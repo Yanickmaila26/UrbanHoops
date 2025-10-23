@@ -1,0 +1,68 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Poppins", "Roboto", sans-serif;
+    background-color: #ffffff;
+    color: #1c1c1c;
+    line-height: 1.6;
+}
+
+.hero {
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.hero h1 {
+    font-weight: 800;
+}
+
+.selector-talla h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.opciones-talla {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.opcion-talla {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.opcion-talla:hover:not(.activo):not(.deshabilitada) {
+    border-color: #ff6600;
+}
+
+.opcion-talla.activo {
+    background-color: #1c1c1c;
+    color: #ffffff;
+    border-color: #1c1c1c;
+    cursor: default;
+}
+
+.opcion-talla.deshabilitada {
+    background-color: #f2f2f2;
+    color: #ccc;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.add-to-cart-section .btn {
+    width: 100%;
+    font-size: 1.1rem;
+    padding: 1rem;
+}

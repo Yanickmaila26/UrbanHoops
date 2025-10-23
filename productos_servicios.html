@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos | UrbanHoops</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./recursos/estilos.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="index.html">
+            <img src="./recursos/imagenes/logo_fondo_osc.png" alt="Logo" width="100">
+        </a>
+        <div class="d-flex">
+            <a href="index.html" class="text-white text-decoration-none me-3">Inicio</a>
+            <a href="productos_servicios.html" class="text-white text-decoration-none me-3">Productos</a>
+            <a href="detalle_producto.html" class="text-white text-decoration-none me-3">Detalle</a>
+            <a href="contactanos.html" class="text-white text-decoration-none">Contacto</a>
+        </div>
+    </div>
+</nav>
+
+<header class="bg-light py-5">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold">Nuestra Colección</h1>
+        <p class="lead text-muted">Explora lo último en zapatillas, ropa y accesorios de baloncesto.</p>
+    </div>
+</header>
+
+<section class="container my-5">
+    <div class="row">
+        <div class="col-lg-3 d-none d-lg-block">
+            <h3 class="h5 mb-3 border-bottom pb-2">Filtros</h3>
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action active">Todas las Categorías</a>
+                <a href="#" class="list-group-item list-group-item-action">Zapatillas</a>
+                <a href="#" class="list-group-item list-group-item-action">Ropa</a>
+                <a href="#" class="list-group-item list-group-item-action">Accesorios</a>
+            </div>
+
+            <h3 class="h5 mt-4 mb-3 border-bottom pb-2">Rango de Precio</h3>
+            <div class="mb-3">
+                <label for="rangePrecio" class="form-label">Precio Máximo: $<span id="valorPrecio">200</span></label>
+                <input type="range" class="form-range" min="10" max="300" step="10" value="200" id="rangePrecio">
+            </div>
+            <button class="btn btn-dark w-100">Aplicar</button>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="row g-4">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm" data-producto="lebron21" data-bs-toggle="modal" data-bs-target="#modalProducto">
+                        <img src="./recursos/productos/lebron21.jpeg" class="card-img-top" alt="Nike LeBron 21">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Nike LeBron 21</h5>
+                            <p class="card-text text-muted">Zapatillas de élite</p>
+                            <h4 class="text-danger fw-bold">$180.00</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm" data-producto="spalding" data-bs-toggle="modal" data-bs-target="#modalProducto">
+                        <img src="./recursos/productos/balonspalding.jpeg" class="card-img-top" alt="Balón Spalding NBA">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Balón Spalding NBA</h5>
+                            <p class="card-text text-muted">Cuero premium</p>
+                            <h4 class="text-danger fw-bold">$75.00</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm" data-producto="lakers" data-bs-toggle="modal" data-bs-target="#modalProducto">
+                        <img src="./recursos/productos/camisetalakers.jpeg" class="card-img-top" alt="Camiseta Lakers">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Camiseta Lakers</h5>
+                            <p class="card-text text-muted">Edición 2024</p>
+                            <h4 class="text-danger fw-bold">$55.00</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm" data-producto="harden8" data-bs-toggle="modal" data-bs-target="#modalProducto">
+                        <img src="./recursos/productos/harden8.jpeg" class="card-img-top" alt="Adidas Harden Vol. 8">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">Adidas Harden Vol. 8</h5>
+                            <p class="card-text text-muted">Rendimiento y agilidad</p>
+                            <h4 class="text-danger fw-bold">$165.00</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm" data-producto="kai2" data-bs-toggle="modal" data-bs-target="#modalProducto">
+                        <img src="./recursos/productos/kai2klay.jpeg" class="card-img-top" alt="ANTA KAI 2">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">ANTA KAI 2 "Klay"</h5>
+                            <p class="card-text text-muted">Diseño urbano</p>
+                            <h4 class="text-danger fw-bold">$130.00</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm" data-producto="curry10" data-bs-toggle="modal" data-bs-target="#modalProducto">
+                        <img src="./recursos/productos/curry10.jpg" class="card-img-top" alt="Under Armour Curry Flow 10">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">UA Curry Flow 10</h5>
+                            <p class="card-text text-muted">Amortiguación</p>
+                            <h4 class="text-danger fw-bold">$145.00</h4>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="modalProducto" tabindex="-1" aria-labelledby="modalProductoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalProductoLabel">Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <img id="modalImagen" src="" alt="Imagen de Producto" class="img-fluid rounded">
+                    </div>
+                    <div class="col-md-7">
+                        <h2 id="modalTitulo" class="fw-bold mb-2"></h2>
+                        <h3 id="modalPrecio" class="text-danger display-6 mb-4 fw-bold"></h3>
+
+                        <p id="modalDescripcion" class="text-muted mb-4">
+                            Descripción general del producto.
+                        </p>
+
+                        <div class="d-grid gap-2 mb-3">
+                            <a href="detalle_producto.html" class="btn btn-warning btn-lg fw-bold">Ver Detalles Completos</a>
+                            <button type="button" class="btn btn-outline-dark">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-dark text-white text-center py-4">
+    <div class="container">
+        <div class="mt-2">
+            <a href="index.html" class="text-warning text-decoration-none me-3">Inicio</a>
+            <a href="contactanos.html" class="text-warning text-decoration-none">Contacto</a>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const modalProducto = document.getElementById('modalProducto');
+    modalProducto.addEventListener('show.bs.modal', event => {
+        const card = event.relatedTarget;
+        const producto = card.getAttribute('data-producto');
+        const modalImagen = modalProducto.querySelector('#modalImagen');
+        const modalTitulo = modalProducto.querySelector('#modalTitulo');
+        const modalPrecio = modalProducto.querySelector('#modalPrecio');
+        const modalDescripcion = modalProducto.querySelector('#modalDescripcion');
+        const imagenSrc = card.querySelector('img').src;
+        const titulo = card.querySelector('.card-title').textContent;
+        const precio = card.querySelector('h4').textContent;
+
+        const descripciones = {
+            'lebron21': 'La Nike LeBron 21 es una zapatilla de baloncesto de élite, perfecta para velocidad y amortiguación.',
+            'harden8': 'Las Adidas Harden Vol. 8, excelentes para rendimiento y agilidad.',
+            'kai2': 'ANTA KAI 2 "Klay", gran diseño urbano y alto rendimiento.',
+            'curry10': 'UA Curry Flow 10, tracción superior y amortiguación revolucionaria.',
+            'spalding': 'Balón oficial de la NBA, cuero premium con agarre excelente.',
+            'lakers': 'Camiseta de los Lakers, edición 2024, transpirable y cómoda.'
+        };
+
+        modalImagen.src = imagenSrc;
+        modalTitulo.textContent = titulo;
+        modalPrecio.textContent = precio;
+        modalDescripcion.textContent = descripciones[producto] || 'Producto de alta calidad para la cancha.';
+    });
+
+    const rangePrecio = document.getElementById('rangePrecio');
+    const valorPrecio = document.getElementById('valorPrecio');
+    rangePrecio.addEventListener('input', (event) => {
+        valorPrecio.textContent = event.target.value;
+    });
+
+</script>
+</body>
+</html>
