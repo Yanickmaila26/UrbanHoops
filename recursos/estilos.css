@@ -34,13 +34,14 @@ body {
 }
 
 .opcion-talla {
-    padding: 0.5rem 0.75rem;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 0.5rem 0.8rem;
+    margin-right: 0.5rem;
     cursor: pointer;
+    border-radius: 0.3rem;
+    /* rounded-3 de Bootstrap */
     font-size: 0.9rem;
-    font-weight: 500;
-    transition: background-color 0.2s, border-color 0.2s;
+    transition: all 0.2s;
 }
 
 .opcion-talla:hover:not(.activo):not(.deshabilitada) {
@@ -66,3 +67,4 @@ body {
     font-size: 1.1rem;
     padding: 1rem;
 }
+.hidden { display: none !important; }
