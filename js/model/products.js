@@ -1,6 +1,5 @@
-document.addEventListener('DOMContentLoaded', function () {
-    var total = 0;
-    const productos = [{
+
+const products = [{
     id: 1,
     name: 'Nike LeBron 21',
     description: 'Zapatillas de élite para velocidad y amortiguación.',
@@ -201,57 +200,18 @@ document.addEventListener('DOMContentLoaded', function () {
     image: './recursos/productos/conjuntopuma.jpeg',
     category: 'ropa'
 }];
-    const listaProductos = document.getElementById('listaProductos');
-    const modalProducto = document.getElementById('modalProducto');
-    const rangePrecio = document.getElementById('rangePrecio');
-    const valorPrecio = document.getElementById('valorPrecio');
-    const btnAgregarCarrito = document.getElementById('btnAgregarCarrito');
 
+class Products {
+    constructor() {
+        this.products = products;
+        this.cart = [];
+    }
 
-    let html = '';
-    for (const producto of productos) {
-    html += `
-            <div class="col">
-                <div class="card shadow-sm h-100" data-bs-toggle="modal" data-bs-target="#modalProducto" data-product-id="${producto.id}" style="cursor:pointer;">
-                <img src="${producto.image}" class="card-img-top" alt="${producto.name}" onerror="this.onerror=null; this.src='https://placehold.co/600x400/CCCCCC/333333?text=Imagen+No+Disproducto.'">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold">${producto.name}</h5>
-                    <p class="card-text  flex-grow-1">${producto.description}</p>
-                    <h4 class="text-danger mt-auto">${producto.price.toFixed(2)} USD</h4>
-                    <a href="detalle_producto.html?id=${producto.id}" class="btn btn-sm btn-dark mt-2">Ver Detalles</a>
-                </div>
-                </div>
-            </div>`;
+    getProducts() {
+        return this.products;
+    }
+
+    getProductById(id) {
+        return this.products.find(p => p.id == id)
+    }
 }
-
-    listaProductos.innerHTML = html;
-
-    modalProducto.addEventListener('show.bs.modal', function (event) {
-    const card = event.relatedTarget;
-    const productId = parseInt(card.getAttribute('data-product-id'), 10);
-    const p = productos.find(x => x.id === productId);
-
-    const img = modalProducto.querySelector('#modalImagen');
-    const tit = modalProducto.querySelector('#modalTitulo');
-    const prec = modalProducto.querySelector('#modalPrecio');
-    const desc = modalProducto.querySelector('#modalDescripcion');
-    const link = modalProducto.querySelector('.modal-body a');
-
-    img.src = p.image;
-    tit.textContent = p.name;
-    prec.textContent = `$${p.price.toFixed(2)} USD`;
-    desc.textContent = p.long_description;
-    link.href = `detalle_producto.html?id=${p.id}`;
-
-    btnAgregarCarrito.setAttribute('data-product-price', p.price.toFixed(2));
-});
-
-    btnAgregarCarrito.addEventListener('click', function () {
-    const precio = parseFloat(this.getAttribute('data-product-price'), 10);
-    total += precio;
-    console.log(total)
-
-});
-
-});
-
