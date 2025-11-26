@@ -10,7 +10,13 @@
 </head>
 
 <body>
-
+<!-- Sidebar accesibilidad -->
+<div id="accesibilidad-menu">
+    <button id="btn-contraste" class="btn btn-warning btn-sm w-100">Alto Contraste</button>
+    <button id="btn-aumentar" class="btn btn-light btn-sm w-100">Aumentar letra</button>
+    <button id="btn-disminuir" class="btn btn-light btn-sm w-100">Disminuir letra</button>
+    <button id="btn-normal" class="btn btn-secondary btn-sm w-100">Tamaño normal</button>
+</div>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid container-lg">
             <a class="navbar-brand" href="index.html">
@@ -159,6 +165,33 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let tamañoActual = 16; // Tamaño base
+
+    // Alto contraste
+    $("#btn-contraste").click(function () {
+        $("body").toggleClass("high-contrast");
+    });
+
+    // Aumentar letra
+    $("#btn-aumentar").click(function () {
+        tamañoActual += 2;
+        $("body").css("font-size", tamañoActual + "px");
+    });
+
+    // Disminuir letra
+    $("#btn-disminuir").click(function () {
+        tamañoActual -= 2;
+        if (tamañoActual < 10) tamañoActual = 10;
+        $("body").css("font-size", tamañoActual + "px");
+    });
+
+    // Tamaño normal
+    $("#btn-normal").click(function () {
+        tamañoActual = 16;
+        $("body").css("font-size", "16px");
+    });
+</script>
 </body>
 
 </html>
