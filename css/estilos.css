@@ -68,3 +68,31 @@ body {
     padding: 1rem;
 }
 .hidden { display: none !important; }
+
+
+     /* Sidebar */
+ #accesibilidad-menu {
+     position: fixed;
+     top: 50%;
+     left: 0;
+     transform: translateY(-50%);
+     background: #212529;
+     padding: 15px;
+     border-radius: 0 10px 10px 0;
+     z-index: 1000;
+ }
+
+#accesibilidad-menu button {
+    width: 180px;
+    margin-bottom: 10px;
+}
+
+/* Alto contraste */
+.high-contrast {
+    background-color: black !important;
+    color: yellow !important;
+}
+
+.high-contrast img {
+    filter: brightness(70%) contrast(150%);
+}
