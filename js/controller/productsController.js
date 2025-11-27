@@ -8,6 +8,7 @@ class ProductController {
         const productos = this.model.getProducts();
         this.view.renderProductos(productos);
         this.agregarEventoModal();
+
     }
 
     agregarEventoModal() {
