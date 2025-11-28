@@ -7,7 +7,7 @@ const products = [{
     price: 180.00,
     qt: 10,
     enStock: true,
-    image: './recursos/productos/lebron21.jpeg',
+    image: './recursos/productos/lebron21.png',
     category: 'zapatillas'
 }, {
     id: 2,
@@ -17,7 +17,7 @@ const products = [{
     price: 160.00,
     qt: 8,
     enStock: true,
-    image: './recursos/productos/harden8.jpeg',
+    image: './recursos/productos/harden8.png',
     category: 'zapatillas'
 }, {
     id: 3,
@@ -27,7 +27,7 @@ const products = [{
     price: 145.00,
     qt: 15,
     enStock: true,
-    image: './recursos/productos/kai2klay.jpeg',
+    image: './recursos/productos/kai2klay.png',
     category: 'zapatillas'
 }, {
     id: 4,
@@ -37,7 +37,7 @@ const products = [{
     price: 150.00,
     qt: 5,
     enStock: true,
-    image: './recursos/productos/curry10.jpg',
+    image: './recursos/productos/curry10.png',
     category: 'zapatillas'
 }, {
     id: 5,
@@ -47,7 +47,7 @@ const products = [{
     price: 120.00,
     qt: 12,
     enStock: true,
-    image: './recursos/productos/zion3.jpeg',
+    image: './recursos/productos/zion3.png',
     category: 'zapatillas'
 }, {
     id: 6,
@@ -57,7 +57,7 @@ const products = [{
     price: 140.00,
     qt: 9,
     enStock: true,
-    image: './recursos/productos/pumaallpro.jpg',
+    image: './recursos/productos/pumaallpro.png',
     category: 'zapatillas'
 }, {
     id: 7,
@@ -157,7 +157,7 @@ const products = [{
     price: 125.00,
     qt: 7,
     enStock: true,
-    image: './recursos/productos/gh4.jpeg',
+    image: './recursos/productos/gh4.png',
     category: 'zapatillas'
 }, {
     id: 17,
@@ -167,7 +167,7 @@ const products = [{
     price: 110.00,
     qt: 13,
     enStock: true,
-    image: './recursos/productos/ktsplash.jpeg',
+    image: './recursos/productos/ktsplash.png',
     category: 'zapatillas'
 }, {
     id: 18,
@@ -177,7 +177,7 @@ const products = [{
     price: 135.00,
     qt: 6,
     enStock: true,
-    image: './recursos/productos/luka3.jpeg',
+    image: './recursos/productos/luka3.png',
     category: 'zapatillas'
 }, {
     id: 19,
