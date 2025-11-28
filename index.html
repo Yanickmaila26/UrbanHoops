@@ -7,40 +7,9 @@
     <title>Inicio | UrbanHoops</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/estilos.css">
-
-    <!-- Estilos del menú lateral -->
-    <style>
-        /* Sidebar */
-        #accesibilidad-menu {
-            position: fixed;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            background: #212529;
-            padding: 15px;
-            border-radius: 0 10px 10px 0;
-            z-index: 1000;
-        }
-
-        #accesibilidad-menu button {
-            width: 180px;
-            margin-bottom: 10px;
-        }
-
-        /* Alto contraste */
-        .high-contrast {
-            background-color: black !important;
-            color: yellow !important;
-        }
-
-        .high-contrast img {
-            filter: brightness(70%) contrast(150%);
-        }
-    </style>
 </head>
 
 <body>
-
 <!-- Sidebar accesibilidad -->
 <div id="accesibilidad-menu">
     <button id="btn-contraste" class="btn btn-warning btn-sm w-100">Alto Contraste</button>
@@ -48,99 +17,112 @@
     <button id="btn-disminuir" class="btn btn-light btn-sm w-100">Disminuir letra</button>
     <button id="btn-normal" class="btn btn-secondary btn-sm w-100">Tamaño normal</button>
 </div>
-
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid container-lg">
-        <a class="navbar-brand" href="index.html">
-            <img src="./recursos/imagenes/logo_fondo_osc.png" alt="Logo" width="100">
-        </a>
-        <div class="d-flex flex-wrap justify-content-end">
-            <a href="index.html" class="text-white text-decoration-none me-3">Inicio</a>
-            <a href="productos_servicios.html" class="text-white text-decoration-none me-3">Productos</a>
-            <a href="contactanos.html" class="text-white text-decoration-none">Contacto</a>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid container-lg">
+            <a class="navbar-brand" href="index.html">
+                <img src="./recursos/imagenes/logo_fondo_osc.png" alt="Logo" width="100">
+            </a>
+            <div class="d-flex align-items-center">
+                <a href="index.html" class="text-white text-decoration-none me-3">Inicio</a>
+                <a href="productos_servicios.html" class="text-white text-decoration-none me-3">Productos</a>
+                <a href="detalle_producto.html" class="text-white text-decoration-none me-3">Detalle</a>
+                <a href="contactanos.html" class="text-white text-decoration-none">Contacto</a>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<header class="bg-dark text-white text-center py-5"
-        style="background-image: linear-gradient(rgba(50,50,50,0.8), rgba(50,50,50,0.8)), url('./recursos/imagenes/fondo_inicio.jpg'); background-size: cover; background-position: center;">
-    <div class="container py-5">
-        <h1 class="display-4 fw-bold">Domina la cancha. Vive el estilo.</h1>
-        <p class="lead my-4 mx-auto" style="max-width: 800px;">
-            En UrbanHoops unimos el rendimiento deportivo con la autenticidad urbana.
-            Equipamiento, zapatillas y moda para quienes viven el baloncesto dentro y fuera de la cancha.
-        </p>
-    </div>
-</header>
-
-<section class="container my-5">
-    <div class="row align-items-center g-4">
-        <div class="col-md-6">
-            <h2 class="text-start mb-4">Acerca de UrbanHoops</h2>
-            <p class="mb-3">
-                UrbanHoops nació de la pasión por el baloncesto y la cultura de calle. Nuestro objetivo es ofrecer a
-                cada jugador, desde el amateur hasta el profesional,
-                los mejores productos que potencien su rendimiento sin perder estilo.
+    <!-- Sección Hero -->
+    <div class="bg-dark text-white text-center py-5" style="background-image: linear-gradient(rgba(50,50,50,0.8), rgba(50, 50, 50, 0.8)), url('./recursos/imagenes/fondo_inicio.jpg'); background-size: cover; background-position: center; min-height: 400px; display: flex; align-items: center;">
+        <div class="container-fluid container-lg">
+            <h1 class="display-3 fw-bold">Domina la cancha. Vive el estilo.</h1>
+            <p class="lead mt-3">
+                En <strong>UrbanHoops</strong> unimos el rendimiento deportivo con la autenticidad urbana.
             </p>
-            <p>
-                Más que una tienda, somos un punto de encuentro para quienes sienten el ritmo del balón y el pulso
-                de la ciudad.
-            </p>
-        </div>
-        <div class="col-md-6">
-            <img src="./recursos/imagenes/UrbanHoops.jpg" alt="Tienda" class="img-fluid rounded shadow-lg">
+            <a href="productos_servicios.html" class="btn btn-warning btn-lg mt-4">Explorar productos</a>
         </div>
     </div>
-</section>
 
-<section class="bg-light py-5">
-    <div class="container">
-        <h2 class="text-center mb-5">Nuestros Valores</h2>
-        <div class="row g-4 justify-content-center">
-            <!-- Cards -->
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="card h-100 border-0 shadow-sm">
-                    <div class="card-body text-center">
-                        <h3 class="card-title h5">Rendimiento</h3>
-                        <p class="card-text">Seleccionamos productos que impulsan tu juego al máximo.</p>
+    <!-- Sección Sobre Nosotros -->
+    <section id="sobre-nosotros" class="py-5 bg-light">
+        <div class="container-fluid container-lg">
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <h2 class="mb-4 text-dark">Acerca de UrbanHoops</h2>
+                    <p>UrbanHoops nació de la pasión por el baloncesto callejero y el diseño de alto rendimiento. Creemos que el equipo que usas debe ser tan audaz como tu juego. Ofrecemos una selección curada de zapatillas, ropa y accesorios que combinan tecnología deportiva de vanguardia con la estética urbana más fresca.</p>
+                    <p>Nuestro compromiso es con la calidad y la comunidad. Somos más que una tienda; somos un punto de encuentro para la cultura del baloncesto.</p>
+                </div>
+                <div class="col-md-5 text-center">
+                    <img src="./recursos/imagenes/balon_urban.png" alt="Balón de baloncesto con logo" class="img-fluid rounded-3 shadow-sm" style="max-height: 300px;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Productos Destacados -->
+    <section id="productos-destacados" class="py-5">
+        <div class="container-fluid container-lg">
+            <h2 class="text-center mb-5 text-dark">Productos Destacados</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center shadow-sm">
+                        <img src="./recursos/productos/lebron21.jpeg" class="card-img-top" alt="Nike LeBron 21">
+                        <div class="card-body">
+                            <h5 class="card-title">Nike LeBron 21</h5>
+                            <p class="card-text text-muted">Zapatillas de élite para velocidad.</p>
+                            <a href="detalle_producto.html" class="btn btn-warning">Ver Detalle</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center shadow-sm">
+                        <img src="./recursos/productos/balonspalding.jpeg" class="card-img-top" alt="Balón Spalding NBA Official">
+                        <div class="card-body">
+                            <h5 class="card-title">Balón Spalding NBA Official</h5>
+                            <p class="card-text text-muted">Agarre y durabilidad premium.</p>
+                            <a href="productos_servicios.html" class="btn btn-warning">Comprar</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center shadow-sm">
+                        <img src="./recursos/productos/camisetalakers.jpeg" class="card-img-top" alt="Camiseta Lakers">
+                        <div class="card-body">
+                            <h5 class="card-title">Camiseta Lakers Edición 2025</h5>
+                            <p class="card-text text-muted">Estilo y comodidad transpirable.</p>
+                            <a href="productos_servicios.html" class="btn btn-warning">Comprar</a>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- Otros cards -->
         </div>
-    </div>
-</section>
-
-<section class="container my-5">
-    <h2 class="text-center mb-5">Productos Destacados</h2>
-    <div class="row g-4">
-        <div class="col-12 col-md-4">
-            <div class="card shadow-sm h-100">
-                <img src="./recursos/productos/lebron21.png" class="card-img-top" alt="Zapatillas">
-                <div class="card-body">
-                    <h5 class="card-title">Nike LeBron 21</h5>
-                    <p class="card-text precio-energia">$180.00</p>
-                </div>
-            </div>
+        <div class="text-center mt-4">
+            <a href="productos_servicios.html" class="btn btn-warning">Ver todos los productos</a>
         </div>
-        <!-- Más productos -->
-    </div>
-    <div class="text-center mt-4">
-        <a href="productos_servicios.html" class="btn btn-warning">Ver todos los productos</a>
-    </div>
-</section>
+    </section>
 
-<footer class="bg-dark text-white text-center py-4">
-    <div class="container-fluid container-lg">
-        <a href="index.html" class="text-warning text-decoration-none me-3">Inicio</a>
-        <a href="productos_servicios.html" class="text-warning text-decoration-none me-3">Productos</a>
-        <a href="contactanos.html" class="text-warning text-decoration-none">Contacto</a>
-    </div>
-</footer>
+    <!-- Sección CTA -->
+    <section id="cta" class="py-5 text-white" style="background-color: #1c1c1c; text-align:center;">
+        <div class="container-fluid container-lg">
+            <h2 class="mb-3">Únete a la Comunidad UrbanHoops</h2>
+            <p style="max-width:700px; margin:1rem auto;">
+                Sé parte del movimiento. Recibe noticias, lanzamientos y eventos exclusivos de baloncesto urbano.
+            </p>
+            <a href="contactanos.html" class="btn btn-outline-warning btn-lg mt-3">Suscribirse</a>
+        </div>
+    </section>
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <footer class="bg-dark text-white text-center py-4">
+        <div class="container-fluid container-lg">
+            <a href="index.html" class="text-warning text-decoration-none me-3">Inicio</a>
+            <a href="productos_servicios.html" class="text-warning text-decoration-none me-3">Productos</a>
+            <a href="contactanos.html" class="text-warning text-decoration-none">Contacto</a>
+        </div>
+    </footer>
 
+    <!-- INCLUSIÓN DE JQUERY: ESTO ES LO QUE FALTABA -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    
 <script>
     let tamañoActual = 16; // Tamaño base
 
@@ -158,17 +140,17 @@
     // Disminuir letra
     $("#btn-disminuir").click(function () {
         tamañoActual -= 2;
-        if (tamañoActual < 10) tamañoActual = 10;
+        if (tamañoActual < 10) tamañoActual = 10; // Límite inferior
         $("body").css("font-size", tamañoActual + "px");
     });
 
     // Tamaño normal
     $("#btn-normal").click(function () {
         tamañoActual = 16;
-        $("body").css("font-size", "16px");
+        $("body").css("font-size", tamañoActual + "px");
+        $("body").removeClass("high-contrast"); // Restablece también el contraste
     });
 </script>
-
 </body>
 
 </html>

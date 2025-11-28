@@ -1,3 +1,68 @@
+/** Definición de Variables y Paleta de Colores **/
+:root {
+    --color-fondo-claro: #ffffff;
+    --color-fondo-oscuro: #1c1c1c;
+    --color-energia: #ff6600;
+    --color-enfasis: #007bff;
+    --color-neutro: #f2f2f2;
+    --color-texto: #1c1c1c;
+    --color-texto-claro: #ffffff;
+    --fuente-principal: "Poppins", "Roboto", sans-serif;
+    --color-borde-gris: #ccc;
+}
+
+/* Estilos de Alto Contraste para accesibilidad */
+body.high-contrast {
+    background-color: #000000 !important;
+    color: #ffff00 !important;
+
+}
+
+body.high-contrast * {
+    background-color: transparent !important;
+    border-color: #ffff00 !important;
+}
+
+body.high-contrast .navbar,
+body.high-contrast .bg-dark,
+body.high-contrast footer,
+body.high-contrast #cta {
+    background-color: #000000 !important;
+    color: #ffff00 !important;
+}
+
+body.high-contrast .card,
+body.high-contrast .bg-light,
+body.high-contrast .shadow-sm {
+    background-color: #000000 !important;
+    border: 1px solid #ffff00 !important;
+    box-shadow: none !important;
+}
+
+body.high-contrast h1,
+body.high-contrast h2,
+body.high-contrast h3,
+body.high-contrast .text-dark,
+body.high-contrast .text-muted {
+    color: #ffff00 !important;
+}
+
+body.high-contrast a,
+body.high-contrast .btn-warning {
+    color: #ffff00 !important;
+    background-color: #000000 !important;
+    border-color: #ffff00 !important;
+}
+
+body.high-contrast .btn-warning:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+/* Fin Estilos de Alto Contraste */
+
+
+/* Estilos Generales */
 * {
     margin: 0;
     padding: 0;
@@ -5,20 +70,122 @@
 }
 
 body {
-    font-family: "Poppins", "Roboto", sans-serif;
-    background-color: #ffffff;
-    color: #1c1c1c;
+    font-family: var(--fuente-principal);
+    background-color: var(--color-fondo-claro);
+    color: var(--color-texto);
     line-height: 1.6;
 }
 
-.hero {
-    background-size: cover;
-    background-position: center;
-    position: relative;
+section {
+    padding: 4rem 2rem;
 }
 
-.hero h1 {
-    font-weight: 800;
+.contenedor {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--color-fondo-oscuro);
+}
+
+/* Estilos de Encabezado (Header/Navbar) */
+.navbar {
+    z-index: 1000;
+}
+
+.navbar-brand img {
+    height: 60px;
+    width: auto;
+}
+
+/* Estilos para el menú de accesibilidad */
+#accesibilidad-menu {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background-color: rgba(28, 28, 28, 0.9);
+    padding: 10px;
+    border-radius: 8px 0 0 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 2000;
+}
+
+#accesibilidad-menu button {
+    width: 150px;
+}
+
+/* Estilos de Tarjetas de Producto */
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card {
+    transition: transform 0.3s ease;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para la sección Detalle de Producto */
+.detalle-producto {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    align-items: flex-start;
+    padding-top: 4rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.galeria-producto {
+    flex: 1 1 400px;
+}
+
+.galeria-producto img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.info-producto {
+    flex: 1 1 400px;
+}
+
+.info-producto h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.rating {
+    color: var(--color-energia);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.precio {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-fondo-oscuro);
+    margin-bottom: 1.5rem;
+}
+
+.descripcion-corta {
+    margin-top: 1.5rem;
+    font-size: 1.1rem;
 }
 
 .selector-talla h3 {
@@ -34,57 +201,83 @@ body {
 }
 
 .opcion-talla {
-    border: 1px solid #ccc;
+    border: 1px solid var(--color-borde-gris);
     padding: 0.5rem 0.8rem;
     margin-right: 0.5rem;
     cursor: pointer;
     border-radius: 0.3rem;
-    /* rounded-3 de Bootstrap */
     font-size: 0.9rem;
     transition: all 0.2s;
+    user-select: none;
 }
 
 .opcion-talla:hover:not(.activo):not(.deshabilitada) {
-    border-color: #ff6600;
+    border-color: var(--color-energia);
 }
 
 .opcion-talla.activo {
-    background-color: #1c1c1c;
-    color: #ffffff;
-    border-color: #1c1c1c;
+    background-color: var(--color-fondo-oscuro);
+    color: var(--color-texto-claro);
+    border-color: var(--color-fondo-oscuro);
     cursor: default;
 }
 
 .opcion-talla.deshabilitada {
-    background-color: #f2f2f2;
-    color: #ccc;
+    background-color: var(--color-neutro);
+    color: var(--color-borde-gris);
     cursor: not-allowed;
     text-decoration: line-through;
 }
 
-.add-to-cart-section .btn {
+.agregar-carrito {
+    margin-top: 2rem;
+}
+
+.agregar-carrito .btn {
     width: 100%;
     font-size: 1.1rem;
     padding: 1rem;
 }
-.hidden { display: none !important; }
 
+/* Estilos para el formulario de contacto */
+.formulario {
+    max-width: 600px;
+    margin: 2rem auto;
+    background-color: var(--color-neutro);
+    padding: 2rem;
+    border-radius: 8px;
+}
 
-     /* Sidebar */
- #accesibilidad-menu {
-     position: fixed;
-     top: 50%;
-     left: 0;
-     transform: translateY(-50%);
-     background: #212529;
-     padding: 15px;
-     border-radius: 0 10px 10px 0;
-     z-index: 1000;
- }
+.formulario label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
 
-#accesibilidad-menu button {
-    width: 180px;
-    margin-bottom: 10px;
+.formulario input,
+.formulario textarea,
+.formulario select {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--color-borde-gris);
+    border-radius: 4px;
+    font-family: var(--fuente-principal);
+}
+
+.formulario input:focus,
+.formulario textarea:focus,
+.formulario select:focus {
+    outline: none;
+    border-color: var(--color-energia);
+}
+
+/* Estilos para las tarjetas de ayuda en contactanos.html */
+.grid-ayuda,
+.grid-productos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
 }
 
 /* Alto contraste */
@@ -92,7 +285,26 @@ body {
     background-color: black !important;
     color: #ffdb29 !important;
 }
+.tarjeta-ayuda {
+    background-color: var(--color-neutro);
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
 
-.high-contrast img {
-    filter: brightness(70%) contrast(150%);
+.tarjeta-ayuda h3 {
+    color: var(--color-energia);
+    margin-bottom: 0.5rem;
+}
+
+/* Media Queries para Responsive Design */
+@media (max-width: 992px) {
+    .detalle-producto {
+        flex-direction: column;
+    }
+
+    .info-producto h1 {
+        text-align: center;
+    }
 }
