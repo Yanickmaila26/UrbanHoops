@@ -1,136 +1,281 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio | UrbanHoops</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="./css/estilos.css">
+    <style>
+        /* Estilos inline para la fuente personalizada */
+        body {
+            font-family: "Poppins", "Roboto", sans-serif;
+        }
+
+        /* Estilos para el menú de hamburguesa */
+        .mobile-menu {
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Asegurar que el menú de accesibilidad esté siempre visible */
+        #accesibilidad-menu {
+            z-index: 9999 !important;
+        }
+    </style>
 </head>
 
-<body>
+<body class="bg-white text-gray-900 font-sans min-h-screen flex flex-col">
     <!-- Sidebar accesibilidad -->
-    <div id="accesibilidad-menu">
-        <button id="btn-contraste" class="btn btn-warning btn-sm w-100">Alto Contraste</button>
-        <button id="btn-aumentar" class="btn btn-light btn-sm w-100">Aumentar letra</button>
-        <button id="btn-disminuir" class="btn btn-light btn-sm w-100">Disminuir letra</button>
-        <button id="btn-normal" class="btn btn-secondary btn-sm w-100">Tamaño normal</button>
+    <div id="accesibilidad-menu"
+        class="fixed top-1/2 right-0 transform -translate-y-1/2 bg-gray-900 p-3 rounded-l-lg shadow-lg flex flex-col gap-2 z-[9999]">
+        <button id="btn-contraste"
+            class="bg-amber-500 hover:bg-amber-600 text-white font-medium px-4 py-2 rounded text-sm transition w-full">
+            Alto Contraste
+        </button>
+        <button id="btn-aumentar"
+            class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-4 py-2 rounded text-sm transition w-full">
+            Aumentar letra
+        </button>
+        <button id="btn-disminuir"
+            class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-4 py-2 rounded text-sm transition w-full">
+            Disminuir letra
+        </button>
+        <button id="btn-normal"
+            class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-4 py-2 rounded text-sm transition w-full">
+            Tamaño normal
+        </button>
     </div>
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid container-lg">
-            <a class="navbar-brand" href="index.html">
-                <img src="./recursos/imagenes/logo_fondo_osc.png" alt="Logo" width="100">
-            </a>
-            <div class="d-flex align-items-center">
-                <a href="index.html" class="text-white text-decoration-none me-3">Inicio</a>
-                <a href="productos_servicios.html" class="text-white text-decoration-none me-3">Productos</a>
-                <a href="detalle_producto.html" class="text-white text-decoration-none me-3">Detalle</a>
-                <a href="contactanos.html" class="text-white text-decoration-none">Contacto</a>
+
+    <!-- Navbar -->
+    <header class="bg-gray-900 sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto px-4 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo con margen adecuado -->
+                <div class="text-white font-bold text-xl pl-2 lg:pl-0">
+                    <a href="index.html" class="flex items-center">
+                        <img src="./recursos/imagenes/logo_fondo_osc.png" alt="UrbanHoops Logo"
+                            class="h-12 md:h-14 w-auto">
+                    </a>
+                </div>
+
+                <!-- Menú Desktop -->
+                <div class="hidden md:block">
+                    <ul class="flex items-center space-x-8">
+                        <li><a href="index.html"
+                                class="text-white hover:text-amber-500 transition-colors duration-300 font-medium py-2 px-1">
+                                Inicio
+                            </a>
+                        </li>
+                        <li><a href="productos_servicios.html"
+                                class="text-white hover:text-amber-500 transition-colors duration-300 font-medium py-2 px-1">
+                                Productos
+                            </a>
+                        </li>
+                        <li><a href="contactanos.html"
+                                class="text-white hover:text-amber-500 transition-colors duration-300 font-medium py-2 px-1">
+                                Contacto
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Botón Menú Móvil -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="outline-none focus:outline-none p-2">
+                        <svg id="menu-icon" class="w-7 h-7 text-white" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
-        </div>
-    </nav>
+
+            <!-- Menú Móvil (oculto por defecto) -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 py-4 border-t border-gray-700">
+                <ul class="space-y-3">
+                    <li>
+                        <a href="index.html"
+                            class="block py-3 px-4 text-white hover:text-amber-500 hover:bg-gray-800 rounded-lg transition-colors duration-300 font-medium">
+                            Inicio
+                        </a>
+                    </li>
+                    <li>
+                        <a href="productos_servicios.html"
+                            class="block py-3 px-4 text-white hover:text-amber-500 hover:bg-gray-800 rounded-lg transition-colors duration-300 font-medium">
+                            Productos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="contactanos.html"
+                            class="block py-3 px-4 text-white hover:text-amber-500 hover:bg-gray-800 rounded-lg transition-colors duration-300 font-medium">
+                            Contacto
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
 
     <!-- Sección Hero -->
-    <div class="bg-dark text-white text-center py-5"
-        style="background-image: linear-gradient(rgba(50,50,50,0.8), rgba(50, 50, 50, 0.8)), url('./recursos/imagenes/fondo_inicio.jpg'); background-size: cover; background-position: center; min-height: 400px; display: flex; align-items: center;">
-        <div class="container-fluid container-lg">
-            <h1 class="display-3 fw-bold">Domina la cancha. Vive el estilo.</h1>
-            <p class="lead mt-3">
-                En <strong>UrbanHoops</strong> unimos el rendimiento deportivo con la autenticidad urbana.
-            </p>
-            <a href="productos_servicios.html" class="btn btn-warning btn-lg mt-4">Explorar productos</a>
+    <section
+        class="relative bg-gradient-to-r from-gray-900/90 to-gray-800/90 text-white min-h-[500px] flex items-center">
+        <div
+            class="absolute inset-0 bg-[url('./recursos/imagenes/fondo_inicio.jpg')] bg-cover bg-center bg-no-repeat -z-10">
         </div>
-    </div>
+        <div class="container mx-auto px-4 lg:px-8 text-center py-16">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                Domina la cancha.<br>Vive el estilo.
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                En <span class="font-bold text-amber-500">UrbanHoops</span> unimos el rendimiento deportivo con la
+                autenticidad urbana.
+            </p>
+            <a href="productos_servicios.html"
+                class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition transform hover:-translate-y-1 hover:shadow-xl">
+                Explorar productos
+            </a>
+        </div>
+    </section>
 
     <!-- Sección Sobre Nosotros -->
-    <section id="sobre-nosotros" class="py-5 bg-light">
-        <div class="container-fluid container-lg">
-            <div class="row align-items-center">
-                <div class="col-md-7">
-                    <h2 class="mb-4 text-dark">Acerca de UrbanHoops</h2>
-                    <p>UrbanHoops nació de la pasión por el baloncesto callejero y el diseño de alto rendimiento.
-                        Creemos que el equipo que usas debe ser tan audaz como tu juego. Ofrecemos una selección curada
-                        de zapatillas, ropa y accesorios que combinan tecnología deportiva de vanguardia con la estética
-                        urbana más fresca.</p>
-                    <p>Nuestro compromiso es con la calidad y la comunidad. Somos más que una tienda; somos un punto de
-                        encuentro para la cultura del baloncesto.</p>
+    <section id="sobre-nosotros" class="py-16 bg-white">
+        <div class="container mx-auto px-4 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <!-- Contenido -->
+                <div class="lg:w-7/12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Acerca de UrbanHoops</h2>
+                    <div class="space-y-4 text-gray-700">
+                        <p class="text-lg">
+                            UrbanHoops nació de la pasión por el baloncesto callejero y el diseño de alto rendimiento.
+                            Creemos que el equipo que usas debe ser tan audaz como tu juego.
+                        </p>
+                        <p class="text-lg">
+                            Ofrecemos una selección curada de zapatillas, ropa y accesorios que combinan tecnología
+                            deportiva de vanguardia con la estética urbana más fresca.
+                        </p>
+                        <p class="text-lg">
+                            Nuestro compromiso es con la calidad y la comunidad. Somos más que una tienda; somos un
+                            punto de encuentro para la cultura del baloncesto.
+                        </p>
+                    </div>
                 </div>
-                <div class="col-md-5 text-center">
-                    <img src="./recursos/imagenes/balon_urban.png" alt="Balón de baloncesto con logo"
-                        class="img-fluid rounded-3 shadow-sm" style="max-height: 300px;">
+
+                <!-- Imagen -->
+                <div class="lg:w-5/12">
+                    <div class="relative overflow-hidden rounded-2xl shadow-xl">
+                        <img src="./recursos/imagenes/UrbanHoops.jpg" alt="Balón de baloncesto con logo"
+                            class="w-full h-auto object-cover transform hover:scale-105 transition duration-500">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Sección Productos Destacados -->
-    <section id="productos-destacados" class="py-5">
-        <div class="container-fluid container-lg">
-            <h2 class="text-center mb-5 text-dark">Productos Destacados</h2>
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="card text-center shadow-sm">
-                        <img src="./recursos/productos/lebron21.jpeg" class="card-img-top" alt="Nike LeBron 21">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike LeBron 21</h5>
-                            <p class="card-text text-muted">Zapatillas de élite para velocidad.</p>
-                            <a href="detalle_producto.html" class="btn btn-warning">Ver Detalle</a>
-                        </div>
+    <section id="productos-destacados" class="py-16 bg-white">
+        <div class="container mx-auto px-4 lg:px-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">Productos Destacados</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Producto 1 -->
+                <div
+                    class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
+                    <div class="h-64 overflow-hidden">
+                        <img src="./recursos/productos/lebron21.png" alt="Nike LeBron 21"
+                            class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Nike LeBron 21</h3>
+                        <p class="text-gray-600 mb-4">Zapatillas de élite para velocidad y potencia en la cancha.</p>
+                        <a href="detalle_producto.html"
+                            class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition w-full text-center">
+                            Ver Detalle
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card text-center shadow-sm">
-                        <img src="./recursos/productos/balonspalding.jpeg" class="card-img-top"
-                            alt="Balón Spalding NBA Official">
-                        <div class="card-body">
-                            <h5 class="card-title">Balón Spalding NBA Official</h5>
-                            <p class="card-text text-muted">Agarre y durabilidad premium.</p>
-                            <a href="productos_servicios.html" class="btn btn-warning">Comprar</a>
-                        </div>
+
+                <!-- Producto 2 -->
+                <div
+                    class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
+                    <div class="h-64 overflow-hidden">
+                        <img src="./recursos/productos/balonspalding.jpeg" alt="Balón Spalding NBA Official"
+                            class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Balón Spalding NBA Official</h3>
+                        <p class="text-gray-600 mb-4">Agarre premium y durabilidad excepcional para juego profesional.
+                        </p>
+                        <a href="productos_servicios.html"
+                            class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition w-full text-center">
+                            Comprar
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card text-center shadow-sm">
-                        <img src="./recursos/productos/camisetalakers.jpeg" class="card-img-top" alt="Camiseta Lakers">
-                        <div class="card-body">
-                            <h5 class="card-title">Camiseta Lakers Edición 2025</h5>
-                            <p class="card-text text-muted">Estilo y comodidad transpirable.</p>
-                            <a href="productos_servicios.html" class="btn btn-warning">Comprar</a>
-                        </div>
+
+                <!-- Producto 3 -->
+                <div
+                    class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
+                    <div class="h-64 overflow-hidden">
+                        <img src="./recursos/productos/camisetalakers.jpeg" alt="Camiseta Lakers"
+                            class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Camiseta Lakers Edición 2025</h3>
+                        <p class="text-gray-600 mb-4">Estilo icónico y comodidad transpirable para el día a día.</p>
+                        <a href="productos_servicios.html"
+                            class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition w-full text-center">
+                            Comprar
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="text-center mt-4">
-            <a href="productos_servicios.html" class="btn btn-warning">Ver todos los productos</a>
+
+            <div class="text-center mt-12">
+                <a href="productos_servicios.html"
+                    class="inline-block border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white font-bold py-4 px-10 rounded-lg text-lg transition">
+                    Ver todos los productos
+                </a>
+            </div>
         </div>
     </section>
 
     <!-- Sección CTA -->
-    <section id="cta" class="py-5 text-white" style="background-color: #1c1c1c; text-align:center;">
-        <div class="container-fluid container-lg">
-            <h2 class="mb-3">Únete a la Comunidad UrbanHoops</h2>
-            <p style="max-width:700px; margin:1rem auto;">
+    <section class="py-16 bg-gray-900 text-white">
+        <div class="container mx-auto px-4 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Únete a la Comunidad UrbanHoops</h2>
+            <p class="text-xl mb-8 max-w-3xl mx-auto text-gray-300">
                 Sé parte del movimiento. Recibe noticias, lanzamientos y eventos exclusivos de baloncesto urbano.
             </p>
-            <a href="contactanos.html" class="btn btn-outline-warning btn-lg mt-3">Suscribirse</a>
+            <a href="contactanos.html"
+                class="inline-block border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white font-bold py-4 px-10 rounded-lg text-lg transition">
+                Suscribirse
+            </a>
         </div>
     </section>
 
-    <footer class="bg-dark text-white text-center py-4">
-        <div class="container-fluid container-lg">
-            <a href="index.html" class="text-warning text-decoration-none me-3">Inicio</a>
-            <a href="productos_servicios.html" class="text-warning text-decoration-none me-3">Productos</a>
-            <a href="contactanos.html" class="text-warning text-decoration-none">Contacto</a>
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 mt-auto">
+        <div class="container mx-auto px-4 lg:px-8 text-center">
+            <div class="flex flex-wrap justify-center gap-6 mb-6">
+                <a href="index.html" class="text-amber-500 hover:text-amber-400 transition font-medium">Inicio</a>
+                <a href="productos_servicios.html"
+                    class="text-amber-500 hover:text-amber-400 transition font-medium">Productos</a>
+                <a href="contactanos.html"
+                    class="text-amber-500 hover:text-amber-400 transition font-medium">Contacto</a>
+            </div>
+            <p class="text-gray-400 text-sm">
+                &copy; 2024 UrbanHoops. Todos los derechos reservados.
+            </p>
         </div>
     </footer>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./js/alto-contraste.js"></script>
+    <script src="./js/menu-hamburguesa.js"></script>
 </body>
 
 </html>

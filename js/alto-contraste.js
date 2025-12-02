@@ -1,24 +1,30 @@
-$(document).ready(function () {
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Script para alto contraste
+    const btnContraste = document.getElementById('btn-contraste');
+    const btnAumentar = document.getElementById('btn-aumentar');
+    const btnDisminuir = document.getElementById('btn-disminuir');
+    const btnNormal = document.getElementById('btn-normal');
     let tamañoActual = 16;
 
-    $("#btn-contraste").click(function () {
-        $("body").toggleClass("high-contrast");
+    btnContraste.addEventListener('click', function () {
+        document.body.classList.toggle('high-contrast');
     });
 
-    $("#btn-aumentar").click(function () {
+    btnAumentar.addEventListener('click', function () {
         tamañoActual += 2;
-        $("body").css("font-size", tamañoActual + "px");
+        document.documentElement.style.fontSize = tamañoActual + 'px';
     });
 
-    $("#btn-disminuir").click(function () {
+    btnDisminuir.addEventListener('click', function () {
         tamañoActual -= 2;
         if (tamañoActual < 10) tamañoActual = 10;
-        $("body").css("font-size", tamañoActual + "px");
+        document.documentElement.style.fontSize = tamañoActual + 'px';
     });
 
-    $("#btn-normal").click(function () {
+    btnNormal.addEventListener('click', function () {
         tamañoActual = 16;
-        $("body").css("font-size", tamañoActual + "px");
-        $("body").removeClass("high-contrast");
+        document.documentElement.style.fontSize = tamañoActual + 'px';
+        document.body.classList.remove('high-contrast');
     });
 });

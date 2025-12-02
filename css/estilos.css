@@ -1,4 +1,3 @@
-/** Definición de Variables y Paleta de Colores **/
 :root {
     --color-fondo-claro: #ffffff;
     --color-fondo-oscuro: #1c1c1c;
@@ -11,116 +10,199 @@
     --color-borde-gris: #ccc;
 }
 
-/* Estilos de Alto Contraste para accesibilidad */
+/* Estilos de Alto Contraste con tu paleta de colores */
 body.high-contrast {
-    background-color: #000000 !important;
-    color: #ffff00 !important;
-
+    background-color: var(--color-fondo-oscuro) !important;
+    color: var(--color-energia) !important;
 }
 
+/* Solo aplicar a elementos directos cuando en alto contraste */
 body.high-contrast * {
+    border-color: var(--color-energia) !important;
+}
+
+/* Navbar en alto contraste */
+body.high-contrast header.bg-gray-900,
+body.high-contrast nav,
+body.high-contrast .bg-gray-900,
+body.high-contrast .bg-black {
+    background-color: var(--color-fondo-oscuro) !important;
+    border-bottom: 2px solid var(--color-energia) !important;
+}
+
+body.high-contrast header a,
+body.high-contrast nav a,
+body.high-contrast .mobile-menu a {
+    color: var(--color-energia) !important;
+}
+
+body.high-contrast header a:hover,
+body.high-contrast nav a:hover,
+body.high-contrast .mobile-menu a:hover {
+    color: var(--color-texto-claro) !important;
+    background-color: var(--color-energia) !important;
+}
+
+/* Sección Hero en alto contraste */
+body.high-contrast .relative.bg-gradient-to-r,
+body.high-contrast section.min-h-\[500px\] {
+    background: var(--color-fondo-oscuro) !important;
+    color: var(--color-texto-claro) !important;
+}
+
+body.high-contrast .relative.bg-gradient-to-r h1,
+body.high-contrast .relative.bg-gradient-to-r p,
+body.high-contrast .relative.bg-gradient-to-r span {
+    color: var(--color-texto-claro) !important;
+}
+
+/* Botones en alto contraste */
+body.high-contrast .bg-amber-500 {
     background-color: transparent !important;
-    border-color: #ffff00 !important;
+    border: 2px solid var(--color-energia) !important;
+    color: var(--color-energia) !important;
 }
 
-body.high-contrast .navbar,
-body.high-contrast .bg-dark,
-body.high-contrast footer,
-body.high-contrast #cta {
-    background-color: #000000 !important;
-    color: #ffff00 !important;
+body.high-contrast .bg-amber-500:hover {
+    background-color: var(--color-energia) !important;
+    color: var(--color-fondo-oscuro) !important;
 }
 
-body.high-contrast .card,
-body.high-contrast .bg-light,
-body.high-contrast .shadow-sm {
-    background-color: #000000 !important;
-    border: 1px solid #ffff00 !important;
-    box-shadow: none !important;
+body.high-contrast .border-amber-500 {
+    border-color: var(--color-energia) !important;
+    color: var(--color-energia) !important;
 }
 
-body.high-contrast h1,
-body.high-contrast h2,
-body.high-contrast h3,
-body.high-contrast .text-dark,
-body.high-contrast .text-muted {
-    color: #ffff00 !important;
+body.high-contrast .border-amber-500:hover {
+    background-color: var(--color-energia) !important;
+    color: var(--color-fondo-oscuro) !important;
 }
 
-body.high-contrast a,
-body.high-contrast .btn-warning {
-    color: #ffff00 !important;
-    background-color: #000000 !important;
-    border-color: #ffff00 !important;
+/* Sección Sobre Nosotros en alto contraste - MANTIENE BLANCO Y NEGRO */
+body.high-contrast #sobre-nosotros.bg-white {
+    background-color: var(--color-fondo-claro) !important;
+    color: var(--color-fondo-oscuro) !important;
 }
 
-body.high-contrast .btn-warning:hover {
-    background-color: #000000 !important;
-    color: #ffffff !important;
+body.high-contrast #sobre-nosotros .text-gray-900,
+body.high-contrast #sobre-nosotros .text-gray-700 {
+    color: var(--color-fondo-oscuro) !important;
 }
 
-/* Fin Estilos de Alto Contraste */
-
-
-/* Estilos Generales */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Sección Productos Destacados en alto contraste */
+body.high-contrast #productos-destacados.bg-gray-900,
+body.high-contrast #productos-destacados {
+    background-color: var(--color-fondo-oscuro) !important;
+    color: var(--color-texto-claro) !important;
 }
 
-body {
-    font-family: var(--fuente-principal);
-    background-color: var(--color-fondo-claro);
-    color: var(--color-texto);
-    line-height: 1.6;
+body.high-contrast #productos-destacados h2 {
+    color: var(--color-texto-claro) !important;
 }
 
-section {
-    padding: 4rem 2rem;
+body.high-contrast .group.bg-white {
+    background-color: var(--color-fondo-oscuro) !important;
+    border: 2px solid var(--color-energia) !important;
+    color: var(--color-texto-claro) !important;
 }
 
-.contenedor {
-    max-width: 1200px;
-    margin: 0 auto;
+body.high-contrast .group.bg-white h3,
+body.high-contrast .group.bg-white p {
+    color: var(--color-texto-claro) !important;
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: var(--color-fondo-oscuro);
+body.high-contrast .group.bg-gray-800 {
+    background-color: var(--color-fondo-oscuro) !important;
+    border: 2px solid var(--color-energia) !important;
+    color: var(--color-texto-claro) !important;
 }
 
-/* Estilos de Encabezado (Header/Navbar) */
-.navbar {
-    z-index: 1000;
+body.high-contrast .group.bg-gray-800 h3,
+body.high-contrast .group.bg-gray-800 p {
+    color: var(--color-texto-claro) !important;
 }
 
-.navbar-brand img {
-    height: 60px;
-    width: auto;
+/* Sección CTA en alto contraste */
+body.high-contrast section.bg-gray-800 {
+    background-color: var(--color-fondo-oscuro) !important;
+    border: 2px solid var(--color-energia) !important;
 }
 
-/* Estilos para el menú de accesibilidad */
-#accesibilidad-menu {
-    position: fixed;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    background-color: rgba(28, 28, 28, 0.9);
-    padding: 10px;
-    border-radius: 8px 0 0 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    z-index: 2000;
+body.high-contrast section.bg-gray-800 h2,
+body.high-contrast section.bg-gray-800 p {
+    color: var(--color-texto-claro) !important;
 }
 
-#accesibilidad-menu button {
-    width: 150px;
+/* Footer en alto contraste */
+body.high-contrast footer.bg-gray-900 {
+    background-color: var(--color-fondo-oscuro) !important;
+    border-top: 2px solid var(--color-energia) !important;
 }
 
+body.high-contrast footer a {
+    color: var(--color-energia) !important;
+}
+
+body.high-contrast footer a:hover {
+    color: var(--color-texto-claro) !important;
+    background-color: var(--color-energia) !important;
+}
+
+/* Menú de accesibilidad en alto contraste - CORREGIDO */
+body.high-contrast #accesibilidad-menu {
+    background-color: var(--color-fondo-oscuro) !important;
+    border: 2px solid var(--color-energia) !important;
+}
+
+body.high-contrast #accesibilidad-menu button {
+    background-color: transparent !important;
+    border: 1px solid var(--color-energia) !important;
+    color: var(--color-energia) !important;
+}
+
+body.high-contrast #accesibilidad-menu .bg-gray-100 {
+    background-color: transparent !important;
+    border: 1px solid var(--color-energia) !important;
+    color: var(--color-energia) !important;
+}
+
+body.high-contrast #accesibilidad-menu .bg-gray-500 {
+    background-color: transparent !important;
+    border: 1px solid var(--color-energia) !important;
+    color: var(--color-energia) !important;
+}
+
+body.high-contrast #accesibilidad-menu button:hover {
+    background-color: var(--color-energia) !important;
+    color: var(--color-fondo-oscuro) !important;
+}
+
+/* Textos generales en alto contraste */
+body.high-contrast .text-gray-600,
+body.high-contrast .text-gray-700,
+body.high-contrast .text-gray-900 {
+    color: var(--color-texto-claro) !important;
+}
+
+body.high-contrast .text-gray-300 {
+    color: var(--color-energia) !important;
+}
+
+body.high-contrast .text-white {
+    color: var(--color-texto-claro) !important;
+}
+
+body.high-contrast .text-amber-500 {
+    color: var(--color-energia) !important;
+}
+
+/* Clases específicas para imágenes de fondo */
+body.high-contrast .absolute.inset-0,
+body.high-contrast .bg-\[url\(\'\.\/recursos\/imagenes\/fondo_inicio\.jpg\'\)\] {
+    display: none !important;
+}
+
+/* Las demás clases de tu CSS original permanecen igual... */
 /* Estilos de Tarjetas de Producto */
 .card-img-top {
     height: 200px;
@@ -229,16 +311,6 @@ h2 {
     text-decoration: line-through;
 }
 
-.agregar-carrito {
-    margin-top: 2rem;
-}
-
-.agregar-carrito .btn {
-    width: 100%;
-    font-size: 1.1rem;
-    padding: 1rem;
-}
-
 /* Estilos para el formulario de contacto */
 .formulario {
     max-width: 600px;
@@ -270,32 +342,6 @@ h2 {
 .formulario select:focus {
     outline: none;
     border-color: var(--color-energia);
-}
-
-/* Estilos para las tarjetas de ayuda en contactanos.html */
-.grid-ayuda,
-.grid-productos {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-}
-
-/* Alto contraste */
-.high-contrast {
-    background-color: black !important;
-    color: #ffdb29 !important;
-}
-.tarjeta-ayuda {
-    background-color: var(--color-neutro);
-    padding: 1.5rem;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.tarjeta-ayuda h3 {
-    color: var(--color-energia);
-    margin-bottom: 0.5rem;
 }
 
 /* Media Queries para Responsive Design */
