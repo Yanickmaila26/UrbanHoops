@@ -98,4 +98,5 @@ class CartModel {
     getItems() {
         return [...this.items];
     }
+
 }
