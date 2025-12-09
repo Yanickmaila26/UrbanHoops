@@ -38,16 +38,19 @@ UrbanHoops nace de la pasión por el básquet y la cultura de la calle. No solo 
 
 
 UrbanHoops/
-├── index.html # Página principal (home)
-├── productos.html # Catálogo de productos
-├── detalle.html # Detalle individual de producto
-├── contacto.html # Formulario de contacto / FAQ
-├── css/
-│ └── style.css # Estilos de la web
-├── recursos/
-│ ├── imagenes/ # Imágenes (logotipo, hero, productos, etc.)
-│ └── js/ # Scripts (si los hay)
-└── README.md # Este archivo
+- ├── index.html # Página principal (home)
+- ├── productos_servicios.html # Catálogo de productos
+- ├── detalle_producto.html # Detalle individual de producto
+- ├── contacto.html # Formulario de contacto / FAQ
+- ├── css/
+- │ └── style.css # Estilos de la web
+- ├── recursos/
+- │ ├── imagenes/ # Imágenes (logotipo, hero, productos, etc.)
+- │ └── js/ # Scripts
+- │    ├── controller
+- │    ├── model
+- │    └── views
+- └── README.md # Este archivo
 
 ---
 
