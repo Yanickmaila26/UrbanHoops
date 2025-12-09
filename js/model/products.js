@@ -67,7 +67,7 @@ const products = [{
     price: 70.00,
     qt: 25,
     enStock: true,
-    image: './recursos/productos/balonspalding.jpeg',
+    image: './recursos/productos/balonspalding.png',
     category: 'balones'
 }, {
     id: 8,
@@ -77,7 +77,7 @@ const products = [{
     price: 65.00,
     qt: 30,
     enStock: true,
-    image: './recursos/productos/balonwilson.jpeg',
+    image: './recursos/productos/balonwilson.png',
     category: 'balones'
 }, {
     id: 9,
@@ -107,7 +107,7 @@ const products = [{
     price: 90.00,
     qt: 22,
     enStock: true,
-    image: './recursos/productos/camisetalakers.jpeg',
+    image: './recursos/productos/camisetalakers.png',
     category: 'ropa'
 }, {
     id: 12,
@@ -117,7 +117,7 @@ const products = [{
     price: 85.00,
     qt: 19,
     enStock: true,
-    image: './recursos/productos/camisetawarriors.jpeg',
+    image: './recursos/productos/camisetawarriors.png',
     category: 'ropa'
 }, {
     id: 13,
@@ -187,7 +187,7 @@ const products = [{
     price: 40.00,
     qt: 40,
     enStock: true,
-    image: './recursos/productos/balonstreet.jpg',
+    image: './recursos/productos/balonstreet.png',
     category: 'balones'
 }, {
     id: 20,

@@ -10,6 +10,26 @@
 </head>
 
 <body>
+    <div id="accesibilidad-menu"
+     class="position-fixed top-50 end-0 translate-middle-y bg-dark p-3 rounded-start shadow-lg d-flex flex-column gap-2"
+     style="z-index: 9999; width: 160px;">
+
+        <button id="btn-contraste" class="btn btn-warning btn-sm fw-bold w-100">
+            Alto Contraste
+        </button>
+
+        <button id="btn-aumentar" class="btn btn-light btn-sm fw-bold w-100">
+            Aumentar letra
+        </button>
+
+        <button id="btn-disminuir" class="btn btn-light btn-sm fw-bold w-100">
+            Disminuir letra
+        </button>
+
+        <button id="btn-normal" class="btn btn-secondary btn-sm fw-bold w-100">
+            Tamaño normal
+        </button>
+    </div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="index.html">
@@ -33,7 +53,7 @@
         <div id="detalleProductoContainer">
             <div class="row">
                 <div class="col-lg-5">
-                    <img id="detalleImagen" src="./recursos/productos/default.jpg" alt="Imagen del Producto"
+                    <img id="detalleImagen" src="./recursos/productos" alt="Imagen del Producto"
                         class="img-fluid rounded shadow w-100 h-100">
                 </div>
                 <div class="col-lg-7">
@@ -248,7 +268,7 @@
                 price: 70.00,
                 qt: 25,
                 enStock: true,
-                image: './recursos/productos/balonspalding.jpeg',
+                image: './recursos/productos/balonspalding.png',
                 category: 'balones'
             }, {
                 id: 8,
@@ -258,7 +278,7 @@
                 price: 65.00,
                 qt: 30,
                 enStock: true,
-                image: './recursos/productos/balonwilson.jpeg',
+                image: './recursos/productos/balonwilson.png',
                 category: 'balones'
             }, {
                 id: 9,
@@ -288,7 +308,7 @@
                 price: 90.00,
                 qt: 22,
                 enStock: true,
-                image: './recursos/productos/camisetalakers.jpeg',
+                image: './recursos/productos/camisetalakers.png',
                 category: 'ropa'
             }, {
                 id: 12,
@@ -298,7 +318,7 @@
                 price: 85.00,
                 qt: 19,
                 enStock: true,
-                image: './recursos/productos/camisetawarriors.jpeg',
+                image: './recursos/productos/camisetawarriors.png',
                 category: 'ropa'
             }, {
                 id: 13,
@@ -368,7 +388,7 @@
                 price: 40.00,
                 qt: 40,
                 enStock: true,
-                image: './recursos/productos/balonstreet.jpg',
+                image: './recursos/productos/balonstreet.png',
                 category: 'balones'
             }, {
                 id: 20,
