@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,305 +8,208 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/estilos.css">
 
-    <style>
-        #accesibilidad-menu {
-            position: fixed;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            z-index: 9999;
-            background: #1e1e2f;
-            padding: 12px;
-            border-radius: 12px;
-            width: 140px;
-        }
-
-        #accesibilidad-menu button {
-            margin-bottom: 6px;
-            width: 100%;
-            padding: 6px 8px;
-            font-size: 12px;
-        }
-
-        .high-contrast {
-            background-color: #000000 !important;
-            color: #ffffff !important;
-        }
-
-        .high-contrast header,
-        .high-contrast section,
-        .high-contrast footer,
-        .high-contrast .card,
-        .high-contrast .list-group-item,
-        .high-contrast .modal-content {
-            background-color: #000000 !important;
-            color: #ffffff !important;
-            border-color: #ff7b00 !important;
-        }
-
-        .high-contrast h1,
-        .high-contrast h2,
-        .high-contrast p,
-        .high-contrast a,
-        .high-contrast label,
-        .high-contrast span {
-            color: #ffffff !important;
-        }
-
-        .high-contrast .list-group-item.active {
-            background-color: #ff7b00 !important;
-            color: #000000 !important;
-        }
-
-        .high-contrast .btn {
-            background-color: #000000 !important;
-            border: 1px solid #ff7b00 !important;
-            color: #ff7b00 !important;
-        }
-
-        .high-contrast .btn:hover {
-            background-color: #ff7b00 !important;
-            color: #000000 !important;
-        }
-    </style>
 </head>
 
 <body>
 
-<div id="accesibilidad-menu">
-    <button id="btn-contraste" class="btn btn-warning btn-sm">Alto Contraste</button>
-    <button id="btn-aumentar" class="btn btn-light btn-sm">Aumentar letra</button>
-    <button id="btn-disminuir" class="btn btn-light btn-sm">Disminuir letra</button>
-    <button id="btn-normal" class="btn btn-secondary btn-sm">Tamaño normal</button>
-</div>
+    <div id="accesibilidad-menu">
+        <button id="btn-contraste" class="btn btn-warning btn-sm">Alto Contraste</button>
+        <button id="btn-aumentar" class="btn btn-light btn-sm">Aumentar letra</button>
+        <button id="btn-disminuir" class="btn btn-light btn-sm">Disminuir letra</button>
+        <button id="btn-normal" class="btn btn-secondary btn-sm">Tamaño normal</button>
+    </div>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="index.html">
-            <img src="./recursos/imagenes/logo_fondo_osc.png" alt="Logo" width="100">
-        </a>
-        <div class="d-flex align-items-center">
-            <a href="index.html" class="text-white text-decoration-none me-3">Inicio</a>
-            <a href="productos_servicios.html" class="text-white text-decoration-none me-3">Productos</a>
-            <a href="contactanos.html" class="text-white text-decoration-none me-3">Contacto</a>
-            <button id="btnOpenCart" class="btn btn-outline-warning position-relative" onclick="abrirCarrito()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352l.798 1.594H15.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H1.832a.5.5 0 0 1-.493-.416l-1.5-8A.5.5 0 0 1 0 1.5zm4.541 6a.5.5 0 0 0-.542.493l.541.432.541-.432a.5.5 0 0 0-.541-.493zM13 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-4-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                </svg>
-                <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;">0</span>
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand" href="index.html">
+                <img src="./recursos/imagenes/logo_fondo_osc.png" alt="UrbanHoops Logo" height="50">
+            </a>
+
+            <!-- Botón hamburguesa -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
             </button>
+
+            <!-- Menú -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="productos_servicios.html">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contactanos.html">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <button id="btnOpenCart" class="btn btn-outline-warning position-relative ms-3"
+                            onclick="abrirCarrito()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352l.798 1.594H15.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H1.832a.5.5 0 0 1-.493-.416l-1.5-8A.5.5 0 0 1 0 1.5zm4.541 6a.5.5 0 0 0-.542.493l.541.432.541-.432a.5.5 0 0 0-.541-.493zM13 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-4-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                            </svg>
+                            <span id="cartCount"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="display:none;">0</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </header>
 
-<header class="bg-light py-5">
-    <div class="container text-center">
-        <h1 class="display-5 fw-bold">Nuestra Colección</h1>
-        <p class="lead">Explora lo último en zapatillas, ropa y accesorios de baloncesto.</p>
-    </div>
-</header>
+    <section class="position-relative bg-light py-5 my-5">
+        <div class="container text-center">
+            <h1 class="display-5 fw-bold">Nuestra Colección</h1>
+            <p class="lead">Explora lo último en zapatillas, ropa y accesorios de baloncesto.</p>
+        </div>
+    </section>
 
-<section class="container my-5">
-    <div class="row">
-        <div class="col-lg-3 d-none d-lg-block">
-            <h3 class="h5 mb-3 border-bottom pb-2">Filtros</h3>
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action active">Todas las Categorías</a>
-                <a href="#" class="list-group-item list-group-item-action">Zapatillas</a>
-                <a href="#" class="list-group-item list-group-item-action">Ropa</a>
-                <a href="#" class="list-group-item list-group-item-action">Accesorios</a>
+    <section class="container my-5">
+        <div class="row">
+            <div class="col-lg-3 d-none d-lg-block">
+                <h3 class="h5 mb-3 border-bottom pb-2">Filtros</h3>
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action active">Todas las Categorías</a>
+                    <a href="#" class="list-group-item list-group-item-action">Zapatillas</a>
+                    <a href="#" class="list-group-item list-group-item-action">Ropa</a>
+                    <a href="#" class="list-group-item list-group-item-action">Accesorios</a>
+                </div>
+
+                <h3 class="h5 mt-4 mb-3 border-bottom pb-2">Rango de Precio</h3>
+                <div class="mb-3">
+                    <label class="form-label">Precio Máximo: $<span id="valorPrecio">200</span></label>
+                    <input type="range" class="form-range" min="10" max="300" step="10" value="200" id="rangePrecio">
+                </div>
+                <button class="btn btn-dark w-100">Aplicar</button>
             </div>
 
-            <h3 class="h5 mt-4 mb-3 border-bottom pb-2">Rango de Precio</h3>
-            <div class="mb-3">
-                <label class="form-label">Precio Máximo: $<span id="valorPrecio">200</span></label>
-                <input type="range" class="form-range" min="10" max="300" step="10" value="200" id="rangePrecio">
+            <div class="col-lg-9">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4" id="listaProductos"></div>
             </div>
-            <button class="btn btn-dark w-100">Aplicar</button>
         </div>
+    </section>
 
-        <div class="col-lg-9">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4" id="listaProductos"></div>
-        </div>
-    </div>
-</section>
+    <div class="modal fade" id="modalProducto" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalProductoLabel">Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <img id="modalImagen" src="" class="img-fluid rounded">
+                        </div>
+                        <div class="col-md-7">
+                            <h2 id="modalTitulo" class="fw-bold mb-2"></h2>
+                            <h3 id="modalPrecio" class="text-danger display-6 mb-4 fw-bold"></h3>
+                            <p id="modalDescripcion" class="mb-4"></p>
 
-<div class="modal fade" id="modalProducto" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalProductoLabel">Producto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-5">
-                        <img id="modalImagen" src="" class="img-fluid rounded">
-                    </div>
-                    <div class="col-md-7">
-                        <h2 id="modalTitulo" class="fw-bold mb-2"></h2>
-                        <h3 id="modalPrecio" class="text-danger display-6 mb-4 fw-bold"></h3>
-                        <p id="modalDescripcion" class="mb-4"></p>
-
-                        <div class="d-grid gap-2 mb-3">
-                            <a id="modalUrl" class="btn btn-warning btn-lg fw-bold">Ver Detalles Completos</a>
-                            <button id="btnAgregarCarrito" class="btn btn-outline-dark" data-product-id="0">
-                                Añadir al Carrito
-                            </button>
+                            <div class="d-grid gap-2 mb-3">
+                                <a id="modalUrl" class="btn btn-warning btn-lg fw-bold">Ver Detalles Completos</a>
+                                <button id="btnAgregarCarrito" class="btn btn-outline-dark" data-product-id="0">
+                                    Añadir al Carrito
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="modalCarrito" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">🛒 Carrito de Compras</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div id="cartItems" class="list-group" style="max-height:400px; overflow-y:auto;">
-                    <div class="text-center py-5 text-muted">Tu carrito está vacío</div>
+    <!-- Modal del Carrito -->
+    <div class="modal fade" id="modalCarrito" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">🛒 Carrito de Compras</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-            </div>
-            <div class="modal-footer d-flex justify-content-between align-items-center">
-                <div class="text-lg font-weight-bold">
-                    Total: <span id="cartTotal" class="text-danger">$0.00</span>
+                <div class="modal-body">
+                    <div id="cartItems" class="list-group" style="max-height:400px; overflow-y:auto;">
+                        <div class="text-center py-5 text-muted">Tu carrito está vacío</div>
+                    </div>
+                    <!-- Estados de compra - Usando d-none de Bootstrap -->
+                    <div id="loading" class="mt-3 text-center d-none">
+                        <img src="./recursos/imagenes/load.gif" alt="Cargando" class="mb-2">
+                        <p class="text-muted">Procesando pago...</p>
+                    </div>
+                    <div id="success" class="mt-3 text-center d-none">
+                        <img src="./recursos/imagenes/success.gif" alt="Éxito" class="mb-2">
+                        <p class="text-success fw-bold">¡Compra realizada con éxito!</p>
+                        <p>Tu pedido ha sido procesado.</p>
+                    </div>
+                    <div id="error" class="mt-3 text-center d-none">
+                        <img src="./recursos/imagenes/error.gif" alt="Error" class="mb-2">
+                        <p class="text-danger fw-bold">Error en el pago</p>
+                        <p>Por favor, intenta nuevamente.</p>
+                    </div>
                 </div>
-                <div>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button id="btnCheckout" type="button" class="btn btn-success">Comprar Ahora</button>
+                <div class="modal-footer d-flex justify-content-between align-items-center">
+                    <div class="text-lg font-weight-bold">
+                        Total: <span id="cartTotal" class="text-danger">$0.00</span>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button id="btnCheckout" type="button" class="btn btn-success">Comprar Ahora</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<footer class="bg-dark text-white text-center py-4">
-    <div class="container">
-        <a href="index.html" class="text-warning me-3">Inicio</a>
-        <a href="contactanos.html" class="text-warning">Contacto</a>
-    </div>
-</footer>
+    <footer class="bg-dark text-white text-center py-4">
+        <div class="container">
+            <a href="index.html" class="text-warning me-3">Inicio</a>
+            <a href="contactanos.html" class="text-warning">Contacto</a>
+        </div>
+    </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-<script src="./js/model/products.js"></script>
-<script src="./js/controller/productsController.js"></script>
-<script src="./js/views/productsView.js"></script>
-<script src="./js/model/modelCarrito.js"></script>
-<script src="./js/views/viewCarrito.js"></script>
-<script src="./js/controller/controllerCarrito.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/model/products.js"></script>
+    <script src="./js/controller/productsController.js"></script>
+    <script src="./js/views/productsView.js"></script>
+    <script src="./js/model/modelCarrito.js"></script>
+    <script src="./js/views/viewCarrito.js"></script>
+    <script src="./js/controller/controllerCarrito.js"></script>
 
-<script>
-    // Función para agregar productos al carrito
-    function agregarProductoAlCarrito(id, nombre, precio, imagen) {
-        console.log('Agregando producto:', {id, nombre, precio, imagen});
-        
-        const producto = {
-            id: id,
-            name: nombre,
-            price: precio,
-            image: imagen,
-            qty: 1
-        };
-        
-        // Agregar al carrito usando window.cart
-        if (window.cart) {
-            console.log('window.cart disponible');
-            window.cart.add(producto, 1);
-            
-            // Actualizar contador
-            const count = window.cart.getCount();
-            const countElement = document.getElementById('cartCount');
-            if (countElement) {
-                countElement.textContent = count;
-                countElement.style.display = count > 0 ? 'inline-block' : 'none';
+    <script src="./js/alto-contraste.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('🔄 Inicializando página de productos...');
+
+            // Inicializar controlador de productos
+            const productController = new ProductController();
+
+            // Inicializar carrito
+            if (typeof initializeCart === 'function') {
+                initializeCart();
             }
-            
-            // Mostrar mensaje
-            if (window.cart.view && window.cart.view.showMessage) {
-                window.cart.view.showMessage(`✅ "${nombre}" agregado al carrito`);
-            }
-        } else {
-            console.error('window.cart NO disponible');
-            alert(`✅ "${nombre}" agregado al carrito`);
-        }
-    }
 
-    // Función para abrir el carrito
-    function abrirCarrito() {
-        console.log('Abriendo carrito...');
-        const modal = document.getElementById('modalCarrito');
-        if (modal) {
-            try {
-                // Intentar con Bootstrap
-                const bsModal = new bootstrap.Modal(modal);
-                bsModal.show();
-            } catch (e) {
-                console.log('Bootstrap no disponible, usando método manual');
-                modal.style.display = 'block';
-            }
-        } else {
-            console.error('Modal no encontrado');
-        }
-    }
-
-    let tamañoActual = 16;
-
-    $("#btn-contraste").click(function () {
-        $("body").toggleClass("high-contrast");
-    });
-
-    $("#btn-aumentar").click(function () {
-        tamañoActual += 2;
-        $("body").css("font-size", tamañoActual + "px");
-    });
-
-    $("#btn-disminuir").click(function () {
-        tamañoActual -= 2;
-        if (tamañoActual < 10) tamañoActual = 10;
-        $("body").css("font-size", tamañoActual + "px");
-    });
-
-    $("#btn-normal").click(function () {
-        tamañoActual = 16;
-        $("body").css("font-size", "16px");
-    });
-
-    $(document).ready(function () {
-        const controller = new ProductController();
-        controller.renderProducts();
-        
-        // Asegurar que el carrito esté inicializado
-        console.log('✅ Productos Página - ProductController inicializado');
-        if (typeof initializeCart === 'function') {
-            initializeCart();
-            console.log('✅ Productos Página - initializeCart ejecutado');
-        }
-    });
-    
-    // Agregar listener directo al botón para debugging
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-            const btnCart = document.getElementById('btnOpenCart');
-            if (btnCart) {
-                console.log('✅ Botón del carrito encontrado en el DOM');
-                btnCart.addEventListener('click', function(e) {
-                    console.log('🖱️ Click en botón del carrito detectado');
-                });
-            } else {
-                console.error('❌ Botón del carrito NO encontrado en el DOM');
-            }
-        }, 500);
-    });
-</script>
+            // Configurar botón del carrito en navbar
+            setTimeout(() => {
+                const btnCart = document.getElementById('btnOpenCart');
+                if (btnCart) {
+                    btnCart.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (window.cart && window.cart.view) {
+                            window.cart.controller.render();
+                            window.cart.view.openModal();
+                        }
+                    });
+                }
+            }, 100);
+        });
+    </script>
 
 </body>
+
 </html>
-
-

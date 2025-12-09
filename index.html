@@ -1,173 +1,119 @@
 <!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio | UrbanHoops</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap"
         rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="./css/estilos.css">
-    <style>
-        /* Estilos inline para la fuente personalizada */
-        body {
-            font-family: "Poppins", "Roboto", sans-serif;
-        }
-
-        /* Estilos para el menú de hamburguesa */
-        .mobile-menu {
-            transition: all 0.3s ease-in-out;
-        }
-
-        /* Asegurar que el menú de accesibilidad esté siempre visible */
-        #accesibilidad-menu {
-            z-index: 9999 !important;
-        }
-    </style>
 </head>
 
-<body class="bg-white text-gray-900 font-sans min-h-screen flex flex-col">
+<body>
     <!-- Sidebar accesibilidad -->
     <div id="accesibilidad-menu"
-        class="fixed top-1/2 right-0 transform -translate-y-1/2 bg-gray-900 p-3 rounded-l-lg shadow-lg flex flex-col gap-2 z-[9999]">
-        <button id="btn-contraste"
-            class="bg-amber-500 hover:bg-amber-600 text-white font-medium px-4 py-2 rounded text-sm transition w-full">
+        class="position-fixed top-50 end-0 translate-middle-y bg-dark p-3 rounded-start shadow-lg d-flex flex-column gap-2 z-3">
+        <button id="btn-contraste" class="btn btn-warning btn-sm">
             Alto Contraste
         </button>
-        <button id="btn-aumentar"
-            class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-4 py-2 rounded text-sm transition w-full">
+        <button id="btn-aumentar" class="btn btn-light btn-sm">
             Aumentar letra
         </button>
-        <button id="btn-disminuir"
-            class="bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium px-4 py-2 rounded text-sm transition w-full">
+        <button id="btn-disminuir" class="btn btn-light btn-sm">
             Disminuir letra
         </button>
-        <button id="btn-normal"
-            class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-4 py-2 rounded text-sm transition w-full">
+        <button id="btn-normal" class="btn btn-secondary btn-sm">
             Tamaño normal
         </button>
     </div>
 
     <!-- Navbar -->
-    <header class="bg-gray-900 sticky top-0 z-50 shadow-md">
-        <nav class="container mx-auto px-4 lg:px-8 py-3">
-            <div class="flex items-center justify-between">
-                <!-- Logo con margen adecuado -->
-                <div class="text-white font-bold text-xl pl-2 lg:pl-0">
-                    <a href="index.html" class="flex items-center">
-                        <img src="./recursos/imagenes/logo_fondo_osc.png" alt="UrbanHoops Logo"
-                            class="h-12 md:h-14 w-auto">
-                    </a>
-                </div>
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand" href="index.html">
+                <img src="./recursos/imagenes/logo_fondo_osc.png" alt="UrbanHoops Logo" height="50">
+            </a>
 
-                <!-- Menú Desktop -->
-                <div class="hidden md:block">
-                    <ul class="flex items-center space-x-8">
-                        <li><a href="index.html"
-                                class="text-white hover:text-amber-500 transition-colors duration-300 font-medium py-2 px-1">
-                                Inicio
-                            </a>
-                        </li>
-                        <li><a href="productos_servicios.html"
-                                class="text-white hover:text-amber-500 transition-colors duration-300 font-medium py-2 px-1">
-                                Productos
-                            </a>
-                        </li>
-                        <li><a href="contactanos.html"
-                                class="text-white hover:text-amber-500 transition-colors duration-300 font-medium py-2 px-1">
-                                Contacto
-                            </a>
-                        </li>
-                        <li>
-                            <button id="btnOpenCart" class="relative inline-flex items-center text-white hover:text-amber-500 transition-colors duration-300 font-medium py-2 px-1" onclick="abrirCarrito()">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352l.798 1.594H15.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H1.832a.5.5 0 0 1-.493-.416l-1.5-8A.5.5 0 0 1 0 1.5zm4.541 6a.5.5 0 0 0-.542.493l.541.432.541-.432a.5.5 0 0 0-.541-.493zM13 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-4-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                                </svg>
-                                <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" style="display:none;">0</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
+            <!-- Botón hamburguesa -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                <!-- Botón Menú Móvil -->
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="outline-none focus:outline-none p-2">
-                        <svg id="menu-icon" class="w-7 h-7 text-white" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Menú Móvil (oculto por defecto) -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4 py-4 border-t border-gray-700">
-                <ul class="space-y-3">
-                    <li>
-                        <a href="index.html"
-                            class="block py-3 px-4 text-white hover:text-amber-500 hover:bg-gray-800 rounded-lg transition-colors duration-300 font-medium">
-                            Inicio
-                        </a>
+            <!-- Menú -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Inicio</a>
                     </li>
-                    <li>
-                        <a href="productos_servicios.html"
-                            class="block py-3 px-4 text-white hover:text-amber-500 hover:bg-gray-800 rounded-lg transition-colors duration-300 font-medium">
-                            Productos
-                        </a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="productos_servicios.html">Productos</a>
                     </li>
-                    <li>
-                        <a href="contactanos.html"
-                            class="block py-3 px-4 text-white hover:text-amber-500 hover:bg-gray-800 rounded-lg transition-colors duration-300 font-medium">
-                            Contacto
-                        </a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contactanos.html">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <button id="btnOpenCart" class="btn btn-outline-warning position-relative ms-3"
+                            onclick="abrirCarrito()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352l.798 1.594H15.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H1.832a.5.5 0 0 1-.493-.416l-1.5-8A.5.5 0 0 1 0 1.5zm4.541 6a.5.5 0 0 0-.542.493l.541.432.541-.432a.5.5 0 0 0-.541-.493zM13 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-4-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                            </svg>
+                            <span id="cartCount"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="display:none;">0</span>
+                        </button>
                     </li>
                 </ul>
             </div>
-        </nav>
+        </div>
     </header>
 
     <!-- Sección Hero -->
-    <section
-        class="relative bg-gradient-to-r from-gray-900/90 to-gray-800/90 text-white min-h-[500px] flex items-center">
-        <div
-            class="absolute inset-0 bg-[url('./recursos/imagenes/fondo_inicio.jpg')] bg-cover bg-center bg-no-repeat -z-10">
+    <section class="position-relative text-white min-vh-100 d-flex align-items-center">
+        <!-- Imagen de fondo -->
+        <div class="position-absolute top-0 start-0 w-100 h-100"
+            style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('./recursos/imagenes/fondo_inicio.jpg') center/cover no-repeat; z-index: -1;">
         </div>
-        <div class="container mx-auto px-4 lg:px-8 text-center py-16">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+
+        <div class="container text-center py-5">
+            <h1 class="display-2 fw-bold mb-4">
                 Domina la cancha.<br>Vive el estilo.
             </h1>
-            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-                En <span class="font-bold text-amber-500">UrbanHoops</span> unimos el rendimiento deportivo con la
+            <p class="lead fs-4 mb-5 max-width-800 mx-auto">
+                En <span class="text-warning fw-bold">UrbanHoops</span> unimos el rendimiento deportivo con la
                 autenticidad urbana.
             </p>
-            <a href="productos_servicios.html"
-                class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition transform hover:-translate-y-1 hover:shadow-xl">
+            <a href="productos_servicios.html" class="btn btn-warning btn-lg px-5 py-3 fw-bold">
                 Explorar productos
             </a>
         </div>
     </section>
 
     <!-- Sección Sobre Nosotros -->
-    <section id="sobre-nosotros" class="py-16 bg-white">
-        <div class="container mx-auto px-4 lg:px-8">
-            <div class="flex flex-col lg:flex-row items-center gap-12">
+    <section id="sobre-nosotros" class="py-5 bg-white">
+        <div class="container">
+            <div class="row align-items-center g-5">
                 <!-- Contenido -->
-                <div class="lg:w-7/12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Acerca de UrbanHoops</h2>
-                    <div class="space-y-4 text-gray-700">
-                        <p class="text-lg">
+                <div class="col-lg-7">
+                    <h2 class="display-5 fw-bold text-dark mb-4">Acerca de UrbanHoops</h2>
+                    <div class="fs-5 text-secondary">
+                        <p class="mb-3">
                             UrbanHoops nació de la pasión por el baloncesto callejero y el diseño de alto rendimiento.
                             Creemos que el equipo que usas debe ser tan audaz como tu juego.
                         </p>
-                        <p class="text-lg">
+                        <p class="mb-3">
                             Ofrecemos una selección curada de zapatillas, ropa y accesorios que combinan tecnología
                             deportiva de vanguardia con la estética urbana más fresca.
                         </p>
-                        <p class="text-lg">
+                        <p>
                             Nuestro compromiso es con la calidad y la comunidad. Somos más que una tienda; somos un
                             punto de encuentro para la cultura del baloncesto.
                         </p>
@@ -175,10 +121,10 @@
                 </div>
 
                 <!-- Imagen -->
-                <div class="lg:w-5/12">
-                    <div class="relative overflow-hidden rounded-2xl shadow-xl">
+                <div class="col-lg-5">
+                    <div class="position-relative overflow-hidden rounded-3 shadow-lg">
                         <img src="./recursos/imagenes/UrbanHoops.jpg" alt="Balón de baloncesto con logo"
-                            class="w-full h-auto object-cover transform hover:scale-105 transition duration-500">
+                            class="img-fluid w-100" style="transition: transform 0.5s;">
                     </div>
                 </div>
             </div>
@@ -186,67 +132,68 @@
     </section>
 
     <!-- Sección Productos Destacados -->
-    <section id="productos-destacados" class="py-16 bg-white">
-        <div class="container mx-auto px-4 lg:px-8">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">Productos Destacados</h2>
+    <section id="productos-destacados" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="display-5 fw-bold text-center text-dark mb-5">Productos Destacados</h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="row g-4">
                 <!-- Producto 1 -->
-                <div
-                    class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
-                    <div class="h-64 overflow-hidden">
-                        <img src="./recursos/productos/lebron21.png" alt="Nike LeBron 21"
-                            class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Nike LeBron 21</h3>
-                        <p class="text-gray-600 mb-4">Zapatillas de élite para velocidad y potencia en la cancha.</p>
-                        <a href="detalle_producto.html"
-                            class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition w-full text-center">
-                            Ver Detalle
-                        </a>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm overflow-hidden">
+                        <div class="overflow-hidden" style="height: 250px;">
+                            <img src="./recursos/productos/lebron21.png" alt="Nike LeBron 21"
+                                class="img-fluid w-100 h-100 object-fit-cover">
+                        </div>
+                        <div class="card-body">
+                            <h3 class="h5 fw-bold text-dark mb-2">Nike LeBron 21</h3>
+                            <p class="card-text text-secondary mb-3">Zapatillas de élite para velocidad y potencia en la
+                                cancha.</p>
+                            <a href="detalle_producto.html" class="btn btn-warning w-100 fw-bold">
+                                Ver Detalle
+                            </a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Producto 2 -->
-                <div
-                    class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
-                    <div class="h-64 overflow-hidden">
-                        <img src="./recursos/productos/balonspalding.jpeg" alt="Balón Spalding NBA Official"
-                            class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Balón Spalding NBA Official</h3>
-                        <p class="text-gray-600 mb-4">Agarre premium y durabilidad excepcional para juego profesional.
-                        </p>
-                        <a href="productos_servicios.html"
-                            class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition w-full text-center">
-                            Comprar
-                        </a>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm overflow-hidden">
+                        <div class="overflow-hidden" style="height: 250px;">
+                            <img src="./recursos/productos/balonspalding.jpeg" alt="Balón Spalding NBA Official"
+                                class="img-fluid w-100 h-100 object-fit-cover">
+                        </div>
+                        <div class="card-body">
+                            <h3 class="h5 fw-bold text-dark mb-2">Balón Spalding NBA Official</h3>
+                            <p class="card-text text-secondary mb-3">Agarre premium y durabilidad excepcional para juego
+                                profesional.</p>
+                            <a href="productos_servicios.html" class="btn btn-warning w-100 fw-bold">
+                                Comprar
+                            </a>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Producto 3 -->
-                <div
-                    class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300">
-                    <div class="h-64 overflow-hidden">
-                        <img src="./recursos/productos/camisetalakers.jpeg" alt="Camiseta Lakers"
-                            class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                    </div>
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">Camiseta Lakers Edición 2025</h3>
-                        <p class="text-gray-600 mb-4">Estilo icónico y comodidad transpirable para el día a día.</p>
-                        <a href="productos_servicios.html"
-                            class="inline-block bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition w-full text-center">
-                            Comprar
-                        </a>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm overflow-hidden">
+                        <div class="overflow-hidden" style="height: 250px;">
+                            <img src="./recursos/productos/camisetalakers.jpeg" alt="Camiseta Lakers"
+                                class="img-fluid w-100 h-100 object-fit-cover">
+                        </div>
+                        <div class="card-body">
+                            <h3 class="h5 fw-bold text-dark mb-2">Camiseta Lakers Edición 2025</h3>
+                            <p class="card-text text-secondary mb-3">Estilo icónico y comodidad transpirable para el día
+                                a día.</p>
+                            <a href="productos_servicios.html" class="btn btn-warning w-100 fw-bold">
+                                Comprar
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="text-center mt-12">
-                <a href="productos_servicios.html"
-                    class="inline-block border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white font-bold py-4 px-10 rounded-lg text-lg transition">
+            <div class="text-center mt-5">
+                <a href="productos_servicios.html" class="btn btn-outline-warning btn-lg px-5 py-3 fw-bold">
                     Ver todos los productos
                 </a>
             </div>
@@ -254,146 +201,131 @@
     </section>
 
     <!-- Sección CTA -->
-    <section class="py-16 bg-gray-900 text-white">
-        <div class="container mx-auto px-4 lg:px-8 text-center">
-            <h2 class="text-3xl md:text-4xl font-bold mb-6">Únete a la Comunidad UrbanHoops</h2>
-            <p class="text-xl mb-8 max-w-3xl mx-auto text-gray-300">
+    <section class="py-5 bg-dark text-white">
+        <div class="container text-center">
+            <h2 class="display-5 fw-bold mb-4">Únete a la Comunidad UrbanHoops</h2>
+            <p class="lead mb-5 max-width-600 mx-auto text-light">
                 Sé parte del movimiento. Recibe noticias, lanzamientos y eventos exclusivos de baloncesto urbano.
             </p>
-            <a href="contactanos.html"
-                class="inline-block border-2 border-amber-500 text-amber-500 hover:bg-amber-500 hover:text-white font-bold py-4 px-10 rounded-lg text-lg transition">
+            <a href="contactanos.html" class="btn btn-outline-warning btn-lg px-5 py-3 fw-bold">
                 Suscribirse
             </a>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-8 mt-auto">
-        <div class="container mx-auto px-4 lg:px-8 text-center">
-            <div class="flex flex-wrap justify-center gap-6 mb-6">
-                <a href="index.html" class="text-amber-500 hover:text-amber-400 transition font-medium">Inicio</a>
-                <a href="productos_servicios.html"
-                    class="text-amber-500 hover:text-amber-400 transition font-medium">Productos</a>
-                <a href="contactanos.html"
-                    class="text-amber-500 hover:text-amber-400 transition font-medium">Contacto</a>
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <div class="d-flex flex-wrap justify-content-center gap-4 mb-3">
+                <a href="index.html" class="text-warning text-decoration-none">Inicio</a>
+                <span class="text-white">|</span>
+                <a href="productos_servicios.html" class="text-warning text-decoration-none">Productos</a>
+                <span class="text-white">|</span>
+                <a href="contactanos.html" class="text-warning text-decoration-none">Contacto</a>
             </div>
-            <p class="text-gray-400 text-sm">
+            <p class="text-light mb-0">
                 &copy; 2024 UrbanHoops. Todos los derechos reservados.
             </p>
         </div>
     </footer>
 
     <!-- Modal del Carrito -->
-    <div class="fixed inset-0 z-50 hidden" id="modalCarrito">
-        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
-        <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-2xl w-full max-w-2xl">
-            <div class="flex items-center justify-between border-b px-6 py-4">
-                <h2 class="text-2xl font-bold text-gray-900">🛒 Carrito de Compras</h2>
-                <button onclick="document.getElementById('modalCarrito').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            <div id="cartItems" class="px-6 py-4" style="max-height:400px; overflow-y:auto;">
-                <div class="text-center py-8 text-gray-500">Tu carrito está vacío</div>
-            </div>
-            <div class="border-t px-6 py-4 flex items-center justify-between">
-                <div>
-                    <p class="text-gray-600">Total:</p>
-                    <p class="text-3xl font-bold text-red-600">$<span id="cartTotal">0.00</span></p>
+    <div class="modal fade" id="modalCarrito" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">🛒 Carrito de Compras</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="space-x-3">
-                    <button onclick="document.getElementById('modalCarrito').classList.add('hidden')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100">Cerrar</button>
-                    <button id="btnCheckout" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Comprar Ahora</button>
+                <div class="modal-body">
+                    <div id="cartItems" class="list-group" style="max-height:400px; overflow-y:auto;">
+                        <div class="text-center py-5 text-muted">Tu carrito está vacío</div>
+                    </div>
+                    <!-- Estados de compra -->
+                    <div id="loading" class="mt-3 text-center d-none">
+                        <img src="./recursos/imagenes/load.gif" alt="Cargando" class="mb-2">
+                        <p class="text-muted">Procesando pago...</p>
+                    </div>
+                    <div id="success" class="mt-3 text-center d-none">
+                        <img src="./recursos/imagenes/success.gif" alt="Éxito" class="mb-2">
+                        <p class="text-success fw-bold">¡Compra realizada con éxito!</p>
+                        <p>Tu pedido ha sido procesado.</p>
+                    </div>
+                    <div id="error" class="mt-3 text-center d-none">
+                        <img src="./recursos/imagenes/error.gif" alt="Error" class="mb-2">
+                        <p class="text-danger fw-bold">Error en el pago</p>
+                        <p>Por favor, intenta nuevamente.</p>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between align-items-center">
+                    <div class="text-lg font-weight-bold">
+                        Total: <span id="cartTotal" class="text-danger">$0.00</span>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button id="btnCheckout" type="button" class="btn btn-success">Comprar Ahora</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- Scripts del Carrito -->
     <script src="./js/model/modelCarrito.js"></script>
     <script src="./js/views/viewCarrito.js"></script>
     <script src="./js/controller/controllerCarrito.js"></script>
 
-    <!-- Scripts de accesibilidad y menú -->
+    <!-- Scripts de accesibilidad -->
     <script src="./js/alto-contraste.js"></script>
-    <script src="./js/menu-hamburguesa.js"></script>
 
     <script>
         // Función para abrir el carrito
         function abrirCarrito() {
-            console.log('Abriendo carrito...');
-            const modal = document.getElementById('modalCarrito');
-            if (modal) {
-                modal.classList.remove('hidden');
-            } else {
-                console.error('Modal no encontrado');
+            if (window.cart && window.cart.view && window.cart.view.openModal) {
+                window.cart.view.openModal();
             }
         }
 
-        // Funcionalidad de accesibilidad
-        let tamañoActual = 16;
-
-        document.getElementById('btn-contraste').addEventListener('click', function () {
-            document.body.classList.toggle('high-contrast');
-        });
-
-        document.getElementById('btn-aumentar').addEventListener('click', function () {
-            tamañoActual += 2;
-            document.body.style.fontSize = tamañoActual + 'px';
-        });
-
-        document.getElementById('btn-disminuir').addEventListener('click', function () {
-            tamañoActual -= 2;
-            if (tamañoActual < 10) tamañoActual = 10;
-            document.body.style.fontSize = tamañoActual + 'px';
-        });
-
-        document.getElementById('btn-normal').addEventListener('click', function () {
-            tamañoActual = 16;
-            document.body.style.fontSize = '16px';
-        });
-
-        // Cerrar modal del carrito
-        function closeCartModal() {
-            const modalCarrito = document.getElementById('modalCarrito');
-            if (modalCarrito) {
-                modalCarrito.classList.add('hidden');
-            }
-        }
-
-        // Event listener para cerrar modal al hacer click fuera
-        document.addEventListener('click', function(e) {
-            const modalCarrito = document.getElementById('modalCarrito');
-            if (modalCarrito && e.target === modalCarrito) {
-                modalCarrito.classList.add('hidden');
-            }
-        });
-        
-        // Asegurar que el carrito esté inicializado en Index
-        document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar carrito cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('✅ Index Página - DOM Content Loaded');
             if (typeof initializeCart === 'function') {
-                setTimeout(function() {
+                setTimeout(function () {
                     initializeCart();
                     console.log('✅ Index Página - initializeCart ejecutado');
                 }, 100);
             }
-            
-            // Agregar listener directo al botón
-            setTimeout(function() {
+
+            // Asegurar que el botón del carrito funcione
+            setTimeout(function () {
                 const btnCart = document.getElementById('btnOpenCart');
                 if (btnCart) {
-                    console.log('✅ Botón del carrito encontrado en Index');
-                    btnCart.addEventListener('click', function(e) {
-                        console.log('🖱️ Click en botón del carrito detectado en Index');
+                    btnCart.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        if (window.cart && window.cart.view) {
+                            window.cart.controller.render();
+                            window.cart.view.openModal();
+                        }
                     });
-                } else {
-                    console.error('❌ Botón del carrito NO encontrado en Index');
                 }
             }, 500);
+        });
+
+        // Función para hover en imágenes de productos
+        document.addEventListener('DOMContentLoaded', function () {
+            const productImages = document.querySelectorAll('#productos-destacados img');
+            productImages.forEach(img => {
+                img.addEventListener('mouseenter', function () {
+                    this.style.transform = 'scale(1.05)';
+                });
+                img.addEventListener('mouseleave', function () {
+                    this.style.transform = 'scale(1)';
+                });
+            });
         });
     </script>
 </body>

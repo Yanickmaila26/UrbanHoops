@@ -7,70 +7,153 @@
     <title>Detalle del Producto | UrbanHoops</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./css/estilos.css">
+    <style>
+        /* Estilos adicionales para la página de detalle */
+        .opcion-talla {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .opcion-talla:hover:not(.activo):not(.deshabilitada) {
+            background-color: #f8f9fa;
+            border-color: #ffc107;
+        }
+
+        .opcion-talla.activo {
+            background-color: #212529;
+            color: white;
+            border-color: #212529;
+        }
+
+        .opcion-talla.deshabilitada {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        #detalleProductoContainer {
+            min-height: 500px;
+        }
+
+        #detalleImagen {
+            object-fit: contain;
+            max-height: 500px;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+    </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div id="accesibilidad-menu"
+        class="position-fixed top-50 end-0 translate-middle-y bg-dark p-3 rounded-start shadow-lg d-flex flex-column gap-2"
+        style="z-index: 9999; width: 160px;">
+
+        <button id="btn-contraste" class="btn btn-warning btn-sm fw-bold w-100">
+            Alto Contraste
+        </button>
+
+        <button id="btn-aumentar" class="btn btn-light btn-sm fw-bold w-100">
+            Aumentar letra
+        </button>
+
+        <button id="btn-disminuir" class="btn btn-light btn-sm fw-bold w-100">
+            Disminuir letra
+        </button>
+
+        <button id="btn-normal" class="btn btn-secondary btn-sm fw-bold w-100">
+            Tamaño normal
+        </button>
+    </div>
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
         <div class="container">
+            <!-- Logo -->
             <a class="navbar-brand" href="index.html">
-                <img src="./recursos/imagenes/logo_fondo_osc.png" alt="Logo UrbanHoops" width="100">
+                <img src="./recursos/imagenes/logo_fondo_osc.png" alt="UrbanHoops Logo" height="50">
             </a>
-            <div class="d-flex align-items-center">
-                <a href="index.html" class="text-white text-decoration-none me-3">Inicio</a>
-                <a href="productos_servicios.html" class="text-white text-decoration-none me-3">Productos</a>
-                <a href="contactanos.html" class="text-white text-decoration-none me-3">Contacto</a>
-                <button id="btnOpenCart" class="btn btn-outline-warning position-relative" onclick="abrirCarrito()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352l.798 1.594H15.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H1.832a.5.5 0 0 1-.493-.416l-1.5-8A.5.5 0 0 1 0 1.5zm4.541 6a.5.5 0 0 0-.542.493l.541.432.541-.432a.5.5 0 0 0-.541-.493zM13 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-4-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
-                    </svg>
-                    <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;">0</span>
-                </button>
+
+            <!-- Botón hamburguesa -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Menú -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="productos_servicios.html">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contactanos.html">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <button id="btnOpenCart" class="btn btn-outline-warning position-relative ms-3"
+                            onclick="abrirCarrito()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352l.798 1.594H15.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H1.832a.5.5 0 0 1-.493-.416l-1.5-8A.5.5 0 0 1 0 1.5zm4.541 6a.5.5 0 0 0-.542.493l.541.432.541-.432a.5.5 0 0 0-.541-.493zM13 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-4-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                            </svg>
+                            <span id="cartCount"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="display:none;">0</span>
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <section class="container my-5">
+    <section class="container my-15 py-5 mt-4">
         <div id="detalleProductoContainer">
             <div class="row">
                 <div class="col-lg-5">
                     <img id="detalleImagen" src="./recursos/productos/default.jpg" alt="Imagen del Producto"
-                        class="img-fluid rounded shadow w-100 h-100">
+                        class="img-fluid rounded shadow w-100">
                 </div>
                 <div class="col-lg-7">
-                    <h1 id="detalleNombre" class="display-5 fw-bold mb-2"></h1>
+                    <h1 id="detalleNombre" class="display-5 fw-bold mb-2">Cargando producto...</h1>
                     <p class="mb-3">
                         <span class="text-warning">★★★★☆</span> 4.0
                     </p>
-                    <h2 id="detallePrecio" class="text-danger display-4 mb-4 fw-bold"></h2>
-                    <h3 class="h5 fw-bold mb-2">Descripción </h3>
-                    <p id="detalleDescripcion" class=" mb-4">
-
+                    <h2 id="detallePrecio" class="text-danger display-4 mb-4 fw-bold">$0.00 USD</h2>
+                    <h3 class="h5 fw-bold mb-2">Descripción</h3>
+                    <p id="detalleDescripcion" class="mb-4">
+                        Cargando descripción del producto...
                     </p>
                     <div class="mb-5">
                         <h3 class="h5 fw-bold mb-3">Talla (US)</h3>
                         <div class="d-flex flex-wrap">
-                            <div class="opcion-talla me-2 mb-2">8</div>
-                            <div class="opcion-talla me-2 mb-2">8.5</div>
-                            <div class="opcion-talla activo me-2 mb-2">9</div>
-                            <div class="opcion-talla me-2 mb-2">9.5</div>
-                            <div class="opcion-talla me-2 mb-2">10</div>
-                            <div class="opcion-talla me-2 mb-2">10.5</div>
-                            <div class="opcion-talla me-2 mb-2">11</div>
-                            <div class="opcion-talla me-2 mb-2">11.5</div>
-                            <div class="opcion-talla me-2 mb-2">12</div>
-                            <div class="opcion-talla me-2 mb-2">13</div>
-                            <div class="opcion-talla me-2 mb-2 text-decoration-line-through  bg-light">14
-                            </div>
+                            <div class="opcion-talla me-2 mb-2 p-2 border rounded">8</div>
+                            <div class="opcion-talla me-2 mb-2 p-2 border rounded">8.5</div>
+                            <div class="opcion-talla activo me-2 mb-2 p-2 border rounded">9</div>
+                            <div class="opcion-talla me-2 mb-2 p-2 border rounded">9.5</div>
+                            <div class="opcion-talla me-2 mb-2 p-2 border rounded">10</div>
+                            <div class="opcion-talla me-2 mb-2 p-2 border rounded">10.5</div>
+                            <div class="opcion-talla me-2 mb-2 p-2 border rounded">11</div>
+                            <div class="opcion-talla me-2 mb-2 p-2 border rounded">11.5</div>
+                            <div class="opcion-talla me-2 mb-2 p-2 border rounded">12</div>
+                            <div class="opcion-talla me-2 mb-2 p-2 border rounded">13</div>
+                            <div
+                                class="opcion-talla deshabilitada me-2 mb-2 p-2 border rounded text-decoration-line-through">
+                                14</div>
                         </div>
                     </div>
                     <div class="d-grid gap-2">
-                        <button class="btn btn-dark btn-lg py-3 fw-bold" id="btnAgregarCarritoDetalle">Añadir al Carrito</button>
+                        <button class="btn btn-dark btn-lg py-3 fw-bold" id="btnAgregarCarritoDetalle">
+                            Añadir al Carrito
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
         <div id="errorProducto" class="text-center" style="display:none;">
             <h2 class="display-6 text-danger">Producto no encontrado.</h2>
+            <p class="lead">El producto que buscas no existe o ha sido removido.</p>
             <a href="productos_servicios.html" class="btn btn-warning mt-3">Volver a Productos</a>
         </div>
     </section>
@@ -87,6 +170,21 @@
                     <div id="cartItems" class="list-group" style="max-height:400px; overflow-y:auto;">
                         <div class="text-center py-5 text-muted">Tu carrito está vacío</div>
                     </div>
+                    <!-- Estados de compra -->
+                    <div id="loading" class="mt-3 text-center d-none">
+                        <img src="./recursos/imagenes/load.gif" alt="Cargando" class="mb-2">
+                        <p class="text-muted">Procesando pago...</p>
+                    </div>
+                    <div id="success" class="mt-3 text-center d-none">
+                        <img src="./recursos/imagenes/success.gif" alt="Éxito" class="mb-2">
+                        <p class="text-success fw-bold">¡Compra realizada con éxito!</p>
+                        <p>Tu pedido ha sido procesado.</p>
+                    </div>
+                    <div id="error" class="mt-3 text-center d-none">
+                        <img src="./recursos/imagenes/error.gif" alt="Error" class="mb-2">
+                        <p class="text-danger fw-bold">Error en el pago</p>
+                        <p>Por favor, intenta nuevamente.</p>
+                    </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-between align-items-center">
                     <div class="text-lg font-weight-bold">
@@ -101,7 +199,7 @@
         </div>
     </div>
 
-    <footer class="bg-dark text-white text-center py-4">
+    <footer class="bg-dark text-white text-center py-4 mt-5">
         <div class="container">
             <div class="mt-2">
                 <a href="index.html" class="text-warning text-decoration-none me-3">Inicio</a>
@@ -110,351 +208,28 @@
                 <span class="text-white">|</span>
                 <a href="contactanos.html" class="text-warning text-decoration-none ms-3">Contacto</a>
             </div>
+            <p class="mt-3 mb-0 text-light small">
+                &copy; 2024 UrbanHoops. Todos los derechos reservados.
+            </p>
         </div>
     </footer>
 
+    <!-- Scripts Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts de accesibilidad -->
     <script src="./js/alto-contraste.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
+
+    <!-- Scripts MVC -->
+    <script src="./js/model/products.js"></script>
+    <script src="./js/views/detalleProductoView.js"></script>
+    <script src="./js/controller/detalleProductoController.js"></script>
+    <script src="./js/model/detalleProducto.js"></script>
+
     <!-- Scripts del Carrito -->
     <script src="./js/model/modelCarrito.js"></script>
     <script src="./js/views/viewCarrito.js"></script>
     <script src="./js/controller/controllerCarrito.js"></script>
-
-    <script>
-        // Función para agregar productos al carrito
-        function agregarProductoAlCarrito(id, nombre, precio, imagen) {
-            console.log('Agregando producto:', {id, nombre, precio, imagen});
-            
-            const producto = {
-                id: id,
-                name: nombre,
-                price: precio,
-                image: imagen,
-                qty: 1
-            };
-            
-            // Agregar al carrito usando window.cart
-            if (window.cart) {
-                console.log('window.cart disponible');
-                window.cart.add(producto, 1);
-                
-                // Actualizar contador
-                const count = window.cart.getCount();
-                const countElement = document.getElementById('cartCount');
-                if (countElement) {
-                    countElement.textContent = count;
-                    countElement.style.display = count > 0 ? 'inline-block' : 'none';
-                }
-                
-                // Mostrar mensaje
-                if (window.cart.view && window.cart.view.showMessage) {
-                    window.cart.view.showMessage(`✅ "${nombre}" agregado al carrito`);
-                }
-            } else {
-                console.error('window.cart NO disponible');
-                alert(`✅ "${nombre}" agregado al carrito`);
-            }
-        }
-
-        // Función para abrir el carrito
-        function abrirCarrito() {
-            console.log('Abriendo carrito...');
-            const modal = document.getElementById('modalCarrito');
-            if (modal) {
-                try {
-                    // Intentar con Bootstrap
-                    const bsModal = new bootstrap.Modal(modal);
-                    bsModal.show();
-                } catch (e) {
-                    console.log('Bootstrap no disponible, usando método manual');
-                    modal.style.display = 'block';
-                }
-            } else {
-                console.error('Modal no encontrado');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-
-            const productos = [{
-                id: 1,
-                name: 'Nike LeBron 21',
-                description: 'Zapatillas de élite para velocidad y amortiguación.',
-                long_description: 'La Nike LeBron 21 es una zapatilla de baloncesto de élite, perfecta para jugadores que buscan una combinación de velocidad, contención y amortiguación premium. Su diseño ligero ofrece una respuesta explosiva en la cancha. Perfecta para el juego moderno.',
-                price: 180.00,
-                qt: 10,
-                enStock: true,
-                image: './recursos/productos/lebron21.png',
-                category: 'zapatillas'
-            }, {
-                id: 2,
-                name: 'Adidas Harden Vol. 8',
-                description: 'Diseño futurista y rendimiento excepcional para el base.',
-                long_description: 'Las Adidas Harden Vol. 8 ofrecen una comodidad inigualable y un rendimiento excepcional con tecnología de amortiguación avanzada. Diseñadas para emular el estilo de juego de James Harden, brindan máxima agilidad y soporte en los movimientos laterales.',
-                price: 160.00,
-                qt: 8,
-                enStock: true,
-                image: './recursos/productos/harden8.png',
-                category: 'zapatillas'
-            }, {
-                id: 3,
-                name: 'ANTA KAI 2 “Klay”',
-                description: 'Estilo y performance con la firma de Klay Thompson.',
-                long_description: 'Las ANTA KAI 2 “Klay” combinan un estilo urbano audaz con tecnología de alto rendimiento. Ofrecen una excelente tracción y amortiguación, ideales para jugadores que necesitan versatilidad y un buen agarre tanto en interiores como exteriores.',
-                price: 145.00,
-                qt: 15,
-                enStock: true,
-                image: './recursos/productos/kai2klay.png',
-                category: 'zapatillas'
-            }, {
-                id: 4,
-                name: 'Under Armour Curry Flow 10',
-                description: 'Tracción superior sin goma para una ligereza extrema.',
-                long_description: 'Las Under Armour Curry Flow 10 son conocidas por su amortiguación revolucionaria Flow, que elimina la necesidad de suela de goma, ofreciendo una ligereza y tracción superior para un juego rápido y ágil. El calzado de la superestrella Stephen Curry.',
-                price: 150.00,
-                qt: 5,
-                enStock: true,
-                image: './recursos/productos/curry10.png',
-                category: 'zapatillas'
-            }, {
-                id: 5,
-                name: 'Jordan Zion 3',
-                description: 'Máxima contención para jugadores explosivos y potentes.',
-                long_description: 'Las Jordan Zion 3 están diseñadas para la fuerza y el poder. Ofrecen una amortiguación excepcional y una contención robusta, perfectas para jugadores que dominan la pintura y necesitan soporte en cada salto y aterrizaje.',
-                price: 120.00,
-                qt: 12,
-                enStock: true,
-                image: './recursos/productos/zion3.png',
-                category: 'zapatillas'
-            }, {
-                id: 6,
-                name: 'Puma All Pro Nitro',
-                description: 'Velocidad y respuesta gracias a la tecnología Nitro.',
-                long_description: 'La Puma All Pro Nitro utiliza la espuma Nitro para una amortiguación ligera y responsiva. Es una zapatilla versátil que proporciona un gran retorno de energía y estabilidad, ideal para jugadores de todas las posiciones.',
-                price: 140.00,
-                qt: 9,
-                enStock: true,
-                image: './recursos/productos/pumaallpro.png',
-                category: 'zapatillas'
-            }, {
-                id: 7,
-                name: 'Balón Spalding NBA Official',
-                description: 'Balón oficial de la liga, cuero premium para interiores.',
-                long_description: 'El Balón Spalding NBA Official está fabricado con cuero premium para una sensación de agarre profesional. Es el balón reglamentario para los partidos de la NBA, ideal para interiores y jugadores que buscan la mejor calidad de juego.',
-                price: 70.00,
-                qt: 25,
-                enStock: true,
-                image: './recursos/productos/balonspalding.jpeg',
-                category: 'balones'
-            }, {
-                id: 8,
-                name: 'Balón Wilson Evolution',
-                description: 'El balón de interior más popular y reconocido del mercado.',
-                long_description: 'El Balón Wilson Evolution es considerado el mejor balón de baloncesto de interior no oficial. Su cubierta de microfibra compuesta ofrece un tacto suave y un agarre excepcional, preferido por jugadores de preparatoria y universidad.',
-                price: 65.00,
-                qt: 30,
-                enStock: true,
-                image: './recursos/productos/balonwilson.jpeg',
-                category: 'balones'
-            }, {
-                id: 9,
-                name: 'Balón Nike Elite Championship',
-                description: 'Excelente tacto y durabilidad para canchas cubiertas.',
-                long_description: 'El Balón Nike Elite Championship ofrece una excelente durabilidad y un tacto suave. Diseñado para la competición, mantiene la forma y la presión durante más tiempo, siendo una opción sólida para torneos y ligas.',
-                price: 55.00,
-                qt: 18,
-                enStock: true,
-                image: './recursos/productos/balonnikeelite.jpg',
-                category: 'balones'
-            }, {
-                id: 10,
-                name: 'Balón Molten GG7X',
-                description: 'Aprobado por la FIBA, gran visibilidad y agarre.',
-                long_description: 'El Balón Molten GG7X es el balón oficial de la FIBA (Federación Internacional de Baloncesto). Su diseño de 12 paneles y la cubierta de cuero sintético proporcionan un agarre constante y una gran visibilidad en la cancha.',
-                price: 75.00,
-                qt: 14,
-                enStock: true,
-                image: './recursos/productos/balonmolten.jpg',
-                category: 'balones'
-            }, {
-                id: 11,
-                name: 'Camiseta Lakers Edición 2025',
-                description: 'Jersey oficial, transpirable y ligero.',
-                long_description: 'La Camiseta de los Lakers Edición 2025 presenta un tejido transpirable con tecnología Dri-FIT para mantenerte fresco y seco. El diseño celebra la nueva temporada con detalles y colores oficiales del equipo de Los Ángeles.',
-                price: 90.00,
-                qt: 22,
-                enStock: true,
-                image: './recursos/productos/camisetalakers.jpeg',
-                category: 'ropa'
-            }, {
-                id: 12,
-                name: 'Camiseta Warriors Classic',
-                description: 'Estilo retro, camiseta del Golden State Warriors.',
-                long_description: 'La Camiseta de los Warriors Classic rinde homenaje a los uniformes históricos del equipo. Confeccionada con materiales de alta calidad, es perfecta para usar en el juego o como parte de tu colección de moda urbana.',
-                price: 85.00,
-                qt: 19,
-                enStock: true,
-                image: './recursos/productos/camisetawarriors.jpeg',
-                category: 'ropa'
-            }, {
-                id: 13,
-                name: 'Short Jordan Performance',
-                description: 'Short ligero y funcional para máxima movilidad.',
-                long_description: 'El Short Jordan Performance es un esencial para el entrenamiento. Su tejido ligero con tecnología que absorbe el sudor te mantiene cómodo mientras te mueves. Cuenta con bolsillos y un ajuste elástico en la cintura.',
-                price: 45.00,
-                qt: 35,
-                enStock: true,
-                image: './recursos/productos/shortjordan.jpeg',
-                category: 'ropa'
-            }, {
-                id: 14,
-                name: 'Sudadera Nike Dri-FIT',
-                description: 'Comodidad y calidez antes y después del partido.',
-                long_description: 'Esta Sudadera Nike Dri-FIT es ideal para mantener la temperatura muscular. El tejido suave y la capucha ajustable ofrecen máxima comodidad. Un básico para los días de entrenamiento o para un look casual deportivo.',
-                price: 75.00,
-                qt: 16,
-                enStock: true,
-                image: './recursos/productos/sudaderanike.jpeg',
-                category: 'ropa'
-            }, {
-                id: 15,
-                name: 'Chaqueta Adidas Training',
-                description: 'Corte moderno, ideal para el calentamiento.',
-                long_description: 'La Chaqueta Adidas Training ofrece un corte moderno y está fabricada con materiales reciclados. Es ligera, resistente al viento y perfecta para el calentamiento o para protegerte en los días fríos.',
-                price: 95.00,
-                qt: 11,
-                enStock: true,
-                image: './recursos/productos/chaquetaadidas.jpeg',
-                category: 'ropa'
-            }, {
-                id: 16,
-                name: 'ANTA GH4',
-                description: 'Zapatillas de alto rendimiento, versátiles para todo tipo de juego.',
-                long_description: 'Las ANTA GH4 son el modelo de Gordon Hayward, conocido por su versatilidad. Estas zapatillas ofrecen un equilibrio perfecto entre amortiguación, estabilidad y respuesta, siendo una opción sólida para jugadores completos.',
-                price: 125.00,
-                qt: 7,
-                enStock: true,
-                image: './recursos/productos/gh4.png',
-                category: 'zapatillas'
-            }, {
-                id: 17,
-                name: 'ANTA KT Splash',
-                description: 'Durabilidad y tracción para el baloncesto de calle.',
-                long_description: 'Las ANTA KT Splash están diseñadas pensando en la durabilidad. Su suela exterior resistente las hace ideales para el baloncesto de calle o canchas con superficies más rugosas, sin sacrificar la comodidad y el agarre.',
-                price: 110.00,
-                qt: 13,
-                enStock: true,
-                image: './recursos/productos/ktsplash.png',
-                category: 'zapatillas'
-            }, {
-                id: 18,
-                name: 'Jordan Luka 3',
-                description: 'Diseñadas para la velocidad y los cambios de ritmo rápidos.',
-                long_description: 'Las Jordan Luka 3 son las zapatillas de Luka Dončić, enfocadas en la ligereza y la amortiguación de bajo perfil para optimizar la velocidad y los cambios de dirección rápidos, esenciales para el juego de un playmaker.',
-                price: 135.00,
-                qt: 6,
-                enStock: true,
-                image: './recursos/productos/luka3.png',
-                category: 'zapatillas'
-            }, {
-                id: 19,
-                name: 'Balón Spalding Street Outdoor',
-                description: 'Diseño resistente y duradero para uso en exteriores.',
-                long_description: 'El Balón Spalding Street Outdoor está construido para resistir las superficies de asfalto y cemento. Su cubierta de caucho garantiza la máxima durabilidad sin comprometer el tacto, siendo el compañero perfecto para la cancha de calle.',
-                price: 40.00,
-                qt: 40,
-                enStock: true,
-                image: './recursos/productos/balonstreet.jpg',
-                category: 'balones'
-            }, {
-                id: 20,
-                name: 'Conjunto Puma Basketball',
-                description: 'Set completo de camiseta y short, listo para la cancha.',
-                long_description: 'Este Conjunto Puma Basketball ofrece una solución completa para el día de juego. Tanto la camiseta como el short están hechos de material transpirable, diseñados para un ajuste cómodo y un rendimiento óptimo en la cancha.',
-                price: 115.00,
-                qt: 17,
-                enStock: true,
-                image: './recursos/productos/conjuntopuma.jpeg',
-                category: 'ropa'
-            }];
-
-            function obtenerParametroURL(nombre) {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.get(nombre);
-            }
-
-
-            const productoId = parseInt(obtenerParametroURL('id'));
-
-            const detalleContainer = document.getElementById('detalleProductoContainer');
-            const errorContainer = document.getElementById('errorProducto');
-
-            let productoEncontrado = null;
-
-            productos.forEach(producto => {
-                if (producto.id === productoId) {
-                    productoEncontrado = producto;
-                }
-            });
-
-            if (productoEncontrado) {
-
-                errorContainer.style.display = 'none';
-                detalleContainer.style.display = 'block';
-
-                document.getElementById('detalleImagen').src = productoEncontrado.image;
-                document.getElementById('detalleImagen').alt = productoEncontrado.name;
-                document.getElementById('detalleNombre').textContent = productoEncontrado.name;
-                document.getElementById('detallePrecio').textContent = `$${productoEncontrado.price.toFixed(2)} USD`;
-                document.getElementById('detalleDescripcion').textContent = productoEncontrado.long_description;
-
-                // Botón Añadir al Carrito
-                const btnAgregarCarrito = document.getElementById('btnAgregarCarritoDetalle');
-                if (btnAgregarCarrito) {
-                    btnAgregarCarrito.addEventListener('click', function() {
-                        console.log('Botón click:', productoEncontrado);
-                        agregarProductoAlCarrito(
-                            productoEncontrado.id,
-                            productoEncontrado.name,
-                            productoEncontrado.price,
-                            productoEncontrado.image
-                        );
-                    });
-                }
-
-            } else {
-
-                detalleContainer.style.display = 'none';
-                errorContainer.style.display = 'block';
-            }
-            
-            // Asegurar que el carrito esté inicializado
-            console.log('✅ Detalle Producto - DOM Content Loaded');
-            if (typeof initializeCart === 'function') {
-                initializeCart();
-                console.log('✅ Detalle Producto - initializeCart ejecutado');
-            }
-        });
-        
-        // Agregar listener directo al botón para debugging
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                const btnCart = document.getElementById('btnOpenCart');
-                if (btnCart) {
-                    console.log('✅ Botón del carrito encontrado en Detalle Producto');
-                    btnCart.addEventListener('click', function(e) {
-                        console.log('🖱️ Click en botón del carrito detectado en Detalle');
-                    });
-                } else {
-                    console.error('❌ Botón del carrito NO encontrado en Detalle Producto');
-                }
-            }, 500);
-        });
-    </script>
 </body>
 
 </html>

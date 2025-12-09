@@ -22,10 +22,10 @@ class CartController {
     init() {
         // Configurar event listeners inmediatamente
         this.setupEventListeners();
-        
+
         // Renderizar la vista
         this.render();
-        
+
         // Si el modelo cambia, actualizar la vista
         document.addEventListener('cart:updated', () => this.render());
     }
@@ -48,7 +48,7 @@ class CartController {
                 this.btnOpenCart.parentNode.replaceChild(newBtn, this.btnOpenCart);
                 this.btnOpenCart = newBtn;
             }
-            
+
             const openModalHandler = (e) => {
                 console.log('🛒 Botón del carrito clickeado');
                 e.preventDefault();
@@ -60,16 +60,37 @@ class CartController {
                     this.view.openModal();
                 }
             };
-            
+
             this.btnOpenCart.addEventListener('click', openModalHandler, false);
         }
 
         // Botón de pagar
         if (this.btnCheckout) {
+            // Remover listener anterior
+            const newBtn = this.btnCheckout.cloneNode(true);
+            if (this.btnCheckout.parentNode) {
+                this.btnCheckout.parentNode.replaceChild(newBtn, this.btnCheckout);
+                this.btnCheckout = newBtn;
+            }
+
             this.btnCheckout.addEventListener('click', () => {
                 const total = this.model.getTotal();
-                alert(`Proceder a pago. Total: $${total.toFixed(2)}`);
-                // Aquí se conectaría con Stripe, PayPal, etc.
+                const items = this.model.getItems();
+
+                if (items.length === 0) {
+                    alert('Tu carrito está vacío');
+                    return;
+                }
+
+                // Usar el método de procesar pago de la vista
+                if (this.view && typeof this.view.procesarPago === 'function') {
+                    this.view.procesarPago(total);
+                } else {
+                    // Fallback si no está disponible
+                    alert(`Proceder a pago. Total: $${total.toFixed(2)}`);
+                    this.model.clear();
+                    this.render();
+                }
             });
         }
     }
@@ -101,7 +122,7 @@ class CartController {
     // Actualizar lo que se ve en pantalla
     render() {
         if (!this.view || !this.model) return;
-        
+
         const items = this.model.getItems();
         const count = this.model.getCount();
         const total = this.model.getTotal();
@@ -130,13 +151,13 @@ let globalCartModel = null;
 
 function initializeCart() {
     console.log('🛒 Inicializando carrito...');
-    
+
     // Crear/Recrear el modelo (datos) - carga del localStorage siempre
     globalCartModel = new CartModel('uh_cart_v1');
-    
+
     // Crear la vista (lo que se ve) con los elementos de la página actual
     const cartView = new CartView();
-    
+
     // Si ya existe el controller, no crear de nuevo
     if (!globalCartController) {
         globalCartController = new CartController(globalCartModel, cartView);
@@ -149,10 +170,10 @@ function initializeCart() {
         globalCartController.setupEventListeners();
         console.log('🛒 CartController actualizado');
     }
-    
+
     // Re-setup de event listeners para asegurar que el botón tenga listeners
     globalCartController.setupEventListeners();
-    
+
     // Actualizar el contador visual inmediatamente
     const countElement = document.getElementById('cartCount');
     if (countElement) {
@@ -160,7 +181,7 @@ function initializeCart() {
         countElement.textContent = count;
         countElement.style.display = count > 0 ? 'inline-block' : 'none';
     }
-    
+
     // Interfaz pública para agregar/eliminar productos desde otros scripts
     window.cart = {
         add: (product, qty = 1) => {
@@ -187,7 +208,7 @@ function initializeCart() {
     // Exponer referencias útiles para otros scripts (por ejemplo para mostrar mensajes)
     window.cart.view = cartView;
     window.cart.controller = globalCartController;
-    
+
     console.log('🛒 Carrito inicializado correctamente');
 }
 
