@@ -89,7 +89,7 @@ class CartModel {
         return this.items.reduce((sum, item) => sum + (item.qty || 0), 0);
     }
 
-    // Cuánto cuesta todo junto
+    // todo junto
     getTotal() {
         return this.items.reduce((sum, item) => sum + (item.price || 0) * (item.qty || 0), 0);
     }

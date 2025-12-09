@@ -21,7 +21,7 @@ class CartView {
         this.btnOpenCart = document.getElementById('btnOpenCart');
         this.btnCheckout = document.getElementById('btnCheckout');
         this.modalElement = document.getElementById('modalCarrito');
-        
+
         // Reintentar buscar si no se encuentran (a veces el DOM no está completamente listo)
         if (!this.btnOpenCart) {
             setTimeout(() => {
@@ -33,6 +33,59 @@ class CartView {
                 this.btnCheckout = document.getElementById('btnCheckout');
             }, 200);
         }
+    }
+
+    // En viewCarrito.js, actualizar el método mostrarEstadoCompra:
+    mostrarEstadoCompra(estado) {
+        // Ocultar todos los estados primero
+        const estados = ['loading', 'success', 'error'];
+        estados.forEach(id => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                elemento.classList.add('d-none');
+                elemento.classList.remove('hidden');
+            }
+        });
+
+        // Mostrar el estado solicitado
+        const elementoEstado = document.getElementById(estado);
+        if (elementoEstado) {
+            elementoEstado.classList.remove('d-none');
+
+            // Si es éxito, reiniciar después de 2 segundos
+            if (estado === 'success') {
+                setTimeout(() => {
+                    elementoEstado.classList.add('d-none');
+                    this.closeModal();
+                    if (window.cart) window.cart.clear();
+                }, 2000);
+            }
+
+            // Si es error, ocultar después de 3 segundos
+            if (estado === 'error') {
+                setTimeout(() => {
+                    elementoEstado.classList.add('d-none');
+                }, 3000);
+            }
+        }
+    }
+
+    // Método para procesar pago (reemplaza el alert)
+    procesarPago(total) {
+        // Mostrar estado de carga
+        this.mostrarEstadoCompra('loading');
+
+        // Simular proceso de pago (en producción sería llamada a API)
+        setTimeout(() => {
+            // Simular éxito (90% de probabilidad) o error (10%)
+            const exito = Math.random() > 0.1;
+
+            if (exito) {
+                this.mostrarEstadoCompra('success');
+            } else {
+                this.mostrarEstadoCompra('error');
+            }
+        }, 1500);
     }
 
     // Pintar los productos en el modal del carrito
@@ -57,7 +110,7 @@ class CartView {
                          style="width:64px;height:64px;object-fit:cover;margin-right:12px;border-radius:6px;">
                     <div>
                         <div class="fw-bold">${item.name}</div>
-                        <div class="text-muted small">$${(item.price||0).toFixed(2)} × ${item.qty}</div>
+                        <div class="text-muted small">$${(item.price || 0).toFixed(2)} × ${item.qty}</div>
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2">
@@ -90,14 +143,51 @@ class CartView {
         });
     }
 
-    // Actualizar el número que aparece en el botón del carrito (navbar)
     updateCartCount(count) {
-        // Rebuscar elemento en caso de que no exista (páginas diferentes)
-        if (!this.countElement) this.countElement = document.getElementById('cartCount');
-        if (!this.countElement) return;
+        // Buscar elemento en múltiples ubicaciones posibles
+        if (!this.countElement) {
+            this.countElement = document.getElementById('cartCount');
+        }
+
+        // Si aún no existe, buscar en otros lugares comunes
+        if (!this.countElement) {
+            // Buscar en el botón del carrito
+            const cartButton = document.getElementById('btnOpenCart');
+            if (cartButton) {
+                this.countElement = cartButton.querySelector('.badge, .cart-count, #cartCount');
+            }
+        }
+
+        // Si no se encuentra, crear uno
+        if (!this.countElement) {
+            const btnCart = document.getElementById('btnOpenCart');
+            if (btnCart) {
+                const span = document.createElement('span');
+                span.id = 'cartCount';
+                span.className = 'position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger';
+                span.style.display = 'none';
+                btnCart.appendChild(span);
+                this.countElement = span;
+            }
+        }
+
+        if (!this.countElement) {
+            console.warn('No se pudo encontrar/crear el elemento cartCount');
+            return;
+        }
+
+        // Actualizar contador
         this.countElement.textContent = count;
-        // Solo mostrar si hay algo en el carrito
-        this.countElement.style.display = count > 0 ? 'inline-block' : 'none';
+
+        // Mostrar u ocultar según la cantidad
+        if (count > 0) {
+            this.countElement.style.display = 'inline-block';
+            this.countElement.classList.remove('d-none');
+            this.countElement.classList.remove('hidden');
+        } else {
+            this.countElement.style.display = 'none';
+            this.countElement.classList.add('d-none');
+        }
     }
 
     // Actualizar el total mostrado en el modal
@@ -108,39 +198,32 @@ class CartView {
     }
 
     // Abrir la ventana modal del carrito
+
     openModal() {
         if (!this.modalElement) this.modalElement = document.getElementById('modalCarrito');
         if (!this.modalElement) {
             console.warn('Modal del carrito no encontrado en la página');
             return;
         }
+
         try {
-            // Verificar si está usando Tailwind (tiene clase hidden)
-            if (this.modalElement.classList) {
-                // Verificar si es un modal Tailwind (tiene la clase 'hidden')
-                if (this.modalElement.classList.contains('hidden')) {
-                    this.modalElement.classList.remove('hidden');
-                    return;
-                }
-            }
-            
-            // Si no, intentar usar Bootstrap 5
-            try {
-                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                    const bsModal = new bootstrap.Modal(this.modalElement, {
-                        backdrop: 'static',
-                        keyboard: true
+            // Siempre usar Bootstrap si está disponible
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                // Si ya hay una instancia de modal, usarla
+                let bsModal = bootstrap.Modal.getInstance(this.modalElement);
+                if (!bsModal) {
+                    bsModal = new bootstrap.Modal(this.modalElement, {
+                        backdrop: true,
+                        keyboard: true,
+                        focus: true
                     });
-                    bsModal.show();
-                } else {
-                    // Fallback si no está bootstrap
-                    this.modalElement.classList.remove('hidden');
-                    this.modalElement.style.display = 'block';
                 }
-            } catch (e) {
-                console.log('Bootstrap no disponible, usando fallback');
+                bsModal.show();
+            } else {
+                // Fallback para páginas sin Bootstrap (como index.html con Tailwind)
                 this.modalElement.classList.remove('hidden');
                 this.modalElement.style.display = 'block';
+                document.body.classList.add('overflow-hidden');
             }
         } catch (e) {
             console.error('Error al abrir modal del carrito:', e);
@@ -149,6 +232,29 @@ class CartView {
                 this.modalElement.style.display = 'block';
                 this.modalElement.classList.remove('hidden');
             }
+        }
+    }
+
+    // Agregar método closeModal():
+    closeModal() {
+        if (!this.modalElement) this.modalElement = document.getElementById('modalCarrito');
+        if (!this.modalElement) return;
+
+        try {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                const bsModal = bootstrap.Modal.getInstance(this.modalElement);
+                if (bsModal) {
+                    bsModal.hide();
+                }
+            } else {
+                this.modalElement.classList.add('hidden');
+                this.modalElement.style.display = 'none';
+                document.body.classList.remove('overflow-hidden');
+            }
+        } catch (e) {
+            console.error('Error al cerrar modal:', e);
+            this.modalElement.classList.add('hidden');
+            this.modalElement.style.display = 'none';
         }
     }
 
