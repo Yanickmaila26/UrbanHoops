@@ -82,6 +82,14 @@
                                 Contacto
                             </a>
                         </li>
+                        <li>
+                            <button id="btnOpenCart" class="relative inline-flex items-center text-white hover:text-amber-500 transition-colors duration-300 font-medium py-2 px-1" onclick="abrirCarrito()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352l.798 1.594H15.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H1.832a.5.5 0 0 1-.493-.416l-1.5-8A.5.5 0 0 1 0 1.5zm4.541 6a.5.5 0 0 0-.542.493l.541.432.541-.432a.5.5 0 0 0-.541-.493zM13 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-4-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                                </svg>
+                                <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" style="display:none;">0</span>
+                            </button>
+                        </li>
                     </ul>
                 </div>
 
@@ -274,8 +282,120 @@
             </p>
         </div>
     </footer>
+
+    <!-- Modal del Carrito -->
+    <div class="fixed inset-0 z-50 hidden" id="modalCarrito">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-2xl w-full max-w-2xl">
+            <div class="flex items-center justify-between border-b px-6 py-4">
+                <h2 class="text-2xl font-bold text-gray-900">🛒 Carrito de Compras</h2>
+                <button onclick="document.getElementById('modalCarrito').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="cartItems" class="px-6 py-4" style="max-height:400px; overflow-y:auto;">
+                <div class="text-center py-8 text-gray-500">Tu carrito está vacío</div>
+            </div>
+            <div class="border-t px-6 py-4 flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600">Total:</p>
+                    <p class="text-3xl font-bold text-red-600">$<span id="cartTotal">0.00</span></p>
+                </div>
+                <div class="space-x-3">
+                    <button onclick="document.getElementById('modalCarrito').classList.add('hidden')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100">Cerrar</button>
+                    <button id="btnCheckout" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Comprar Ahora</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="./js/model/modelCarrito.js"></script>
+    <script src="./js/views/viewCarrito.js"></script>
+    <script src="./js/controller/controllerCarrito.js"></script>
+
+    <!-- Scripts de accesibilidad y menú -->
     <script src="./js/alto-contraste.js"></script>
     <script src="./js/menu-hamburguesa.js"></script>
+
+    <script>
+        // Función para abrir el carrito
+        function abrirCarrito() {
+            console.log('Abriendo carrito...');
+            const modal = document.getElementById('modalCarrito');
+            if (modal) {
+                modal.classList.remove('hidden');
+            } else {
+                console.error('Modal no encontrado');
+            }
+        }
+
+        // Funcionalidad de accesibilidad
+        let tamañoActual = 16;
+
+        document.getElementById('btn-contraste').addEventListener('click', function () {
+            document.body.classList.toggle('high-contrast');
+        });
+
+        document.getElementById('btn-aumentar').addEventListener('click', function () {
+            tamañoActual += 2;
+            document.body.style.fontSize = tamañoActual + 'px';
+        });
+
+        document.getElementById('btn-disminuir').addEventListener('click', function () {
+            tamañoActual -= 2;
+            if (tamañoActual < 10) tamañoActual = 10;
+            document.body.style.fontSize = tamañoActual + 'px';
+        });
+
+        document.getElementById('btn-normal').addEventListener('click', function () {
+            tamañoActual = 16;
+            document.body.style.fontSize = '16px';
+        });
+
+        // Cerrar modal del carrito
+        function closeCartModal() {
+            const modalCarrito = document.getElementById('modalCarrito');
+            if (modalCarrito) {
+                modalCarrito.classList.add('hidden');
+            }
+        }
+
+        // Event listener para cerrar modal al hacer click fuera
+        document.addEventListener('click', function(e) {
+            const modalCarrito = document.getElementById('modalCarrito');
+            if (modalCarrito && e.target === modalCarrito) {
+                modalCarrito.classList.add('hidden');
+            }
+        });
+        
+        // Asegurar que el carrito esté inicializado en Index
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Index Página - DOM Content Loaded');
+            if (typeof initializeCart === 'function') {
+                setTimeout(function() {
+                    initializeCart();
+                    console.log('✅ Index Página - initializeCart ejecutado');
+                }, 100);
+            }
+            
+            // Agregar listener directo al botón
+            setTimeout(function() {
+                const btnCart = document.getElementById('btnOpenCart');
+                if (btnCart) {
+                    console.log('✅ Botón del carrito encontrado en Index');
+                    btnCart.addEventListener('click', function(e) {
+                        console.log('🖱️ Click en botón del carrito detectado en Index');
+                    });
+                } else {
+                    console.error('❌ Botón del carrito NO encontrado en Index');
+                }
+            }, 500);
+        });
+    </script>
 </body>
 
 </html>

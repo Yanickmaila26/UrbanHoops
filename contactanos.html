@@ -35,10 +35,16 @@
             <a class="navbar-brand" href="index.html">
                 <img src="./recursos/imagenes/logo_fondo_osc.png" alt="Logo" width="100">
             </a>
-            <div class="d-flex flex-wrap justify-content-end">
-                <a href="index.html" class="text-white text-decoration-none me-3">Inicio</a>
-                <a href="productos_servicios.html" class="text-white text-decoration-none me-3">Productos</a>
+            <div class="d-flex align-items-center flex-wrap justify-content-end gap-3">
+                <a href="index.html" class="text-white text-decoration-none">Inicio</a>
+                <a href="productos_servicios.html" class="text-white text-decoration-none">Productos</a>
                 <a href="contactanos.html" class="text-white text-decoration-none">Contacto</a>
+                <button id="btnOpenCart" class="btn btn-outline-warning position-relative" onclick="abrirCarrito()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352l.798 1.594H15.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H1.832a.5.5 0 0 1-.493-.416l-1.5-8A.5.5 0 0 1 0 1.5zm4.541 6a.5.5 0 0 0-.542.493l.541.432.541-.432a.5.5 0 0 0-.541-.493zM13 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-4-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                    </svg>
+                    <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;">0</span>
+                </button>
             </div>
         </div>
     </nav>
@@ -217,6 +223,32 @@
         </div>
     </section>
 
+    <!-- Modal del Carrito -->
+    <div class="modal fade" id="modalCarrito" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">🛒 Carrito de Compras</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="cartItems" class="list-group" style="max-height:400px; overflow-y:auto;">
+                        <div class="text-center py-5 text-muted">Tu carrito está vacío</div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between align-items-center">
+                    <div class="text-lg font-weight-bold">
+                        Total: <span id="cartTotal" class="text-danger">$0.00</span>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button id="btnCheckout" type="button" class="btn btn-success">Comprar Ahora</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="bg-dark text-white text-center py-4">
         <div class="container-fluid container-lg">
             <a href="index.html" class="text-warning text-decoration-none me-3">Inicio</a>
@@ -228,7 +260,58 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <!-- Scripts del Carrito -->
+    <script src="./js/model/modelCarrito.js"></script>
+    <script src="./js/views/viewCarrito.js"></script>
+    <script src="./js/controller/controllerCarrito.js"></script>
+    
+    <!-- Scripts de accesibilidad -->
     <script src="./js/alto-contraste.js"></script>
+    
+    <script>
+        // Función para abrir el carrito
+        function abrirCarrito() {
+            console.log('Abriendo carrito...');
+            const modal = document.getElementById('modalCarrito');
+            if (modal) {
+                try {
+                    // Intentar con Bootstrap
+                    const bsModal = new bootstrap.Modal(modal);
+                    bsModal.show();
+                } catch (e) {
+                    console.log('Bootstrap no disponible, usando método manual');
+                    modal.style.display = 'block';
+                }
+            } else {
+                console.error('Modal no encontrado');
+            }
+        }
+
+        // Asegurar que el carrito esté inicializado en Contactanos
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Contactanos Página - DOM Content Loaded');
+            if (typeof initializeCart === 'function') {
+                setTimeout(function() {
+                    initializeCart();
+                    console.log('✅ Contactanos Página - initializeCart ejecutado');
+                }, 100);
+            }
+            
+            // Agregar listener directo al botón
+            setTimeout(function() {
+                const btnCart = document.getElementById('btnOpenCart');
+                if (btnCart) {
+                    console.log('✅ Botón del carrito encontrado en Contactanos');
+                    btnCart.addEventListener('click', function(e) {
+                        console.log('🖱️ Click en botón del carrito detectado en Contactanos');
+                    });
+                } else {
+                    console.error('❌ Botón del carrito NO encontrado en Contactanos');
+                }
+            }, 500);
+        });
+    </script>
 
 </body>
 
