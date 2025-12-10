@@ -1,97 +1,59 @@
-# UrbanHoops 🏀
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-**UrbanHoops** es una tienda en línea especializada en artículos de baloncesto que combina **rendimiento deportivo** con **estilo urbano**, ofreciendo zapatillas, ropa técnica, accesorios y objetos de moda inspirados en la cultura del básquet callejero. Nuestra misión es empoderar tanto a los jugadores serios como a los entusiastas del estilo urbano con productos de calidad y una experiencia de compra optimizada.
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
----
+## About Laravel
 
-## 📚 Índice
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Motivación](#motivación)  
-- [Características principales](#características-principales)  
-- [Arquitectura del proyecto](#arquitectura-del-proyecto)  
-- [Instalación y uso](#instalación-y-uso)  
-- [Contribuir](#contribuir)  
-- [Roadmap](#roadmap)  
-- [Contacto](#contacto)  
-- [Licencia](#licencia)  
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
----
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## 🧠 Motivación
+## Learning Laravel
 
-UrbanHoops nace de la pasión por el básquet y la cultura de la calle. No solo queremos vender productos, sino crear una comunidad: jugadores que buscan rendimiento, amantes del estilo urbano que quieren verse bien dentro y fuera de la cancha, y coleccionistas que valoran lanzamientos exclusivos. Aspiramos a ser la marca referente para quienes viven el baloncesto como un estilo de vida.
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
 
----
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## ✨ Características principales
+## Laravel Sponsors
 
-- Sitio web moderno con diseño minimalista y paleta de colores coherente (blanco, negro carbón, naranja intenso, azul eléctrico, gris)  
-- Catálogo de productos (zapatillas, ropa, accesorios) con páginas detalladas por producto  
-- Formulario de contacto y sección de ayuda (FAQ / Mesa de Ayuda)  
-- Diseño responsive para uso en móviles, tablets y desktop  
-- Guía de tallas, reseñas y detalles técnicos para cada producto  
-- Branding urbano con identidad visual fuerte  
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
----
+### Premium Partners
 
-## 📁 Arquitectura del Proyecto
+- **[Vehikl](https://vehikl.com)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
+- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
+- **[Redberry](https://redberry.international/laravel-development)**
+- **[Active Logic](https://activelogic.com)**
 
+## Contributing
 
-UrbanHoops/
-- ├── index.html # Página principal (home)
-- ├── productos_servicios.html # Catálogo de productos
-- ├── detalle_producto.html # Detalle individual de producto
-- ├── contacto.html # Formulario de contacto / FAQ
-- ├── css/
-- │ └── style.css # Estilos de la web
-- ├── recursos/
-- │ ├── imagenes/ # Imágenes (logotipo, hero, productos, etc.)
-- │ └── js/ # Scripts
-- │    ├── controller
-- │    ├── model
-- │    └── views
-- └── README.md # Este archivo
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
----
+## Code of Conduct
 
-## 🚀 Instalación y Uso
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-1. Clona este repositorio:
-   ```sh
-   git clone https://github.com/Yanickmaila26/UrbanHoops.git
+## Security Vulnerabilities
 
-2. Abre index.html en tu navegador para ver la página principal.
-3. Si estás trabajando localmente, puedes usar un servidor web local (como Live Server en VSCode) para una mejor experiencia:
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-- npx live-server
+## License
 
-
-4. Modifica los archivos HTML, CSS y recursos según tus necesidades.
-
-## 🤝 Contribuir
-
-¡Las contribuciones son bienvenidas! Si quieres ayudar a mejorar UrbanHoops, puedes:
-
-1. Hacer un fork del repositorio
-2. Crear una rama para tu feature o bugfix: git checkout -b mi-feature
-3. Hacer commits con mensajes claros
-4. Abrir un Pull Request explicando los cambios
-
-Por favor, asegúrate de seguir el estilo de código existente y de probar tus cambios antes de enviarlos.
-
-## 📅 Roadmap
-- Integrar un chatbot para atención personalizada
-- Añadir funcionalidad de carrito y checkout
-- Incluir filtros avanzados en el catálogo (por talla, marca, precio)
-- Implementar autenticación de usuario (registro / login)
-- Añadir un blog con contenido de comunidad (jugadores, torneos, consejos)
-
-## 📬 Contacto
-
-- Sitio web: (tu futura URL de producción)
-- Correo: soporte@urbanhoops.com
-- Instagram / TikTok: @UrbanHoopsOfficial
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT — consulta el archivo LICENSE para más detalles.
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
