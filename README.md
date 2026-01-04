@@ -1,59 +1,269 @@
+# UrbanHoops 🏀
+
+**UrbanHoops** es una tienda en línea especializada en artículos de baloncesto que combina **rendimiento deportivo** con **estilo urbano**, ofreciendo zapatillas, ropa técnica, accesorios y objetos de moda inspirados en la cultura del básquet callejero. Nuestra misión es empoderar tanto a los jugadores serios como a los entusiastas del estilo urbano con productos de calidad y una experiencia de compra optimizada.
+
+---
+
+## 📚 Índice
+
+- [Motivación](#motivación)
+- [Características principales](#características-principales)
+- [Requisitos](#requisitos)
+- [Instalación](#instalación)
+- [Desarrollo](#desarrollo)
+- [Arquitectura del proyecto](#arquitectura-del-proyecto)
+- [Contribución](#contribución)
+- [Roadmap](#roadmap)
+- [Contacto](#contacto)
+- [Licencia](#licencia)
+
+---
+
+## 🧠 Motivación
+
+UrbanHoops nace de la pasión por el básquet y la cultura de la calle. No solo queremos vender productos, sino crear una comunidad: jugadores que buscan rendimiento, amantes del estilo urbano que quieren verse bien dentro y fuera de la cancha, y coleccionistas que valoran lanzamientos exclusivos. Aspiramos a ser la marca referente para quienes viven el baloncesto como un estilo de vida.
+
+---
+
+## ✨ Características principales
+
+- Sitio web moderno con diseño minimalista y paleta de colores coherente (blanco, negro carbón, naranja intenso, azul eléctrico, gris)
+- Catálogo de productos (zapatillas, ropa, accesorios) con páginas detalladas por producto
+- Formulario de contacto y sección de ayuda (FAQ / Mesa de Ayuda)
+- Diseño responsive para uso en móviles, tablets y desktop
+- Guía de tallas, reseñas y detalles técnicos para cada producto
+- Branding urbano con identidad visual fuerte
+- Plataforma construida con Laravel 11 para mayor robustez y escalabilidad
+
+---
+
+## 📋 Requisitos
+
+- PHP 8.1 o superior
+- Laravel 12.x
+- MySQL/MariaDB
+- Composer
+- Node.js y NPM
+
+---
+
+## 🛠️ Instalación
+
+1. **Clonar el repositorio**
+```bash
+git clone https://github.com/Yanickmaila26/UrbanHoops.git
+cd UrbanHoops
+```
+
+2. **Instalar dependencias**
+```bash
+composer install
+npm install
+```
+
+3. **Configurar entorno**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+4. **Configurar base de datos**
+
+Editar `.env` con los datos de tu base de datos:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=urbanhoops
+DB_USERNAME=tu_usuario
+DB_PASSWORD=tu_password
+```
+
+5. **Ejecutar migraciones**
+```bash
+php artisan migrate
+```
+
+6. **Compilar assets**
+```bash
+npm run dev
+```
+
+7. **Iniciar servidor de desarrollo**
+```bash
+php artisan serve
+```
+## 💾 Configuración de Oracle Database (Especial)
+
+Debido a que el proyecto utiliza Oracle Database en una Máquina Virtual, se requieren pasos adicionales para habilitar la comunicación entre PHP (Laragon/Windows) y el servidor (Linux).
+
+### 1. Instalación del Oracle Instant Client
+Para que PHP pueda "hablar" con Oracle, necesitas las librerías nativas en tu sistema host (Windows):
+
+1. Descarga el **Instant Client Basic (64-bit)** de la [página oficial de Oracle](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html) (Versión 19c recomendada).
+2. Descomprime el contenido en una ruta permanente, por ejemplo: `C:\oracle\instantclient_19_25`.
+3. Agrega dicha ruta a las **Variables de Entorno (PATH)** de Windows.
+4. En Laragon, asegúrate de activar las extensiones en el archivo `php.ini`:
+   ```ini
+   extension=oci8_19
+   extension=pdo_oci
+
+5. **Configurar base de datos**
+
+Editar `.env` con los datos de tu base de datos:
+```env
+
+DB_CONNECTION=oracle
+DB_HOST=192.168.x.x        # IP de la Máquina Virtual
+DB_PORT=1521               # Puerto estándar de Oracle
+DB_DATABASE=xe             # Nombre de la CDB (Database Global)
+DB_SERVICE_NAME=TU_PDB     # Nombre de tu PDB específica
+DB_USERNAME=tu_usuario     # Usuario con acceso a los Tablespaces
+DB_PASSWORD=tu_password
+DB_CHARSET=AL32UTF8
+
+6. **Instalación del Driver de Laravel**
+El proyecto utiliza el paquete yajra/laravel-oci8. Si estás instalando desde cero:
+```bash
+composer require yajra/laravel-oci8
+php artisan vendor:publish --tag=oracle
+```
+
+---
+
+## 🔧 Desarrollo
+
+### Comandos útiles
+
+```bash
+# Iniciar servidor de desarrollo
+php artisan serve
+
+# Limpiar caché
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+
+# Crear nueva migración
+php artisan make:migration nombre_migracion
+
+# Ejecutar tests
+php artisan test
+```
+
+### Logs
+Los logs del sistema se encuentran en `storage/logs/laravel.log`
+
+### Estructura del proyecto (Laravel)
+```
+UrbanHoops/
+├── app/                 # Lógica de la aplicación
+├── bootstrap/          # Archivos de arranque
+├── config/            # Configuraciones
+├── database/          # Migraciones y seeds
+├── public/            # Punto de entrada público
+├── resources/         # Vistas, assets, idiomas
+├── routes/           # Rutas de la aplicación
+├── storage/          # Archivos temporales y logs
+├── tests/            # Pruebas automatizadas
+├── vendor/           # Dependencias de Composer
+└── .env.example      # Plantilla de variables de entorno
+```
+
+---
+
+## 📁 Arquitectura del Proyecto
+
+El proyecto ha evolucionado desde una estructura estática HTML/CSS a una aplicación completa con Laravel:
+
+**Versión actual (Laravel)**
+```
+UrbanHoops/
+├── app/
+│   ├── Http/Controllers/     # Controladores
+│   ├── Models/              # Modelos Eloquent
+│   └── ...
+├── resources/views/
+│   ├── products/            # Vistas de productos
+│   ├── contact.blade.php    # Formulario de contacto
+│   └── ...
+├── routes/web.php          # Rutas principales
+└── public/                # Assets compilados
+```
+
+**Histórico (versión inicial)**
+```
+UrbanHoops/
+├── index.html             # Página principal (home)
+├── productos.html         # Catálogo de productos
+├── detalle.html           # Detalle individual de producto
+├── contacto.html          # Formulario de contacto / FAQ
+├── css/
+│   └── style.css         # Estilos de la web
+├── recursos/
+│   ├── imagenes/         # Imágenes
+│   └── js/               # Scripts
+└── README.md             # Documentación
+```
+
+---
+
+## 🤝 Contribución
+
+¡Las contribuciones son bienvenidas! Si quieres ayudar a mejorar UrbanHoops, sigue estos pasos:
+
+1. **Fork del proyecto**
+2. **Crear rama para nueva funcionalidad**
+   ```bash
+   git checkout -b feature/nueva-funcionalidad
+   ```
+3. **Hacer commits con mensajes claros**
+4. **Abrir un Pull Request** explicando los cambios
+
+Por favor, asegúrate de seguir el estilo de código existente y de probar tus cambios antes de enviarlos.
+
+---
+
+## 📅 Roadmap
+
+- [ ] Integrar un chatbot para atención personalizada
+- [ ] Añadir funcionalidad de carrito y checkout
+- [ ] Incluir filtros avanzados en el catálogo (por talla, marca, precio)
+- [ ] Implementar autenticación de usuario (registro / login)
+- [ ] Añadir un blog con contenido de comunidad (jugadores, torneos, consejos)
+- [ ] Sistema de reseñas y valoraciones
+- [ ] Integración con pasarelas de pago
+- [ ] API para aplicaciones móviles
+
+---
+
+## 📬 Contacto
+
+- Sitio web: (tu futura URL de producción)
+- Correo: soporte@urbanhoops.com
+- Instagram / TikTok: @UrbanHoopsOfficial
+- Repositorio: [https://github.com/Yanickmaila26/UrbanHoops](https://github.com/Yanickmaila26/UrbanHoops)
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT — consulta el archivo LICENSE para más detalles.
+
+---
+
+## Acerca de Laravel
+
+UrbanHoops está construido con [Laravel](https://laravel.com), un framework de PHP expresivo y elegante. Laravel facilita tareas comunes en proyectos web como:
+
+- [Motor de rutas simple y rápido](https://laravel.com/docs/routing)
+- [Contenedor de inyección de dependencias potente](https://laravel.com/docs/container)
+- Múltiples backends para [sesiones](https://laravel.com/docs/session) y [caché](https://laravel.com/docs/cache)
+- [ORM de base de datos expresivo e intuitivo](https://laravel.com/docs/eloquent)
+- [Migraciones de esquema independientes de la base de datos](https://laravel.com/docs/migrations)
+- [Procesamiento robusto de trabajos en segundo plano](https://laravel.com/docs/queues)
+- [Difusión de eventos en tiempo real](https://laravel.com/docs/broadcasting)
+
+Laravel es accesible, potente y proporciona las herramientas necesarias para aplicaciones grandes y robustas como UrbanHoops.
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
