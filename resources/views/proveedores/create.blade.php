@@ -55,16 +55,17 @@
                                     @enderror
                                 </div>
 
-                                <!-- Nombre -->
+                                <!-- PRV_Nombre -->
                                 <div>
-                                    <label for="nombre"
+                                    <label for="PRV_Nombre"
                                         class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                         Nombre *
                                     </label>
-                                    <input type="text" name="nombre" id="nombre" value="{{ old('nombre') }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white sm:text-sm @error('nombre') border-red-500 @enderror"
+                                    <input type="text" name="PRV_Nombre" id="PRV_Nombre" value="{{ old('PRV_Nombre') }}"
+                                        required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white sm:text-sm @error('PRV_Nombre') border-red-500 @enderror"
                                         placeholder="Nombre completo">
-                                    @error('nombre')
+                                    @error('PRV_Nombre')
                                         <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                     @enderror
                                 </div>
