@@ -26,62 +26,85 @@
                 </div>
             </div>
 
-            <!-- Filtros y Búsqueda -->
+            <!-- Filtro General -->
             <div class="mb-6">
                 <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
                     <form action="{{ route('suppliers.index') }}" method="GET" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <!-- Búsqueda por cédula/RUC -->
-                            <div>
-                                <label for="search"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Cédula/RUC
-                                </label>
-                                <input type="text" name="search" id="search" value="{{ request('search') }}"
-                                    placeholder="Buscar por cédula/RUC..."
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white sm:text-sm">
-                            </div>
-
-                            <!-- Búsqueda por nombre -->
-                            <div>
-                                <label for="nombre"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Nombre
-                                </label>
-                                <input type="text" name="nombre" id="nombre" value="{{ request('nombre') }}"
-                                    placeholder="Buscar por nombre..."
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white sm:text-sm">
-                            </div>
-
-                            <!-- Búsqueda por correo -->
-                            <div>
-                                <label for="correo"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Correo
-                                </label>
-                                <input type="email" name="correo" id="correo" value="{{ request('correo') }}"
-                                    placeholder="Buscar por correo..."
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white sm:text-sm">
-                            </div>
-
-                            <!-- Botones -->
-                            <div class="flex items-end space-x-2">
-                                <button type="submit"
-                                    class="flex-1 inline-flex justify-center items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
-                                    Buscar
-                                </button>
-                                <a href="{{ route('suppliers.index') }}"
-                                    class="flex-1 inline-flex justify-center items-center px-4 py-2 bg-gray-200 border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:hover:bg-zinc-600">
-                                    Limpiar
-                                </a>
+                        <div>
+                            <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Buscar Proveedor
+                            </label>
+                            <div class="flex gap-2">
+                                <div class="flex-1">
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                        </div>
+                                        <input type="text" name="search" id="search" value="{{ $search ?? '' }}"
+                                            placeholder="Buscar por cédula, nombre, dirección, teléfono o correo..."
+                                            class="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white sm:text-sm">
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                        Busca en todos los campos: cédula/RUC, nombre, dirección, teléfono y correo
+                                    </p>
+                                </div>
+                                <div class="flex items-end">
+                                    <div class="flex space-x-2">
+                                        <button type="submit"
+                                            class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                            Buscar
+                                        </button>
+                                        @if ($search)
+                                            <a href="{{ route('suppliers.index') }}"
+                                                class="inline-flex items-center px-4 py-2 bg-gray-200 border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:hover:bg-zinc-600">
+                                                Limpiar
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        @if ($search)
+                            <div class="rounded-md bg-blue-50 p-4 dark:bg-blue-900/20">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-blue-700 dark:text-blue-400">
+                                            Mostrando resultados para: <span
+                                                class="font-semibold">"{{ $search }}"</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </form>
                 </div>
+            </div>
+
+            <!-- Información de resultados -->
+            <div class="mb-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    Total de proveedores: <span class="font-semibold">{{ $suppliers->total() }}</span>
+                    @if ($search)
+                        | Resultados encontrados: <span class="font-semibold">{{ $suppliers->count() }}</span>
+                    @endif
+                </p>
             </div>
 
             <!-- Tabla de Proveedores -->
@@ -124,7 +147,7 @@
                                         {{ $supplier->PRV_Ced_Ruc }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                                        {{ $supplier->nombre ?? 'N/A' }}
+                                        {{ $supplier->PRV_Nombre }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                         {{ $supplier->PRV_Direccion }}
@@ -138,7 +161,8 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <div class="flex space-x-2">
                                             <a href="{{ route('suppliers.show', $supplier->PRV_Ced_Ruc) }}"
-                                                class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                                class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                                                title="Ver detalles">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -148,7 +172,8 @@
                                                 </svg>
                                             </a>
                                             <a href="{{ route('suppliers.edit', $supplier->PRV_Ced_Ruc) }}"
-                                                class="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300">
+                                                class="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300"
+                                                title="Editar">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -156,7 +181,8 @@
                                                 </svg>
                                             </a>
                                             <button onclick="openDeleteModal('{{ $supplier->PRV_Ced_Ruc }}')"
-                                                class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                                                class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                                title="Eliminar">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -168,8 +194,53 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                        No se encontraron proveedores
+                                    <td colspan="6" class="px-6 py-8 text-center">
+                                        @if ($search)
+                                            <div class="text-gray-500 dark:text-gray-400">
+                                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                    No se encontraron resultados
+                                                </h3>
+                                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                                    No hay proveedores que coincidan con "{{ $search }}"
+                                                </p>
+                                                <div class="mt-4">
+                                                    <a href="{{ route('suppliers.index') }}"
+                                                        class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                                        Ver todos los proveedores
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div class="text-gray-500 dark:text-gray-400">
+                                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                </svg>
+                                                <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+                                                    No hay proveedores registrados
+                                                </h3>
+                                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                                                    Comienza agregando tu primer proveedor.
+                                                </p>
+                                                <div class="mt-4">
+                                                    <a href="{{ route('suppliers.create') }}"
+                                                        class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                                        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2" d="M12 4v16m8-8H4" />
+                                                        </svg>
+                                                        Nuevo Proveedor
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforelse
@@ -260,6 +331,16 @@
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeDeleteModal();
+            }
+        });
+
+        // Focus en el campo de búsqueda al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search');
+            if (searchInput) {
+                searchInput.focus();
+                // Mover el cursor al final del texto
+                searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
             }
         });
     </script>

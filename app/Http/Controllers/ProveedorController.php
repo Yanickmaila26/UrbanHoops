@@ -13,34 +13,24 @@ class ProveedorController extends Controller
      */
     public function index(Request $request)
     {
-        // Obtener parámetros de búsqueda
+        // Obtener término de búsqueda general
         $search = $request->input('search');
-        $nombre = $request->input('nombre');
-        $correo = $request->input('correo');
 
         // Consulta base
         $query = Proveedor::query();
 
-        // Aplicar filtros
+        // Aplicar filtro general si existe
         if ($search) {
-            $query->search($search);
+            $query->generalSearch($search);
         }
 
-        if ($nombre) {
-            $query->where('nombre', 'like', "%{$nombre}%");
-        }
-
-        if ($correo) {
-            $query->where('PRV_Correo', 'like', "%{$correo}%");
-        }
-
-        // Ordenar por creación
+        // Ordenar por creación (más reciente primero)
         $query->orderBy('created_at', 'desc');
 
         // Paginación
-        $suppliers = $query->paginate(10);
+        $suppliers = $query->paginate(10)->withQueryString();
 
-        return view('proveedores.index', compact('suppliers'));
+        return view('proveedores.index', compact('suppliers', 'search'));
     }
 
     /**
@@ -68,7 +58,6 @@ class ProveedorController extends Controller
         try {
             // Crear proveedor
             Proveedor::create($validator->validated());
-
             return redirect()->route('suppliers.index')
                 ->with('success', 'Proveedor creado exitosamente.');
         } catch (\Exception $e) {
@@ -143,21 +132,6 @@ class ProveedorController extends Controller
         }
     }
 
-    /**
-     * Get suppliers for API/autocomplete.
-     */
-    public function apiIndex(Request $request)
-    {
-        $query = Proveedor::query();
-
-        if ($request->has('search')) {
-            $query->search($request->input('search'));
-        }
-
-        $suppliers = $query->limit(10)->get();
-
-        return response()->json($suppliers);
-    }
 
     /**
      * Validate supplier data.
@@ -165,7 +139,7 @@ class ProveedorController extends Controller
     public function validateSupplier(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'PRV_Ced_Ruc' => 'required|string|size:13|unique:proveedores,PRV_Ced_Ruc',
+            'PRV_Ced_Ruc' => 'required|string|size:13|unique:proveedors,PRV_Ced_Ruc',
         ]);
 
         if ($validator->fails()) {
