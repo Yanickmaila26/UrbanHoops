@@ -39,12 +39,30 @@ UrbanHoops nace de la pasión por el básquet y la cultura de la calle. No solo 
 
 ## 📋 Requisitos
 
-- PHP 8.1 o superior
+- PHP 8.2 o superior
 - Laravel 12.x
 - MySQL/MariaDB
 - Composer
 - Node.js y NPM
+- Maquina virtual linux (previamente ya configurada para oracle)
 
+---
+
+## 💾 Configuración de Oracle Database
+
+Debido a que el proyecto utiliza Oracle Database en una Máquina Virtual, se requieren pasos adicionales para habilitar la comunicación entre PHP (Laragon/Windows) y el servidor (Linux).
+
+### Instalación del Oracle Instant Client
+Para que PHP pueda "hablar" con Oracle, necesitas las librerías nativas en tu sistema host (Windows):
+
+1. Descarga el **Instant Client Basic (64-bit)** de la [página oficial de Oracle](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html) (Versión 19c recomendada).
+2. Descomprime el contenido en una ruta permanente, por ejemplo: `C:\oracle\instantclient_19_25`.
+3. Agrega dicha ruta a las **Variables de Entorno (PATH)** de Windows.
+4. Asegurate que la ruta agregada sea la primera en la lista.
+5. En Laragon, asegúrate de activar las extensiones en el archivo `php.ini`:
+   ```ini
+   extension=oci8_19
+   extension=pdo_oci
 ---
 
 ## 🛠️ Instalación
@@ -67,9 +85,21 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-4. **Configurar base de datos**
+4. **Configurar base de datos para usar oracle (tambien se puede usar mysql) selecciona una opcion:**
 
-Editar `.env` con los datos de tu base de datos:
+Editar `.env` con los datos de tu base de datos con oracle:
+```env
+
+DB_CONNECTION=oracle
+DB_HOST=192.168.x.x        # IP de la Máquina Virtual
+DB_PORT=1521               # Puerto estándar de Oracle
+DB_DATABASE=orcl           # Nombre de la CDB (Comenta DB_SERVICE_NAME si se usa esta opcion) 
+DB_SERVICE_NAME=TU_PDB     # Nombre de tu PDB específico (Comenta DB_DATABASE si se usa un servicio)
+DB_USERNAME=tu_usuario     # Usuario con el que se va acceder
+DB_PASSWORD=tu_password    # Contraseña del usuario 
+```
+
+Editar `.env` con los datos de tu base de datos mysql:
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -88,47 +118,6 @@ php artisan migrate
 ```bash
 npm run dev
 ```
-
-7. **Iniciar servidor de desarrollo**
-```bash
-php artisan serve
-```
-## 💾 Configuración de Oracle Database (Especial)
-
-Debido a que el proyecto utiliza Oracle Database en una Máquina Virtual, se requieren pasos adicionales para habilitar la comunicación entre PHP (Laragon/Windows) y el servidor (Linux).
-
-### 1. Instalación del Oracle Instant Client
-Para que PHP pueda "hablar" con Oracle, necesitas las librerías nativas en tu sistema host (Windows):
-
-1. Descarga el **Instant Client Basic (64-bit)** de la [página oficial de Oracle](https://www.oracle.com/database/technologies/instant-client/winx64-64-downloads.html) (Versión 19c recomendada).
-2. Descomprime el contenido en una ruta permanente, por ejemplo: `C:\oracle\instantclient_19_25`.
-3. Agrega dicha ruta a las **Variables de Entorno (PATH)** de Windows.
-4. En Laragon, asegúrate de activar las extensiones en el archivo `php.ini`:
-   ```ini
-   extension=oci8_19
-   extension=pdo_oci
-
-5. **Configurar base de datos**
-
-Editar `.env` con los datos de tu base de datos:
-```env
-
-DB_CONNECTION=oracle
-DB_HOST=192.168.x.x        # IP de la Máquina Virtual
-DB_PORT=1521               # Puerto estándar de Oracle
-DB_DATABASE=xe             # Nombre de la CDB (Database Global)
-DB_SERVICE_NAME=TU_PDB     # Nombre de tu PDB específica
-DB_USERNAME=tu_usuario     # Usuario con acceso a los Tablespaces
-DB_PASSWORD=tu_password
-DB_CHARSET=AL32UTF8
-
-6. **Instalación del Driver de Laravel**
-El proyecto utiliza el paquete yajra/laravel-oci8. Si estás instalando desde cero:
-```bash
-composer require yajra/laravel-oci8
-php artisan vendor:publish --tag=oracle
-```
-
 ---
 
 ## 🔧 Desarrollo

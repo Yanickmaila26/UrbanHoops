@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('proveedors', function (Blueprint $table) {
-            $table->id();
+            //$table->id();
+            $table->string('PRV_Ced_Ruc', 13)->unique()->primary();
+            $table->string('PRV_Direccion', 150);
+            $table->string('PRV_Telefono', 10);
+            $table->string('PRV_Correo', 60);
             $table->timestamps();
         });
     }
