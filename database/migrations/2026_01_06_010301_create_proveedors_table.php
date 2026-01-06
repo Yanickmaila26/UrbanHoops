@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('PRV_Telefono', 10);
             $table->string('PRV_Correo', 60);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -26,6 +27,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('proveedors');
+        Schema::table('proveedores', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
     }
 };
