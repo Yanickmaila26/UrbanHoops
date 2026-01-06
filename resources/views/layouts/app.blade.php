@@ -34,7 +34,7 @@
         <div class="container mx-auto px-4 py-2 flex items-center justify-between min-h-[80px]">
 
             <a href="{{ route('welcome') }}" class="flex-shrink-0 mr-4" aria-label="UrbanHoops Inicio">
-                <img src="{{ asset('images/logo_fondo_osc.png') }}" alt="UrbanHoops Logo" class="h-10 md:h-12 w-auto">
+                <img src="{{ asset('images/logo_fondo_UH.png') }}" alt="UrbanHoops Logo" class="h-10 md:h-12 w-auto">
             </a>
 
             <button @click="open = !open" class="lg:hidden text-white order-last ml-4 focus:outline-none"
