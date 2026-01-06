@@ -13,6 +13,16 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                brand: {
+                    DEFAULT: '#ff9500',
+                    dark: '#cc7700',
+                },
+                dark: {
+                    DEFAULT: '#212529',
+                    surface: '#1e1e2f'
+                }
+            },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },

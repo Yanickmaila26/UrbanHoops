@@ -2,6 +2,95 @@
 @tailwind components;
 @tailwind utilities;
 
-[x-cloak] {
-    display: none;
+/* --- Lógica base del sitio --- */
+@layer base {
+    *:focus {
+        @apply outline-none ring-4 ring-brand ring-offset-2;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+@layer components {
+    .btn {
+        @apply px-5 py-3 font-bold rounded transition-colors duration-200 inline-block text-center;
+    }
+
+    .btn-brand {
+        @apply bg-brand text-black hover:bg-brand-dark;
+    }
+
+    .btn-outline-brand {
+        @apply border-2 border-brand text-brand hover:bg-brand hover:text-black bg-transparent;
+    }
+
+    .skip-link {
+        @apply absolute -top-10 left-0 bg-brand text-black px-4 py-2 z-50 font-bold transition-all duration-300;
+    }
+
+    .skip-link:focus {
+        @apply top-0;
+    }
+}
+
+/* --- SOLUCIÓN DE ALTO CONTRASTE (Fuera de @layer para máxima prioridad) --- */
+
+/* 1. Fondo negro y texto blanco FORZOSO en todo el body y contenedores principales */
+body.high-contrast,
+body.high-contrast header,
+body.high-contrast footer,
+body.high-contrast section,
+body.high-contrast main,
+body.high-contrast div {
+    background-color: #000000 !important;
+    background-image: none !important;
+    /* Elimina gradientes y fotos de fondo CSS */
+    color: #ffffff !important;
+    box-shadow: none !important;
+    /* Elimina sombras que puedan parecer grises */
+}
+
+/* 2. Eliminar superposiciones semitransparentes (como el overlay del Hero) */
+body.high-contrast .absolute.inset-0.bg-black\/70 {
+    background-color: #000000 !important;
+    opacity: 1 !important;
+}
+
+/* 3. Forzar el color de todos los textos a blanco (excepto botones de marca) */
+body.high-contrast p,
+body.high-contrast h1,
+body.high-contrast h2,
+body.high-contrast h3,
+body.high-contrast span,
+body.high-contrast a:not(.btn) {
+    color: #ffffff !important;
+}
+
+/* 4. Bordes naranjas para mantener la estructura y accesibilidad */
+body.high-contrast * {
+    border-color: #ff9500 !important;
+}
+
+/* 5. Manejo de Botones e Inputs en Alto Contraste */
+body.high-contrast .btn-brand,
+body.high-contrast .btn-outline-brand {
+    background-color: #000000 !important;
+    color: #ff9500 !important;
+    border: 2px solid #ff9500 !important;
+}
+
+/* 6. Ocultar imágenes decorativas de fondo en el Hero para que no molesten */
+body.high-contrast .hero-bg-img {
+    display: none !important;
+}
+
+/* 7. Asegurar que los inputs se vean */
+body.high-contrast input,
+body.high-contrast select,
+body.high-contrast textarea {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #ff9500 !important;
 }
