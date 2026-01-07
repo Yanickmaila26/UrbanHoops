@@ -30,4 +30,12 @@ class Producto extends Model
         'updated_at' => 'datetime',
     ];
 
+    public function scopeGeneralSearch($query, $search)
+    {
+        return $query->where(function($q) use ($search) {
+            $q->where('PRO_Codigo', 'LIKE', "%{$search}%")
+                ->orWhere('PRO_Nombre', 'LIKE', "%{$search}%")
+                ->orWhere('PRO_Descripcion_Corta', 'LIKE', "%{$search}%");
+        });
+    }
 }
