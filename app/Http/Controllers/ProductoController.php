@@ -60,7 +60,6 @@ class ProductoController extends Controller
 
             $rutaRelativa = $request->file('PRO_Imagen')->store('productos', 'public');
             $rutaAbsoluta = storage_path('app/public/' . $rutaRelativa);
-            dd($rutaAbsoluta);
         }
 
         \App\Models\Producto::create($data);
@@ -105,7 +104,7 @@ class ProductoController extends Controller
 
         $producto->update($data);
 
-        return redirect()->route('productos.index')->with('success', 'Producto actualizado.');
+        return redirect()->route('products.index')->with('success', 'Producto actualizado.');
     }
 
     /**
@@ -119,6 +118,6 @@ class ProductoController extends Controller
 
         $producto->delete();
 
-        return redirect()->route('productos.index')->with('success', 'Producto eliminado.');
+        return redirect()->route('products.index')->with('success', 'Producto eliminado.');
     }
 }

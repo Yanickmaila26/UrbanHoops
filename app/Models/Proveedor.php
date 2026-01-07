@@ -87,7 +87,7 @@ class Proveedor extends Model
      * @param string $search
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSearch($query, $search)
+    public function scopeGeneralSearch($query, $search)
     {
         return $query->where(function ($q) use ($search) {
             $q->where('PRV_Ced_Ruc', 'like', "%{$search}%")
