@@ -26,9 +26,8 @@
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-zinc-800 shadow rounded-lg p-6">
-                <form action="{{ route('products.update', $producto->PRO_Codigo) }}" method="POST"
-                    enctype="multipart/form-data">
+            <div class="bg-white dark:bg-zinc-800 overflow-hidden shadow rounded-lg">
+                <form action="{{ route('products.update', $producto->PRO_Codigo) }}" method="POST" enctype="multipart/form-data" class="p-6">
                     @csrf
                     @method('PUT')
 

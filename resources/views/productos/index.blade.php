@@ -5,6 +5,7 @@
 @section('content')
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
             <div class="mb-6">
                 <div class="flex justify-between items-center">
                     <div>
@@ -63,8 +64,34 @@
                                 @endif
                             </div>
                         </div>
+
+                        @if ($search)
+                            <div class="rounded-md bg-blue-50 p-4 dark:bg-blue-900/20 mt-4">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-blue-700 dark:text-blue-400">
+                                            Mostrando resultados para: <span class="font-semibold">"{{ $search }}"</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
                     </form>
                 </div>
+            </div>
+
+            <div class="mb-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    Total de productos: <span class="font-semibold">{{ $productos->total() }}</span>
+                    @if ($search)
+                        | Resultados encontrados: <span class="font-semibold">{{ $productos->count() }}</span>
+                    @endif
+                </p>
             </div>
 
             <div class="bg-white dark:bg-zinc-800 overflow-hidden shadow rounded-lg">
@@ -220,7 +247,7 @@
     </div>
 
     <script>
-        function openDeleteModal(codigo) {
+        function openDeleteModal(urlAction) {
             const form = document.getElementById('delete-form');
             form.action = `/admin/productos/${codigo}`;
             document.getElementById('delete-modal').classList.remove('hidden');
