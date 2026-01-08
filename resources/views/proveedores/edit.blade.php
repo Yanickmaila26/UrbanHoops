@@ -58,16 +58,16 @@
 
                                 <!-- Nombre -->
                                 <div>
-                                    <label for="nombre"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        Nombre *
-                                    </label>
-                                    <input type="text" name="nombre" id="nombre"
-                                        value="{{ old('nombre', $supplier->nombre) }}" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white sm:text-sm @error('nombre') border-red-500 @enderror"
-                                        placeholder="Nombre completo">
-                                    @error('nombre')
-                                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <label for="PRV_Nombre"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del
+                                        Proveedor</label>
+                                    <input type="text" name="PRV_Nombre" id="PRV_Nombre"
+                                        value="{{ old('PRV_Nombre', $supplier->PRV_Nombre ?? '') }}"
+                                        placeholder="Ej: Distribuidora Textil S.A." onkeypress="return soloLetras(event)"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white"
+                                        required>
+                                    @error('PRV_Nombre')
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
@@ -153,6 +153,30 @@
 
     <!-- Script para validación -->
     <script>
+        function soloLetras(e) {
+            // Capturar la tecla presionada
+            let key = e.keyCode || e.which;
+            let tecla = String.fromCharCode(key).toLowerCase();
+
+            // Definir caracteres permitidos: letras, espacio, tildes y eñe
+            let letras = " abcdefghijklmnñopqrstuvwxyz";
+
+            // Permitir teclas de control (Backspace, flechas, etc.)
+            let especiales = [8, 37, 39, 46];
+            let tecla_especial = false;
+
+            for (let i in especiales) {
+                if (key == especiales[i]) {
+                    tecla_especial = true;
+                    break;
+                }
+            }
+
+            // Si no es letra ni tecla especial, bloquear la entrada
+            if (letras.indexOf(tecla) == -1 && !tecla_especial) {
+                return false;
+            }
+        }
         document.addEventListener('DOMContentLoaded', function() {
             const telefonoInput = document.getElementById('PRV_Telefono');
 
