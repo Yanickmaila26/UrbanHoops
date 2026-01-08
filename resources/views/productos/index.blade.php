@@ -69,13 +69,16 @@
                             <div class="rounded-md bg-blue-50 p-4 dark:bg-blue-900/20 mt-4">
                                 <div class="flex">
                                     <div class="flex-shrink-0">
-                                        <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                     </div>
                                     <div class="ml-3">
                                         <p class="text-sm text-blue-700 dark:text-blue-400">
-                                            Mostrando resultados para: <span class="font-semibold">"{{ $search }}"</span>
+                                            Mostrando resultados para: <span
+                                                class="font-semibold">"{{ $search }}"</span>
                                         </p>
                                     </div>
                                 </div>
@@ -111,8 +114,6 @@
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
                                     Descripción</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Producto</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Marca/Color</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -157,7 +158,6 @@
                                     <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                         {{ $producto->PRO_Descripcion }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $producto->PRO_Nombre }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $producto->PRO_Marca }} -
                                         {{ $producto->PRO_Color }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap font-bold text-green-600">

@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('facturas', function (Blueprint $table) {
-            $table->id();
+            //$table->id();
+            $table->string('FAC_Codigo', 15)->unique()->primary();
             $table->timestamps();
         });
     }
