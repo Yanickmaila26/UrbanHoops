@@ -58,15 +58,15 @@
                                 <!-- PRV_Nombre -->
                                 <div>
                                     <label for="PRV_Nombre"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                        Nombre *
-                                    </label>
-                                    <input type="text" name="PRV_Nombre" id="PRV_Nombre" value="{{ old('PRV_Nombre') }}"
-                                        required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white sm:text-sm @error('PRV_Nombre') border-red-500 @enderror"
-                                        placeholder="Nombre completo">
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del
+                                        Proveedor</label>
+                                    <input type="text" name="PRV_Nombre" id="PRV_Nombre"
+                                        value="{{ old('PRV_Nombre', $supplier->PRV_Nombre ?? '') }}"
+                                        placeholder="Ej: Distribuidora Textil S.A." onkeypress="return soloLetras(event)"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white"
+                                        required>
                                     @error('PRV_Nombre')
-                                        <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
@@ -150,9 +150,34 @@
 
     <!-- Script para validación -->
     <script>
+        function soloLetras(e) {
+            // Captura la tecla pulsada
+            key = e.keyCode || e.which;
+            tecla = String.fromCharCode(key).toLowerCase();
+
+            // Letras permitidas (incluye espacios, tildes y eñe)
+            letras = "abcdefghijklmnñopqrstuvwxyz";
+
+            // Teclas especiales como borrar o flechas (opcional para compatibilidad)
+            especiales = [8, 37, 39, 46];
+
+            tecla_especial = false;
+            for (var i in especiales) {
+                if (key == especiales[i]) {
+                    tecla_especial = true;
+                    break;
+                }
+            }
+
+            if (letras.indexOf(tecla) == -1 && !tecla_especial) {
+                return false;
+            }
+        }
         document.addEventListener('DOMContentLoaded', function() {
             const cedulaInput = document.getElementById('PRV_Ced_Ruc');
             const telefonoInput = document.getElementById('PRV_Telefono');
+
+
 
             // Validar solo números para cédula/RUC
             cedulaInput.addEventListener('input', function() {

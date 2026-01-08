@@ -20,33 +20,39 @@ class Proveedor extends Model
         'PRV_Correo',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
+    public static function getProveedores($search = null)
+    {
+        $query = self::query();
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [];
+        if ($search) {
+            $query->search($search);
+        }
 
-    /**
-     * Validation rules for the model.
-     *
-     * @return array
-     */
-    public static function rules($id = null)
+        return $query->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
+    }
+
+    public static function createProveedor(array $data)
+    {
+        return self::create($data);
+    }
+
+    public function updateProveedor(array $data)
+    {
+        return $this->update($data);
+    }
+
+    public static function deleteProveedor(Proveedor $proveedor)
+    {
+        return $proveedor->delete();
+    }
+
+    public static function rules()
     {
         $rules = [
             'PRV_Ced_Ruc' => 'required|string|min:10|max:13|unique:proveedors,PRV_Ced_Ruc',
-            'PRV_Nombre' => 'required|string|max:50',
+            'PRV_Nombre' => 'required|string|max:50|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/',
             'PRV_Direccion' => 'required|string|max:150',
             'PRV_Telefono' => 'required|string|size:10|regex:/^[0-9]{10}$/',
             'PRV_Correo' => 'required|email|max:60',
@@ -55,11 +61,6 @@ class Proveedor extends Model
         return $rules;
     }
 
-    /**
-     * Custom validation messages.
-     *
-     * @return array
-     */
     public static function messages()
     {
         return [
@@ -69,6 +70,7 @@ class Proveedor extends Model
             'PRV_Ced_Ruc.unique' => 'La cédula/RUC ya está registrada.',
             'PRV_Nombre.required' => 'El nombre es obligatorio.',
             'PRV_Nombre.max' => 'El nombre no debe exceder los 255 caracteres.',
+            'PRV_Nombre.regex' => 'Solo se permiten letras y espacios en el nombre.',
             'PRV_Direccion.required' => 'La dirección es obligatoria.',
             'PRV_Direccion.max' => 'La dirección no debe exceder los 150 caracteres.',
             'PRV_Telefono.required' => 'El teléfono es obligatorio.',
@@ -80,14 +82,7 @@ class Proveedor extends Model
         ];
     }
 
-    /**
-     * Scope para búsqueda.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $search
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeGeneralSearch($query, $search)
+    public function scopeSearch($query, $search)
     {
         return $query->where(function ($q) use ($search) {
             $q->where('PRV_Ced_Ruc', 'like', "%{$search}%")
@@ -95,15 +90,5 @@ class Proveedor extends Model
                 ->orWhere('PRV_Correo', 'like', "%{$search}%")
                 ->orWhere('PRV_Telefono', 'like', "%{$search}%");
         });
-    }
-
-    /**
-     * Get the route key for the model.
-     *
-     * @return string
-     */
-    public function getRouteKeyName()
-    {
-        return 'PRV_Ced_Ruc';
     }
 }

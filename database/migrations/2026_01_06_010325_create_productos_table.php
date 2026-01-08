@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('productos', function (Blueprint $table) {
             $table->string('PRO_Codigo', 15)->unique()->primary();
             $table->string('PRO_Nombre', 60);
-            $table->string('PRO_Descripcion_Corta', 100);
-            $table->text('PRO_Descripcion_Larga');
+            $table->string('PRO_Descripcion');
+            $table->string('PRO_Color', 15);
+            $table->string('PRO_Talla', 5);
+            $table->string('PRO_Marca', 20);
+            $table->decimal('PRO_Precio', 10, 2);
+            $table->integer('PRO_Stock')->default(0);
             $table->string('PRO_Imagen')->nullable();
             $table->timestamps();
         });

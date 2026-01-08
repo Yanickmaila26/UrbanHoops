@@ -38,5 +38,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'estebangarciaojeda@gmail.com',
             'password' => Hash::make('secreto123'),
         ]);
+        $this->call(ProveedorSeeder::class);
+        $this->call(ProductoSeeder::class);
     }
 }

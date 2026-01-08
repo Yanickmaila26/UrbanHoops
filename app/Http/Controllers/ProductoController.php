@@ -5,30 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProductoController extends Controller
 {
     /**
-     * Listado de productos.
+     * Listado de productos con búsqueda general.
      */
     public function index(Request $request)
     {
-        // Obtener término de búsqueda general
         $search = $request->input('search');
 
-        // Consulta base
-        $query = Producto::query();
-
-        // Aplicar filtro general si existe
-        if ($search) {
-            $query->generalSearch($search);
-        }
-
-        // Ordenar por creación (más reciente primero)
-        $query->orderBy('created_at', 'desc');
-
-        // Paginación
-        $productos = $query->paginate(10)->withQueryString();
+        // El modelo ahora se encarga de decidir si filtra o no
+        $productos = Producto::getProductos($search);
 
         return view('productos.index', compact('productos', 'search'));
     }
@@ -38,33 +27,41 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        return view('productos.create');
+        $ultimoProducto = Producto::orderBy('created_at', 'desc')->first();
+
+        if (!$ultimoProducto) {
+            $nuevoCodigo = 'P001';
+        } else {
+            // Extraer el número del código (asumiendo formato P001)
+            $numeroUltimo = (int) substr($ultimoProducto->PRO_Codigo, 1);
+            // Generar el nuevo con ceros a la izquierda
+            $nuevoCodigo = 'P' . str_pad($numeroUltimo + 1, 3, '0', STR_PAD_LEFT);
+        }
+        return view('productos.create', compact('nuevoCodigo'));
     }
 
     /**
-     * Guardar nuevo producto con imagen.
+     * Guardar nuevo producto.
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'PRO_Codigo'            => 'required|string|max:15|unique:productos',
-            'PRO_Nombre'            => 'required|string|max:60',
-            'PRO_Descripcion_Corta' => 'required|string|max:100',
-            'PRO_Descripcion_Larga' => 'required|string',
-            'PRO_Imagen'            => 'nullable|image|mimes:jpg,jpeg,png|max:5048',
-        ]);
+        // Validar usando las reglas y mensajes del Modelo
+        $validator = Validator::make($request->all(), Producto::rules(), Producto::messages());
 
-        $data = $request->all();
-
-        if ($request->hasFile('PRO_Imagen')) {
-
-            $rutaRelativa = $request->file('PRO_Imagen')->store('productos', 'public');
-            $rutaAbsoluta = storage_path('app/public/' . $rutaRelativa);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        \App\Models\Producto::create($data);
+        $data = $validator->validated();
 
-        return redirect()->route('products.index')->with('success', 'Producto creado con éxito.');
+        if ($request->hasFile('PRO_Imagen')) {
+            $ruta = $request->file('PRO_Imagen')->store('productos', 'public');
+            $data['PRO_Imagen'] = $ruta;
+        }
+
+        Producto::createProducto($data);
+
+        return redirect()->route('products.index')->with('success', 'Producto registrado exitosamente.');
     }
 
     /**
@@ -75,6 +72,9 @@ class ProductoController extends Controller
         return view('productos.show', compact('producto'));
     }
 
+    /**
+     * Formulario de edición.
+     */
     public function edit(Producto $producto)
     {
         return view('productos.edit', compact('producto'));
@@ -85,39 +85,51 @@ class ProductoController extends Controller
      */
     public function update(Request $request, Producto $producto)
     {
-        $request->validate([
-            'PRO_Nombre'            => 'required|string|max:60',
-            'PRO_Descripcion_Corta' => 'required|string|max:100',
-            'PRO_Descripcion_Larga' => 'required|string',
-            'PRO_Imagen'            => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+        // Pasamos el código actual para ignorar la regla 'unique' de PRO_Codigo
+        $validator = Validator::make($request->all(), Producto::rules($producto->PRO_Codigo), Producto::messages());
 
-        $data = $request->all();
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $data = $validator->validated();
 
         if ($request->hasFile('PRO_Imagen')) {
             if ($producto->PRO_Imagen) {
                 Storage::disk('public')->delete($producto->PRO_Imagen);
             }
-            // Guardar la nueva
             $data['PRO_Imagen'] = $request->file('PRO_Imagen')->store('productos', 'public');
         }
 
-        $producto->update($data);
+        $producto->updateProducto($data);
 
-        return redirect()->route('products.index')->with('success', 'Producto actualizado.');
+        return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente.');
     }
 
     /**
      * Eliminar producto y su archivo de imagen.
      */
+
     public function destroy(Producto $producto)
     {
-        if ($producto->PRO_Imagen) {
-            Storage::disk('public')->delete($producto->PRO_Imagen);
+        try {
+            // 1. Verificar si el producto tiene una imagen asignada
+            if ($producto->PRO_Imagen) {
+                // 2. Intentar borrar el archivo físico del disco 'public'
+                if (Storage::disk('public')->exists($producto->PRO_Imagen)) {
+                    Storage::disk('public')->delete($producto->PRO_Imagen);
+                }
+            }
+
+            // 3. Eliminar el registro de la base de datos
+            $producto->delete();
+
+            return redirect()->route('products.index')
+                ->with('success', 'Producto e imagen eliminados correctamente.');
+        } catch (\Exception $e) {
+            // En caso de error (ej. restricción de llave foránea o error de disco)
+            return redirect()->route('products.index')
+                ->with('error', 'No se pudo eliminar el producto: ' . $e->getMessage());
         }
-
-        $producto->delete();
-
-        return redirect()->route('products.index')->with('success', 'Producto eliminado.');
     }
 }

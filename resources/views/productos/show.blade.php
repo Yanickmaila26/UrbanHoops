@@ -16,17 +16,19 @@
                         </p>
                     </div>
                     <div class="flex space-x-2">
-                        <a href="{{ route('productos.edit', $producto->PRO_Codigo) }}"
-                           class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 transition">
+                        <a href="{{ route('products.edit', $producto->PRO_Codigo) }}"
+                            class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 transition">
                             <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                             Editar
                         </a>
-                        <a href="{{ route('productos.index') }}"
-                           class="inline-flex items-center px-4 py-2 bg-gray-200 border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 transition dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
+                        <a href="{{ route('products.index') }}"
+                            class="inline-flex items-center px-4 py-2 bg-gray-200 border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 transition dark:bg-zinc-700 dark:border-zinc-600 dark:text-white">
                             <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
                             Volver
                         </a>
@@ -40,15 +42,16 @@
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4 uppercase tracking-wider">
                             Imagen del Producto
                         </h3>
-                        <div class="aspect-square w-full relative overflow-hidden rounded-lg border dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900">
-                            @if($producto->PRO_Imagen)
-                                <img src="{{ asset('storage/' . $producto->PRO_Imagen) }}"
-                                     alt="{{ $producto->PRO_Nombre }}"
-                                     class="object-cover w-full h-full hover:scale-105 transition duration-300">
+                        <div
+                            class="aspect-square w-full relative overflow-hidden rounded-lg border dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900">
+                            @if ($producto->PRO_Imagen)
+                                <img src="{{ asset($producto->PRO_Imagen) }}" alt="{{ $producto->PRO_Nombre }}"
+                                    class="object-cover w-full h-full hover:scale-105 transition duration-300">
                             @else
                                 <div class="flex flex-col items-center justify-center h-full text-gray-400">
                                     <svg class="h-16 w-16 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
                                     <span class="text-xs italic">Sin imagen disponible</span>
                                 </div>
@@ -66,23 +69,32 @@
                             <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Código</dt>
-                                    <dd class="mt-1 text-sm font-bold text-gray-900 dark:text-white">{{ $producto->PRO_Codigo }}</dd>
+                                    <dd class="mt-1 text-sm font-bold text-gray-900 dark:text-white">
+                                        {{ $producto->PRO_Codigo }}</dd>
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Nombre</dt>
                                     <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $producto->PRO_Nombre }}</dd>
                                 </div>
                                 <div class="sm:col-span-2">
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Descripción Corta</dt>
+                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Descripción</dt>
                                     <dd class="mt-1 text-sm text-gray-900 dark:text-white italic">
-                                        "{{ $producto->PRO_Descripcion_Corta }}"
+                                        "{{ $producto->PRO_Descripcion }}"
                                     </dd>
                                 </div>
-                                <div class="sm:col-span-2">
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Descripción Detallada</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-zinc-900 p-4 rounded-md border dark:border-zinc-700 whitespace-pre-line">
-                                        {{ $producto->PRO_Descripcion_Larga }}
-                                    </dd>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Marca</dt>
+                                        <dd class="text-lg text-gray-900 dark:text-white">{{ $producto->PRO_Marca }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Talla</dt>
+                                        <dd class="text-lg text-gray-900 dark:text-white">{{ $producto->PRO_Talla }}</dd>
+                                    </div>
+                                    <div>
+                                        <dt class="text-sm font-medium text-gray-500">Precio de Venta</dt>
+                                        <dd class="text-2xl font-bold text-blue-600">${{ $producto->PRO_Precio }}</dd>
+                                    </div>
                                 </div>
                             </dl>
                         </div>
@@ -93,11 +105,13 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Registrado el</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $producto->created_at->format('d/m/Y H:i') }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                                        {{ $producto->created_at->format('d/m/Y H:i') }}</dd>
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Última edición</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $producto->updated_at->format('d/m/Y H:i') }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900 dark:text-white">
+                                        {{ $producto->updated_at->format('d/m/Y H:i') }}</dd>
                                 </div>
                             </div>
                         </div>
