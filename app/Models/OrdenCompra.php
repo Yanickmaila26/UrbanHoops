@@ -74,4 +74,42 @@ class OrdenCompra extends Model
         }
         return $orden->delete();
     }
+
+    public static function rules($numeroActual = null)
+    {
+        return [
+            'ORC_Numero' => 'required|string|unique:orden_compras,ORC_Numero,' . $numeroActual . ',ORC_Numero',
+            'PRV_Ced_Ruc' => 'required|exists:proveedors,PRV_Ced_Ruc',
+            'ORC_Fecha_Emision' => 'required|date',
+            'ORC_Fecha_Entrega' => 'required|date|after_or_equal:ORC_Fecha_Emision',
+            'ORC_Monto_Total' => 'required|numeric|min:0',
+            'productos' => 'required|array|min:1',
+            'cantidades' => 'required|array|min:1',
+        ];
+    }
+    public static function messages()
+    {
+        return [
+            'ORC_Numero.required' => 'El número de orden es obligatorio.',
+            'ORC_Numero.unique'   => 'Este número de orden ya ha sido registrado.',
+
+            'PRV_Ced_Ruc.required' => 'Debe seleccionar un proveedor.',
+            'PRV_Ced_Ruc.exists'   => 'El proveedor seleccionado no es válido.',
+
+            'ORC_Fecha_Emision.required' => 'La fecha de emisión es obligatoria.',
+            'ORC_Fecha_Emision.date'     => 'La fecha de emisión debe ser una fecha válida.',
+            'ORC_Fecha_Entrega.required' => 'La fecha de entrega es obligatoria.',
+            'ORC_Fecha_Entrega.after_or_equal' => 'La fecha de entrega no puede ser anterior a la fecha de emisión.',
+
+            'ORC_Monto_Total.required' => 'El monto total es obligatorio.',
+            'ORC_Monto_Total.numeric'  => 'El monto debe ser un valor numérico.',
+            'ORC_Monto_Total.min'      => 'El monto total no puede ser negativo.',
+
+            'productos.required'   => 'Debe agregar al menos un producto a la orden.',
+            'productos.min'        => 'Debe agregar al menos un producto a la orden.',
+            'cantidades.required'  => 'Debe especificar las cantidades para cada producto.',
+            'cantidades.*.integer' => 'La cantidad debe ser un número entero.',
+            'cantidades.*.min'     => 'La cantidad mínima por producto es 1.',
+        ];
+    }
 }

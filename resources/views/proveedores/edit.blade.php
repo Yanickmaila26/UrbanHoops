@@ -29,7 +29,7 @@
 
             <!-- Formulario -->
             <div class="bg-white dark:bg-zinc-800 overflow-hidden shadow rounded-lg">
-                <form action="{{ route('suppliers.update', $supplier->PRV_Ced_Ruc) }}" method="POST" class="p-6">
+                <form action="{{ route('suppliers.update', $supplier->PRV_Ced_Ruc) }}" method="POST">
                     @csrf
                     @method('PUT')
 

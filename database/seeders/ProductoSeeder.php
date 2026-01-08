@@ -18,7 +18,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Color' => 'Rojo Blanco',
                 'PRO_Talla' => '42',
                 'PRO_Precio' => 185.00,
-                'PRO_Stock' => 15
+                'PRO_Stock' => 0
             ],
             [
                 'PRO_Codigo' => 'P002',
@@ -28,7 +28,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Color' => 'Negro',
                 'PRO_Talla' => '40',
                 'PRO_Precio' => 160.00,
-                'PRO_Stock' => 20
+                'PRO_Stock' => 0
             ],
             [
                 'PRO_Codigo' => 'P003',
@@ -38,7 +38,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Color' => 'Blanco',
                 'PRO_Talla' => '38',
                 'PRO_Precio' => 85.00,
-                'PRO_Stock' => 30
+                'PRO_Stock' => 0
             ],
             [
                 'PRO_Codigo' => 'P004',
@@ -48,7 +48,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Color' => 'Negro Blanco',
                 'PRO_Talla' => '39',
                 'PRO_Precio' => 75.00,
-                'PRO_Stock' => 50
+                'PRO_Stock' => 0
             ],
             [
                 'PRO_Codigo' => 'P005',
@@ -58,7 +58,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Color' => 'Azul',
                 'PRO_Talla' => '41',
                 'PRO_Precio' => 155.50,
-                'PRO_Stock' => 12
+                'PRO_Stock' => 0
             ],
             [
                 'PRO_Codigo' => 'P006',
@@ -68,7 +68,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Color' => 'Blanco Azul',
                 'PRO_Talla' => '43',
                 'PRO_Precio' => 110.00,
-                'PRO_Stock' => 18
+                'PRO_Stock' => 0
             ],
             [
                 'PRO_Codigo' => 'P007',
@@ -78,7 +78,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Color' => 'Negro',
                 'PRO_Talla' => '37',
                 'PRO_Precio' => 65.00,
-                'PRO_Stock' => 45
+                'PRO_Stock' => 0
             ],
             [
                 'PRO_Codigo' => 'P008',
@@ -88,7 +88,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Color' => 'Multicolor',
                 'PRO_Talla' => '42',
                 'PRO_Precio' => 125.00,
-                'PRO_Stock' => 10
+                'PRO_Stock' => 0
             ],
         ];
 

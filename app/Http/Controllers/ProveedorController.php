@@ -12,8 +12,13 @@ class ProveedorController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-
-        $suppliers = Proveedor::getProveedores($search);
+        $query = Proveedor::activos();
+        if ($search) {
+            $query->search($search);
+        }
+        $suppliers = $query->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->withQueryString();
 
         return view('proveedores.index', compact('suppliers', 'search'));
     }
@@ -50,11 +55,15 @@ class ProveedorController extends Controller
         $supplier = Proveedor::findOrFail($id);
         $validator = Validator::make($request->all(), Proveedor::rules($id), Proveedor::messages());
 
-        if ($validator->fails()) return redirect()->back()->withErrors($validator)->withInput();
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $supplier->updateProveedor($validator->validated());
 
-        return redirect()->route('suppliers.index')->with('success', 'Proveedor actualizado.');
+        return redirect()->route('suppliers.index')->with('success', 'Proveedor actualizado correctamente.');
     }
 
     public function destroy(string $id)

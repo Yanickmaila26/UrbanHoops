@@ -247,7 +247,7 @@
     </div>
 
     <script>
-        function openDeleteModal(urlAction) {
+        function openDeleteModal(codigo) {
             const form = document.getElementById('delete-form');
             form.action = `/admin/productos/${codigo}`;
             document.getElementById('delete-modal').classList.remove('hidden');

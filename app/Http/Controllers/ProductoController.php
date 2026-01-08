@@ -15,10 +15,13 @@ class ProductoController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $query = Producto::activos();
 
-        // El modelo ahora se encarga de decidir si filtra o no
-        $productos = Producto::getProductos($search);
+        if ($search) {
+            $query->search($search);
+        }
 
+        $productos = $query->orderBy('PRO_Codigo', 'desc')->paginate(10);
         return view('productos.index', compact('productos', 'search'));
     }
 
@@ -27,7 +30,7 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        $ultimoProducto = Producto::orderBy('created_at', 'desc')->first();
+        $ultimoProducto = Producto::orderBy('PRO_Codigo', 'desc')->first();
 
         if (!$ultimoProducto) {
             $nuevoCodigo = 'P001';
@@ -83,27 +86,32 @@ class ProductoController extends Controller
     /**
      * Actualizar producto y gestionar reemplazo de imagen.
      */
-    public function update(Request $request, Producto $producto)
+    public function update(Request $request, string $id)
     {
-        // Pasamos el código actual para ignorar la regla 'unique' de PRO_Codigo
-        $validator = Validator::make($request->all(), Producto::rules($producto->PRO_Codigo), Producto::messages());
+        $producto = Producto::findOrFail($id);
+
+        $validator = Validator::make($request->all(), Producto::rules($id), Producto::messages());
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $data = $validator->validated();
+        try {
+            $data = $validator->validated();
 
-        if ($request->hasFile('PRO_Imagen')) {
-            if ($producto->PRO_Imagen) {
-                Storage::disk('public')->delete($producto->PRO_Imagen);
+            if ($request->hasFile('PRO_Imagen')) {
+                if ($producto->PRO_Imagen && Storage::disk('public')->exists($producto->PRO_Imagen)) {
+                    Storage::disk('public')->delete($producto->PRO_Imagen);
+                }
+                $data['PRO_Imagen'] = $request->file('PRO_Imagen')->store('productos', 'public');
             }
-            $data['PRO_Imagen'] = $request->file('PRO_Imagen')->store('productos', 'public');
+
+            $producto->updateProducto($data);
+
+            return redirect()->route('products.index')->with('success', 'Producto actualizado.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
-
-        $producto->updateProducto($data);
-
-        return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente.');
     }
 
     /**
@@ -112,24 +120,7 @@ class ProductoController extends Controller
 
     public function destroy(Producto $producto)
     {
-        try {
-            // 1. Verificar si el producto tiene una imagen asignada
-            if ($producto->PRO_Imagen) {
-                // 2. Intentar borrar el archivo físico del disco 'public'
-                if (Storage::disk('public')->exists($producto->PRO_Imagen)) {
-                    Storage::disk('public')->delete($producto->PRO_Imagen);
-                }
-            }
-
-            // 3. Eliminar el registro de la base de datos
-            $producto->delete();
-
-            return redirect()->route('products.index')
-                ->with('success', 'Producto e imagen eliminados correctamente.');
-        } catch (\Exception $e) {
-            // En caso de error (ej. restricción de llave foránea o error de disco)
-            return redirect()->route('products.index')
-                ->with('error', 'No se pudo eliminar el producto: ' . $e->getMessage());
-        }
+        $producto->update(['activo' => false]);
+        return redirect()->route('products.index')->with('success', 'Producto eliminado (borrado lógico).');
     }
 }

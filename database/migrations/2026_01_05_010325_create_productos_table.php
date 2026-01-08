@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('PRO_Precio', 10, 2);
             $table->integer('PRO_Stock')->default(0);
             $table->string('PRO_Imagen')->nullable();
+            $table->boolean('activo')->default(true);
             $table->timestamps();
         });
     }

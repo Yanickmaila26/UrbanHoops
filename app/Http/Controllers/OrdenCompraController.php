@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\OrdenCompra;
 use App\Models\Proveedor;
 use App\Models\Producto;
+use Illuminate\Support\Facades\Validator;
 
 class OrdenCompraController extends Controller
 {
@@ -26,7 +27,7 @@ class OrdenCompraController extends Controller
     public function create()
     {
         // Lógica de código automático
-        $ultima = OrdenCompra::orderBy('created_at', 'desc')->first();
+        $ultima = OrdenCompra::orderBy('ORC_Numero', 'desc')->first();
         $nuevoCodigo = $ultima
             ? 'ORC' . str_pad((int)substr($ultima->ORC_Numero, 3) + 1, 3, '0', STR_PAD_LEFT)
             : 'ORC001';
@@ -47,12 +48,7 @@ class OrdenCompraController extends Controller
                 ->withInput();
         }
 
-        $request->validate([
-            'ORC_Numero' => 'required|unique:orden_compras',
-            'PRV_Ced_Ruc' => 'required|exists:proveedors,PRV_Ced_Ruc',
-            'productos' => 'required|array',
-            'cantidades' => 'required|array',
-        ]);
+        $request->validate(OrdenCompra::rules(), OrdenCompra::messages());
 
         $detalles = [];
         foreach ($request->productos as $index => $proCodigo) {
@@ -84,12 +80,12 @@ class OrdenCompraController extends Controller
 
         try {
             // 1. Actualizar cabecera (excepto el número que es único)
-            $orden->update([
-                'PRV_Ced_Ruc' => $request->PRV_Ced_Ruc,
-                'ORC_Fecha_Emision' => $request->ORC_Fecha_Emision,
-                'ORC_Fecha_Entrega' => $request->ORC_Fecha_Entrega,
-                'ORC_Monto_Total'   => $request->ORC_Monto_Total,
-            ]);
+
+            $validator = Validator::make($request->all(), OrdenCompra::rules($id), OrdenCompra::messages());
+
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
 
             // 2. Sincronizar productos (Borra los anteriores y crea los nuevos en la tabla pivot)
             $detalles = [];
