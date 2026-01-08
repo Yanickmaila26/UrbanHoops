@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bodegas', function (Blueprint $table) {
-            $table->string('BOD_Codigo', 15)->unique()->primary();
-            $table->string('TRN_Codigo', 15);
-            $table->string('ORC_Numero', 15)->nullable();
-            $table->string('PRO_Codigo', 15)->nullable();
-            $table->integer('BOD_cantidad');
+        Schema::create('transaccions', function (Blueprint $table) {
+            // $table->id();
+            $table->string('TRN_Codigo', 15)->unique()->primary();
+            $table->string('TRN_Nombre', 50);
+            $table->char('TRN_Tipo', 1); // 'E' para ingreso, 'S' para egreso
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bodegas');
+        Schema::dropIfExists('transaccions');
     }
 };
