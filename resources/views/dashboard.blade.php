@@ -1,6 +1,6 @@
 @extends('components.admin-layout')
 
-@section('page-title', 'Dashboard')
+@section('page-title', 'Panel de Gestión')
 
 @section('content')
     <div class="py-12">

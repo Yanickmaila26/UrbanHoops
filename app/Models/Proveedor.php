@@ -18,6 +18,7 @@ class Proveedor extends Model
         'PRV_Direccion',
         'PRV_Telefono',
         'PRV_Correo',
+        'activo',
     ];
 
     public static function getProveedores($search = null)
@@ -43,22 +44,25 @@ class Proveedor extends Model
         return $this->update($data);
     }
 
-    public static function deleteProveedor(Proveedor $proveedor)
+    public function scopeActivos($query)
     {
-        return $proveedor->delete();
+        return $query->where('activo', true);
     }
 
-    public static function rules()
+    public static function deleteProveedor(Proveedor $proveedor)
     {
-        $rules = [
-            'PRV_Ced_Ruc' => 'required|string|min:10|max:13|unique:proveedors,PRV_Ced_Ruc',
-            'PRV_Nombre' => 'required|string|max:50|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/',
-            'PRV_Direccion' => 'required|string|max:150',
-            'PRV_Telefono' => 'required|string|size:10|regex:/^[0-9]{10}$/',
-            'PRV_Correo' => 'required|email|max:60',
-        ];
+        return $proveedor->update(['activo' => false]);
+    }
 
-        return $rules;
+    public static function rules($id = null)
+    {
+        return [
+            'PRV_Ced_Ruc' => 'required|string|min:10|max:13|unique:proveedors,PRV_Ced_Ruc,' . $id . ',PRV_Ced_Ruc',
+            'PRV_Nombre'    => 'required|string|max:50|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/',
+            'PRV_Direccion' => 'required|string|max:150',
+            'PRV_Telefono'  => 'required|string|size:10|regex:/^[0-9]+$/',
+            'PRV_Correo'    => 'required|email|max:60',
+        ];
     }
 
     public static function messages()

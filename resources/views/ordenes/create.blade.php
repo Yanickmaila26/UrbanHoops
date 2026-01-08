@@ -169,5 +169,23 @@
         }
 
         document.addEventListener('DOMContentLoaded', addRow);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const fechaEmision = document.querySelector('input[name="ORC_Fecha_Emision"]');
+            const fechaEntrega = document.querySelector('input[name="ORC_Fecha_Entrega"]');
+
+            function validarFechas() {
+                // Establecer el mínimo de entrega basado en la emisión
+                fechaEntrega.min = fechaEmision.value;
+
+                if (fechaEntrega.value && fechaEntrega.value < fechaEmision.value) {
+                    alert("La fecha de entrega no puede ser menor a la de emisión");
+                    fechaEntrega.value = fechaEmision.value;
+                }
+            }
+
+            fechaEmision.addEventListener('change', validarFechas);
+            fechaEntrega.addEventListener('change', validarFechas);
+        });
     </script>
 @endsection

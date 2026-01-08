@@ -20,7 +20,8 @@ class Producto extends Model
         'PRO_Marca',
         'PRO_Precio',
         'PRO_Stock',
-        'PRO_Imagen'
+        'PRO_Imagen',
+        'activo'
     ];
 
     public static function getProductos($search = null)
@@ -46,21 +47,14 @@ class Producto extends Model
 
     public static function deleteProducto(Producto $producto)
     {
-        return $producto->delete();
+        return $producto->update(['activo' => false]);
     }
 
-    public static function rules($codigo = null)
+    public static function rules($id = null)
     {
         return [
-            'PRO_Codigo' => $codigo
-                ? 'required|string|max:15'
-                : 'required|string|max:15|unique:productos,PRO_Codigo',
-            'PRO_Nombre' => [
-                'required',
-                'string',
-                'max:60',
-                'regex:/^[a-zA-Z0-9\s]+$/'
-            ],
+            'PRO_Codigo' => 'required|string|max:15|unique:productos,PRO_Codigo,' . $id . ',PRO_Codigo',
+            'PRO_Nombre' => 'required|string|max:100|regex:/^[A-Za-z0-9\sáéíóúÁÉÍÓÚñÑ.]+$/',
             'PRO_Descripcion' => 'required|string|max:255',
             'PRO_Color'       => 'required|string|max:15',
             'PRO_Talla'       => 'required|string|max:5',
@@ -71,19 +65,31 @@ class Producto extends Model
         ];
     }
 
+    public function scopeActivos($query)
+    {
+        return $query->where('activo', true);
+    }
+
     public static function messages()
     {
         return [
-            'PRO_Codigo.required' => 'El código es obligatorio.',
-            'PRO_Codigo.unique'   => 'Este código ya ha sido registrado.',
-            'PRO_Nombre.required' => 'El nombre del producto es obligatorio.',
-            'PRO_Nombre.regex'    => 'El nombre no puede contener caracteres especiales.',
-            'PRO_Precio.numeric'  => 'El precio debe ser un número válido.',
-            'PRO_Precio.min'      => 'El precio no puede ser negativo.',
-            'PRO_Stock.integer'   => 'El stock debe ser un número entero.',
-            'PRO_Stock.min'       => 'El stock no puede ser negativo.',
-            'PRO_Imagen.image'    => 'El archivo debe ser una imagen.',
-            'PRO_Imagen.mimes'    => 'Formatos permitidos: jpg, jpeg, png.',
+            'PRO_Codigo.required'      => 'El código es obligatorio.',
+            'PRO_Codigo.unique'        => 'Este código ya ha sido registrado.',
+            'PRO_Nombre.required'      => 'El nombre del producto es obligatorio.',
+            'PRO_Nombre.regex'         => 'El nombre no puede contener caracteres especiales.',
+            'PRO_Descripcion.required' => 'La descripción es obligatoria.',
+            'PRO_Color.required'       => 'El color es obligatorio.',
+            'PRO_Talla.required'       => 'La talla es obligatoria.',
+            'PRO_Marca.required'       => 'La marca es obligatoria.',
+            'PRO_Precio.required'      => 'El precio es obligatorio.',
+            'PRO_Precio.numeric'       => 'El precio debe ser un número válido.',
+            'PRO_Precio.min'           => 'El precio no puede ser negativo.',
+            'PRO_Stock.required'       => 'El stock inicial es obligatorio.',
+            'PRO_Stock.integer'        => 'El stock debe ser un número entero.',
+            'PRO_Stock.min'            => 'El stock no puede ser negativo.',
+            'PRO_Imagen.image'         => 'El archivo debe ser una imagen.',
+            'PRO_Imagen.mimes'         => 'Formatos permitidos: jpg, jpeg, png.',
+            'PRO_Imagen.max'           => 'La imagen no debe pesar más de 2MB.',
         ];
     }
 

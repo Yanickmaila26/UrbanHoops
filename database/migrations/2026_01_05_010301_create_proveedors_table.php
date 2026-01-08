@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('PRV_Direccion', 150);
             $table->string('PRV_Telefono', 10);
             $table->string('PRV_Correo', 60);
+            $table->boolean('activo')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

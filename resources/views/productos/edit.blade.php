@@ -26,23 +26,33 @@
                 </div>
             </div>
 
+            @if ($errors->any())
+                <div class="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700">
+                    <p class="font-bold">Por favor corrija los siguientes errores:</p>
+                    <ul class="list-disc pl-5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="bg-white dark:bg-zinc-800 overflow-hidden shadow rounded-lg">
-                <form action="{{ route('products.update', $producto->PRO_Codigo) }}" method="POST" enctype="multipart/form-data" class="p-6">
+                <form action="{{ route('products.update', $producto->PRO_Codigo) }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
-
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Código Único (No
                                 editable)</label>
-                            <input type="text" value="{{ $producto->PRO_Codigo }}"
-                                class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm dark:bg-zinc-900 dark:border-zinc-700 dark:text-gray-400 cursor-not-allowed"
-                                disabled>
+                            <input type="text" name="PRO_Codigo" value="{{ $producto->PRO_Codigo }}" readonly
+                                class="w-full rounded-md border-gray-300 bg-gray-100 dark:bg-zinc-700 cursor-not-allowed">
                         </div>
-
                         <div>
                             <label for="PRO_Nombre"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre
+                                del
                                 Producto</label>
                             <input type="text" name="PRO_Nombre" id="PRO_Nombre"
                                 value="{{ old('PRO_Nombre', $producto->PRO_Nombre) }}"
@@ -106,7 +116,8 @@
 
                         <div>
                             <label for="PRO_Precio"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Precio ($)</label>
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Precio
+                                ($)</label>
                             <input type="number" step="0.01" min="0" name="PRO_Precio" id="PRO_Precio"
                                 value="{{ old('PRO_Precio', $producto->PRO_Precio) }}" placeholder="0.00" min="0"
                                 step="0.1"

@@ -11,9 +11,13 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
+                        <input type="text" name="ORC_Numero" value="{{ $orden->ORC_Numero }}" readonly
+                            class="bg-gray-100 w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-gray-400 cursor-not-allowed">
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium dark:text-gray-300">Proveedor</label>
-                        <select name="PRV_Ced_Ruc" class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white"
-                            required>
+                        <select name="PRV_Ced_Ruc"
+                            class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
                             @foreach ($proveedores as $prov)
                                 <option value="{{ $prov->PRV_Ced_Ruc }}"
                                     {{ $orden->PRV_Ced_Ruc == $prov->PRV_Ced_Ruc ? 'selected' : '' }}>
@@ -199,5 +203,23 @@
         }
 
         document.addEventListener('DOMContentLoaded', addRow);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const fechaEmision = document.querySelector('input[name="ORC_Fecha_Emision"]');
+            const fechaEntrega = document.querySelector('input[name="ORC_Fecha_Entrega"]');
+
+            function validarFechas() {
+                // Establecer el mínimo de entrega basado en la emisión
+                fechaEntrega.min = fechaEmision.value;
+
+                if (fechaEntrega.value && fechaEntrega.value < fechaEmision.value) {
+                    alert("La fecha de entrega no puede ser menor a la de emisión");
+                    fechaEntrega.value = fechaEmision.value;
+                }
+            }
+
+            fechaEmision.addEventListener('change', validarFechas);
+            fechaEntrega.addEventListener('change', validarFechas);
+        });
     </script>
 @endsection
