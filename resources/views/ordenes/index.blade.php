@@ -30,7 +30,7 @@
                         Buscar
                     </button>
                     @if ($search)
-                        <a href="{{ route('products.index') }}"
+                        <a href="{{ route('purchase-orders.index') }}"
                             class="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-zinc-700 border border-transparent rounded-md font-semibold text-xs text-gray-700 dark:text-white uppercase tracking-widest hover:bg-gray-300 transition">
                             Limpiar
                         </a>

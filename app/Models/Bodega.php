@@ -39,6 +39,12 @@ class Bodega extends Model
         if ($search) {
             $query->where('BOD_Codigo', 'like', "%{$search}%")
                 ->orWhere('ORC_Numero', 'like', "%{$search}%")
+                ->orWhereHas('transaccion', function ($q) use ($search) {
+                    $q->where('TRN_Nombre', 'like', "%{$search}%");
+                })
+                ->orWhereHas('producto', function ($q) use ($search) {
+                    $q->where('PRO_Nombre', 'like', "%{$search}%");
+                })
                 ->orWhere('PRO_Codigo', 'like', "%{$search}%");
         }
         return $query->orderBy('created_at', 'desc')->paginate(10);
