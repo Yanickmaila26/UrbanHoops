@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('facturas', function (Blueprint $table) {
             //$table->id();
             $table->string('FAC_Codigo', 15)->unique()->primary();
+            $table->string('CLI_Ced_Ruc', 13);
+            $table->foreign('CLI_Ced_Ruc')->references('CLI_Ced_Ruc')->on('clientes')->onDelete('cascade');
+            $table->decimal('FAC_Total', 10, 2);
+            $table->enum('FAC_Estado', ['Pen', 'Pag', 'Anu'])->default('Pen')->comment('Pen: Pendiente, Pag: Pagada, Anu: Anulada');
             $table->timestamps();
         });
     }

@@ -21,7 +21,7 @@ class CarritoController extends Controller
             $query->where('CRC_Carrito', 'like', "%{$search}%")
                 ->orWhere('CLI_Ced_Ruc', 'like', "%{$search}%")
                 ->orWhereHas('cliente', function ($q) use ($search) {
-                    $q->where('CLI_Nombre', 'like', "%{$search}%") // Asumiendo campo nombre en cliente
+                    $q->where('CLI_Nombre', 'like', "%{$search}%")
                         ->orWhere('CLI_Apellido', 'like', "%{$search}%");
                 });
         }

@@ -76,6 +76,11 @@
                                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Nombre</dt>
                                     <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ $producto->PRO_Nombre }}</dd>
                                 </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Proveedor</dt>
+                                    <dd class="mt-1 text-sm font-bold text-gray-900 dark:text-white">
+                                        {{ $producto->proveedor->PRV_Nombre ?? 'N/A' }}</dd>
+                                </div>
                                 <div class="sm:col-span-2">
                                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Descripción</dt>
                                     <dd class="mt-1 text-sm text-gray-900 dark:text-white italic">

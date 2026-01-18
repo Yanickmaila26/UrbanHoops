@@ -20,19 +20,19 @@
 
                     <div class="flex space-x-2">
                         <a href="{{ route('customers.edit', $cliente->CLI_Ced_Ruc) }}"
-                           class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-md text-xs font-semibold uppercase hover:bg-yellow-700">
+                            class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-md text-xs font-semibold uppercase hover:bg-yellow-700">
                             <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                             Editar
                         </a>
 
                         <a href="{{ route('customers.index') }}"
-                           class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-xs font-semibold uppercase dark:bg-zinc-700 dark:text-white hover:bg-gray-300 dark:hover:bg-zinc-600">
+                            class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-xs font-semibold uppercase dark:bg-zinc-700 dark:text-white hover:bg-gray-300 dark:hover:bg-zinc-600">
                             <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                             </svg>
                             Volver
                         </a>
@@ -93,7 +93,7 @@
                                 </dt>
                                 <dd class="mt-1 text-sm">
                                     <a href="mailto:{{ $cliente->CLI_Correo }}"
-                                       class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                        class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
                                         {{ $cliente->CLI_Correo }}
                                     </a>
                                 </dd>
@@ -135,19 +135,19 @@
             <!-- Botones inferiores -->
             <div class="mt-6 flex justify-between">
                 <a href="{{ route('customers.index') }}"
-                   class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-xs font-semibold uppercase dark:bg-zinc-700 dark:text-white hover:bg-gray-300 dark:hover:bg-zinc-600">
+                    class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-xs font-semibold uppercase dark:bg-zinc-700 dark:text-white hover:bg-gray-300 dark:hover:bg-zinc-600">
                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                     Volver a la lista
                 </a>
 
                 <a href="{{ route('customers.edit', $cliente->CLI_Ced_Ruc) }}"
-                   class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-md text-xs font-semibold uppercase hover:bg-yellow-700">
+                    class="inline-flex items-center px-4 py-2 bg-yellow-600 text-white rounded-md text-xs font-semibold uppercase hover:bg-yellow-700">
                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
                     Editar Cliente
                 </a>

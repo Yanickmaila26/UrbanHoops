@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
+use App\Models\Proveedor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -25,103 +26,81 @@ class ProductoController extends Controller
         return view('productos.index', compact('productos', 'search'));
     }
 
-    /**
-     * Formulario de creación.
-     */
     public function create()
     {
         $ultimoProducto = Producto::orderBy('PRO_Codigo', 'desc')->first();
+        $nuevoCodigo = $ultimoProducto ? 'P' . str_pad((int)substr($ultimoProducto->PRO_Codigo, 1) + 1, 3, '0', STR_PAD_LEFT) : 'P001';
 
-        if (!$ultimoProducto) {
-            $nuevoCodigo = 'P001';
-        } else {
-            // Extraer el número del código (asumiendo formato P001)
-            $numeroUltimo = (int) substr($ultimoProducto->PRO_Codigo, 1);
-            // Generar el nuevo con ceros a la izquierda
-            $nuevoCodigo = 'P' . str_pad($numeroUltimo + 1, 3, '0', STR_PAD_LEFT);
-        }
-        return view('productos.create', compact('nuevoCodigo'));
+        $proveedores = Proveedor::getProveedoresActivos();
+
+        return view('productos.create', compact('nuevoCodigo', 'proveedores'));
     }
 
-    /**
-     * Guardar nuevo producto.
-     */
     public function store(Request $request)
     {
-        // Validar usando las reglas y mensajes del Modelo
         $validator = Validator::make($request->all(), Producto::rules(), Producto::messages());
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $data = $validator->validated();
+        $data = $request->except('PRO_Imagen');
 
         if ($request->hasFile('PRO_Imagen')) {
-            $ruta = $request->file('PRO_Imagen')->store('productos', 'public');
-            $data['PRO_Imagen'] = $ruta;
+            $data['PRO_Imagen'] = $request->file('PRO_Imagen')->store('productos', 'public');
         }
 
-        Producto::createProducto($data);
-
-        return redirect()->route('products.index')->with('success', 'Producto registrado exitosamente.');
+        try {
+            Producto::createProducto($data);
+            return redirect()->route('products.index')->with('success', 'Producto creado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al crear producto: ' . $e->getMessage())->withInput();
+        }
     }
 
-    /**
-     * Mostrar un producto específico.
-     */
     public function show(Producto $producto)
     {
         return view('productos.show', compact('producto'));
     }
 
-    /**
-     * Formulario de edición.
-     */
     public function edit(Producto $producto)
     {
-        return view('productos.edit', compact('producto'));
+        $proveedores = Proveedor::getProveedoresActivos();
+        return view('productos.edit', compact('producto', 'proveedores'));
     }
 
-    /**
-     * Actualizar producto y gestionar reemplazo de imagen.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Producto $producto)
     {
-        $producto = Producto::findOrFail($id);
-
-        $validator = Validator::make($request->all(), Producto::rules($id), Producto::messages());
+        $validator = Validator::make($request->all(), Producto::rules($producto->PRO_Codigo), Producto::messages());
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        try {
-            $data = $validator->validated();
+        $data = $request->except('PRO_Imagen');
 
-            if ($request->hasFile('PRO_Imagen')) {
-                if ($producto->PRO_Imagen && Storage::disk('public')->exists($producto->PRO_Imagen)) {
-                    Storage::disk('public')->delete($producto->PRO_Imagen);
-                }
-                $data['PRO_Imagen'] = $request->file('PRO_Imagen')->store('productos', 'public');
+        if ($request->hasFile('PRO_Imagen')) {
+            if ($producto->PRO_Imagen) {
+                Storage::disk('public')->delete($producto->PRO_Imagen);
             }
+            $data['PRO_Imagen'] = $request->file('PRO_Imagen')->store('productos', 'public');
+        }
 
+        try {
             $producto->updateProducto($data);
-
-            return redirect()->route('products.index')->with('success', 'Producto actualizado.');
+            return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente.');
         } catch (\Exception $e) {
-            // Log::error($e->getMessage()); // Buena práctica: loguear el error real internamente
-            return redirect()->back()->with('error', 'Ocurrió un problema al actualizar el producto. Verifique los datos e intente nuevamente.');
+            return redirect()->back()->with('error', 'Error al actualizar producto: ' . $e->getMessage())->withInput();
         }
     }
 
-    /**
-     * Eliminar producto y su archivo de imagen.
-     */
-
     public function destroy(Producto $producto)
     {
-        $producto->update(['activo' => false]);
-        return redirect()->route('products.index')->with('success', 'Producto eliminado (borrado lógico).');
+        try {
+            Producto::deleteProducto($producto);
+            return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error al eliminar producto: ' . $e->getMessage());
+        }
     }
 }

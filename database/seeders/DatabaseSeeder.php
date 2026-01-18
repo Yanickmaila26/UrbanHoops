@@ -52,6 +52,8 @@ class DatabaseSeeder extends Seeder
         foreach ($tipos as $tipo) {
             Transaccion::create($tipo);
         }
+        $this->call(BodegaSeeder::class);
+        $this->call(ClienteSeeder::class);
         $this->call(ProveedorSeeder::class);
         $this->call(ProductoSeeder::class);
     }

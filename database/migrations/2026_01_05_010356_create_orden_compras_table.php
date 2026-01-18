@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orden_compras', function (Blueprint $table) {
-            $table->string('ORC_Numero', 20)->primary(); // Código tipo ORC001
+            $table->string('ORC_Numero', 20)->primary();
             $table->string('PRV_Ced_Ruc', 13); // Relación con Proveedor
+            $table->foreign('PRV_Ced_Ruc')->references('PRV_Ced_Ruc')->on('proveedors')->onDelete('cascade');
             $table->date('ORC_Fecha_Emision');
             $table->date('ORC_Fecha_Entrega');
             $table->decimal('ORC_Monto_Total', 10, 2);
             $table->boolean('ORC_Estado')->default(true);
-            $table->foreign('PRV_Ced_Ruc')->references('PRV_Ced_Ruc')->on('proveedors')->onDelete('cascade');
             $table->timestamps();
         });
 

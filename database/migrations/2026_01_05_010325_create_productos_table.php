@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->string('PRO_Codigo', 15)->unique()->primary();
+            $table->string('PRV_Ced_Ruc', 13); // Relación con Proveedor
+            $table->foreign('PRV_Ced_Ruc')->references('PRV_Ced_Ruc')->on('proveedors')->onDelete('cascade');
             $table->string('PRO_Nombre', 60);
             $table->string('PRO_Descripcion');
             $table->string('PRO_Color', 15);
