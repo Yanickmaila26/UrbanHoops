@@ -78,4 +78,21 @@
             </div>
         </div>
     </div>
+
+    <!-- Botón Flotante de Ayuda (H10) -->
+    <div x-data="{ open: false }" class="fixed bottom-6 right-6">
+        <div x-show="open" x-transition class="absolute bottom-16 right-0 w-64 bg-white dark:bg-zinc-700 rounded-lg shadow-xl p-4 border dark:border-zinc-600 mb-2">
+            <h4 class="font-bold text-gray-800 dark:text-white mb-2">¿Necesitas ayuda?</h4>
+            <ul class="text-sm text-gray-600 dark:text-gray-300 space-y-2">
+                <li><a href="#" class="hover:text-blue-500">• Manual de Usuario</a></li>
+                <li><a href="#" class="hover:text-blue-500">• Preguntas Frecuentes</a></li>
+                <li><a href="#" class="hover:text-blue-500">• Contactar Soporte</a></li>
+            </ul>
+        </div>
+        <button @click="open = !open" class="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg transition-transform transform hover:scale-110">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </button>
+    </div>
 @endsection

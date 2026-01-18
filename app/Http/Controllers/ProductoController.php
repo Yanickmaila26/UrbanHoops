@@ -110,7 +110,8 @@ class ProductoController extends Controller
 
             return redirect()->route('products.index')->with('success', 'Producto actualizado.');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+            // Log::error($e->getMessage()); // Buena práctica: loguear el error real internamente
+            return redirect()->back()->with('error', 'Ocurrió un problema al actualizar el producto. Verifique los datos e intente nuevamente.');
         }
     }
 

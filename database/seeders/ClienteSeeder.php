@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class ClienteSeeder extends Seeder
 {
@@ -12,6 +12,71 @@ class ClienteSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $clientes = [
+            [
+                'CLI_Ced_Ruc' => '1712345678',
+                'CLI_Nombre' => 'Juan Perez',
+                'CLI_Telefono' => '0991234567',
+                'CLI_Correo' => 'juan.perez@email.com',
+                'CLI_Direccion' => 'Av. Amazonas y Naciones Unidas',
+            ],
+            [
+                'CLI_Ced_Ruc' => '1798765432001',
+                'CLI_Nombre' => 'Empresa XYZ S.A.',
+                'CLI_Telefono' => '022345678',
+                'CLI_Correo' => 'contacto@xyz.com',
+                'CLI_Direccion' => 'Parque Industrial Quito',
+            ],
+            [
+                'CLI_Ced_Ruc' => '1700112233',
+                'CLI_Nombre' => 'Maria Rodriguez',
+                'CLI_Telefono' => '0987654321',
+                'CLI_Correo' => 'maria.rodriguez@email.com',
+                'CLI_Direccion' => 'Calle La Ronda 123',
+            ],
+            [
+                'CLI_Ced_Ruc' => '0911223344',
+                'CLI_Nombre' => 'Carlos Lopez',
+                'CLI_Telefono' => '0998877665',
+                'CLI_Correo' => 'carlos.lopez@email.com',
+                'CLI_Direccion' => 'Av. 9 de Octubre, Guayaquil',
+            ],
+            [
+                'CLI_Ced_Ruc' => '0102030405',
+                'CLI_Nombre' => 'Ana Gomez',
+                'CLI_Telefono' => '0955443322',
+                'CLI_Correo' => 'ana.gomez@email.com',
+                'CLI_Direccion' => 'Calle Larga, Cuenca',
+            ],
+            [
+                'CLI_Ced_Ruc' => '1002003001',
+                'CLI_Nombre' => 'Tech Solutions Ltd',
+                'CLI_Telefono' => '062998877',
+                'CLI_Correo' => 'info@techsolutions.com',
+                'CLI_Direccion' => 'Ibarra, Centro',
+            ],
+            [
+                'CLI_Ced_Ruc' => '1715566778',
+                'CLI_Nombre' => 'Luis Torres',
+                'CLI_Telefono' => '0991122334',
+                'CLI_Correo' => 'luis.torres@email.com',
+                'CLI_Direccion' => 'Cumbayá, Plaza Central',
+            ],
+            [
+                'CLI_Ced_Ruc' => '1755664433',
+                'CLI_Nombre' => 'Sofia Diaz',
+                'CLI_Telefono' => '0981122445',
+                'CLI_Correo' => 'sofia.diaz@email.com',
+                'CLI_Direccion' => 'El Condado, Calle A',
+            ]
+        ];
+
+        // Insertar o ignorar si ya existen para evitar duplicados en PK
+        foreach ($clientes as $cliente) {
+            DB::table('clientes')->updateOrInsert(
+                ['CLI_Ced_Ruc' => $cliente['CLI_Ced_Ruc']],
+                $cliente
+            );
+        }
     }
 }

@@ -28,7 +28,7 @@
 
             <div class="mb-6">
                 <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
-                    <form action="{{ route('products.index') }}" method="GET" class="space-y-4">
+                    <form action="{{ route('products.index') }}" method="GET" class="space-y-4" x-data="{ searching: false }" @submit="searching = true">
                         <div>
                             <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Buscar Producto
@@ -48,13 +48,20 @@
                                             class="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white sm:text-sm">
                                     </div>
                                 </div>
-                                <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 transition">
-                                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    </div>
+                                </div>
+                                <button type="submit" :disabled="searching"
+                                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <svg x-show="searching" class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    <svg x-show="!searching" class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
-                                    Buscar
+                                    <span x-show="!searching">Buscar</span>
+                                    <span x-show="searching">Buscando...</span>
                                 </button>
                                 @if ($search)
                                     <a href="{{ route('products.index') }}"
@@ -113,8 +120,8 @@
                                     Nombre</th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">
-                                    Descripción</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Descripciónt</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
                                     Marca/Color</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Precio</th>
@@ -155,10 +162,10 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                         {{ $producto->PRO_Nombre }}
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-xs truncate" title="{{ $producto->PRO_Descripcion }}">
                                         {{ $producto->PRO_Descripcion }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">{{ $producto->PRO_Marca }} -
+                                    <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">{{ $producto->PRO_Marca }} -
                                         {{ $producto->PRO_Color }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap font-bold text-green-600">
                                         ${{ number_format($producto->PRO_Precio, 2) }}</td>
@@ -191,7 +198,7 @@
                                             </a>
                                             <button onclick="openDeleteModal('{{ $producto->PRO_Codigo }}')"
                                                 class="text-red-600 hover:text-red-900 dark:text-red-400"
-                                                title="Eliminar">
+                                                title="Eliminar producto">
                                                 <svg class="h-5 w-5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -228,8 +235,13 @@
         <div class="flex items-center justify-center min-h-screen px-4 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="closeDeleteModal()"></div>
             <div
-                class="inline-block align-bottom bg-white dark:bg-zinc-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <form id="delete-form" method="POST" class="p-6">
+                class="inline-block align-bottom bg-white dark:bg-zinc-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full relative">
+                <button onclick="closeDeleteModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <form id="delete-form" method="POST" class="p-6" x-data="{ deleting: false }" @submit="deleting = true">
                     @csrf
                     @method('DELETE')
                     <h3 class="text-lg font-medium text-gray-900 dark:text-white">Eliminar Producto</h3>
@@ -238,8 +250,15 @@
                     <div class="mt-6 flex justify-end space-x-3">
                         <button type="button" onclick="closeDeleteModal()"
                             class="px-4 py-2 bg-gray-200 dark:bg-zinc-700 rounded-md text-sm font-semibold">Cancelar</button>
-                        <button type="submit"
-                            class="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-semibold hover:bg-red-700">Eliminar</button>
+                        <button type="submit" :disabled="deleting"
+                            class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition">
+                            <svg x-show="deleting" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span x-show="!deleting">Eliminar</span>
+                            <span x-show="deleting">Eliminando...</span>
+                        </button>
                     </div>
                 </form>
             </div>

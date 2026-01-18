@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('carritos', function (Blueprint $table) {
-            $table->id();
+            $table->string('CRC_Carrito', 13)->primary();
+            $table->string('CLI_Ced_Ruc', 13);
+            $table->foreign('CLI_Ced_Ruc')->references('CLI_Ced_Ruc')->on('clientes')->onDelete('cascade');
             $table->timestamps();
         });
     }

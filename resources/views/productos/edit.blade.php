@@ -39,7 +39,7 @@
 
             <div class="bg-white dark:bg-zinc-800 overflow-hidden shadow rounded-lg">
                 <form action="{{ route('products.update', $producto->PRO_Codigo) }}" method="POST"
-                    enctype="multipart/form-data">
+                    enctype="multipart/form-data" x-data="{ loading: false }" @submit="loading = true">
                     @csrf
                     @method('PUT')
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -154,6 +154,7 @@
                                     <span class="text-sm text-gray-600 dark:text-gray-400">Subir nueva imagen (dejar vacío
                                         para mantener la actual)</span>
                                     <input type="file" name="PRO_Imagen" id="PRO_Imagen" accept="image/*"
+                                        onchange="document.getElementById('preview').src = window.URL.createObjectURL(this.files[0])"
                                         class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-zinc-700 dark:file:text-white">
                                 </label>
                             </div>
@@ -169,12 +170,14 @@
                             Cancelar
                         </a>
                         <button type="submit"
-                            class="inline-flex items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700 focus:ring-2 focus:ring-yellow-500 transition">
-                            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        <button type="submit" :disabled="loading"
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            <svg x-show="loading" class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            Actualizar Producto
+                            <span x-show="!loading">Actualizar Producto</span>
+                            <span x-show="loading">Actualizando...</span>
                         </button>
                     </div>
                 </form>
@@ -182,12 +185,5 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('PRO_Imagen').onchange = evt => {
-            const [file] = document.getElementById('PRO_Imagen').files
-            if (file) {
-                document.getElementById('preview').src = URL.createObjectURL(file)
-            }
-        }
-    </script>
+
 @endsection

@@ -31,10 +31,6 @@ class Cliente extends Model
             ->withQueryString();
     }
 
-    /* ===========================
-       MÉTODOS CRUD
-    ============================ */
-
     public static function createCliente(array $data)
     {
         return self::create($data);
@@ -49,10 +45,6 @@ class Cliente extends Model
     {
         return $cliente->delete();
     }
-
-    /* ===========================
-       VALIDACIONES
-    ============================ */
 
     public static function rules($id = null)
     {
@@ -72,20 +64,16 @@ class Cliente extends Model
             'CLI_Ced_Ruc.min' => 'La cédula/RUC debe tener al menos 10 dígitos.',
             'CLI_Ced_Ruc.max' => 'La cédula/RUC debe tener máximo 13 dígitos.',
             'CLI_Ced_Ruc.unique' => 'La cédula/RUC ya está registrada.',
-
             'CLI_Nombre.required' => 'El nombre es obligatorio.',
             'CLI_Nombre.max' => 'El nombre no debe exceder los 60 caracteres.',
             'CLI_Nombre.regex' => 'El nombre solo puede contener letras y espacios.',
-
             'CLI_Telefono.required' => 'El teléfono es obligatorio.',
             'CLI_Telefono.size' => 'El teléfono debe tener exactamente 10 dígitos.',
             'CLI_Telefono.regex' => 'El teléfono debe contener solo números.',
-
             'CLI_Correo.required' => 'El correo electrónico es obligatorio.',
             'CLI_Correo.email' => 'El correo electrónico no es válido.',
             'CLI_Correo.max' => 'El correo electrónico no debe exceder los 60 caracteres.',
             'CLI_Correo.unique' => 'El correo electrónico ya está registrado.',
-
             'CLI_Direccion.required' => 'La dirección es obligatoria.',
             'CLI_Direccion.max' => 'La dirección no debe exceder los 150 caracteres.',
         ];
