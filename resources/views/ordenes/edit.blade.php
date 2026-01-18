@@ -2,224 +2,220 @@
 
 @section('content')
     <div class="max-w-7xl mx-auto p-6">
-        <form action="{{ route('purchase-orders.update', $orden->ORC_Numero) }}" method="POST" id="order-form">
-            @csrf
-            @method('PUT')
-
-            <div class="bg-white dark:bg-zinc-800 shadow rounded-lg p-6 mb-6">
-                <h2 class="text-xl font-bold mb-4 dark:text-white">Editar Orden #{{ $orden->ORC_Numero }}</h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <input type="text" name="ORC_Numero" value="{{ $orden->ORC_Numero }}" readonly
-                            class="bg-gray-100 w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-gray-400 cursor-not-allowed">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium dark:text-gray-300">Proveedor</label>
-                        <select name="PRV_Ced_Ruc"
-                            class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
-                            @foreach ($proveedores as $prov)
-                                <option value="{{ $prov->PRV_Ced_Ruc }}"
-                                    {{ $orden->PRV_Ced_Ruc == $prov->PRV_Ced_Ruc ? 'selected' : '' }}>
-                                    {{ $prov->PRV_Nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium dark:text-gray-300">Fecha Emisión</label>
-                        <input type="date" name="ORC_Fecha_Emision" value="{{ $orden->ORC_Fecha_Emision }}"
-                            class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium dark:text-gray-300">Fecha Entrega</label>
-                        <input type="date" name="ORC_Fecha_Entrega" value="{{ $orden->ORC_Fecha_Entrega }}"
-                            class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
-                    </div>
-                </div>
+    <form action="{{ route('purchase-orders.update', $orden->ORC_Numero) }}" method="POST" id="order-form"
+        x-data="ordenFormEdit()"
+        x-init="initForm(
+            {{ $orden->productos->map(function($p) { return ['id' => uniqid(), 'code' => $p->PRO_Codigo, 'qty' => $p->pivot->cantidad_solicitada, 'price' => $p->PRO_Precio]; }) }},
+            '{{ $orden->ORC_Fecha_Emision }}',
+            '{{ $orden->ORC_Fecha_Entrega }}'
+        )"
+        @submit="loading = true">
+        @csrf
+        @method('PUT')
+        
+        <!-- Error Message -->
+        <template x-if="errorMessage">
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <span class="block sm:inline" x-text="errorMessage"></span>
+                <span class="absolute top-0 bottom-0 right-0 px-4 py-3" @click="errorMessage = ''">
+                    <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+                </span>
             </div>
+        </template>
 
-            <div class="bg-white dark:bg-zinc-800 shadow rounded-lg p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold dark:text-white">Productos de la Orden</h3>
-                    <button type="button" onclick="addRow()" class="bg-green-600 text-white px-3 py-1 rounded-md text-sm">+
-                        Añadir</button>
+        <div class="bg-white dark:bg-zinc-800 shadow rounded-lg p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4 dark:text-white">Editar Orden #{{ $orden->ORC_Numero }}</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium dark:text-gray-300">Número de Orden</label>
+                    <input type="text" name="ORC_Numero" value="{{ $orden->ORC_Numero }}" readonly
+                        class="bg-gray-100 w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-gray-400 cursor-not-allowed">
                 </div>
-
-                <table class="w-full">
-                    <thead>
-                        <tr class="text-left text-sm border-b dark:border-zinc-700">
-                            <th class="pb-2">Producto</th>
-                            <th class="pb-2 w-32">Cantidad</th>
-                            <th class="pb-2 w-32">Precio Unit.</th>
-                            <th class="pb-2 w-32">Subtotal</th>
-                            <th class="pb-2 w-16"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="items-body">
-                        @foreach ($orden->productos as $item)
-                            <tr id="row-{{ $loop->index }}" class="border-b dark:border-zinc-700">
-                                <td class="py-3">
-                                    <select name="productos[]" onchange="validateSelection(this, {{ $loop->index }})"
-                                        class="w-full rounded-md dark:bg-zinc-900 dark:text-white select-product" required>
-                                        @foreach ($productos as $p)
-                                            <option value="{{ $p->PRO_Codigo }}" data-price="{{ $p->PRO_Precio }}"
-                                                {{ $item->PRO_Codigo == $p->PRO_Codigo ? 'selected' : '' }}>
-                                                {{ $p->PRO_Nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                                <td class="py-3">
-                                    <input type="number" name="cantidades[]"
-                                        value="{{ $item->pivot->cantidad_solicitada }}" min="1"
-                                        oninput="calculateSubtotal({{ $loop->index }})"
-                                        class="w-full rounded-md dark:bg-zinc-900 dark:text-white">
-                                </td>
-                                <td class="py-3">
-                                    <input type="number" name="precios[]" value="{{ $item->PRO_Precio }}"
-                                        class="w-full border-none bg-transparent dark:text-gray-300" readonly>
-                                </td>
-                                <td class="py-3">
-                                    <input type="number" step="0.01"
-                                        class="subtotal w-full border-none bg-transparent font-semibold dark:text-white"
-                                        value="{{ $item->pivot->cantidad_solicitada * $item->PRO_Precio }}" readonly>
-                                </td>
-                                <td class="py-3 text-center">
-                                    <button type="button" onclick="removeRow({{ $loop->index }})"
-                                        class="text-red-500">✕</button>
-                                </td>
-                            </tr>
+                <div>
+                    <label class="block text-sm font-medium dark:text-gray-300">Proveedor</label>
+                    <select name="PRV_Ced_Ruc" id="proveedor-select"
+                        class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
+                        @foreach ($proveedores as $prov)
+                            <option value="{{ $prov->PRV_Ced_Ruc }}"
+                                {{ $orden->PRV_Ced_Ruc == $prov->PRV_Ced_Ruc ? 'selected' : '' }}>
+                                {{ $prov->PRV_Nombre }}
+                            </option>
                         @endforeach
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3" class="text-right font-bold py-4 dark:text-white">TOTAL:</td>
-                            <td><input type="number" step="0.01" name="ORC_Monto_Total" id="total-final"
-                                    value="{{ $orden->ORC_Monto_Total }}" readonly
-                                    class="w-full font-bold border-none bg-transparent dark:text-blue-400"></td>
-                        </tr>
-                    </tfoot>
-                </table>
-
-                <div class="mt-6 flex justify-end gap-2">
-                    <a href="{{ route('purchase-orders.index') }}" class="px-6 py-2 bg-gray-200 rounded-md">Cancelar</a>
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md">Actualizar Orden</button>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium dark:text-gray-300">Fecha Emisión</label>
+                    <input type="date" name="ORC_Fecha_Emision" x-model="fechaEmision"
+                        class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium dark:text-gray-300">Fecha Entrega</label>
+                    <input type="date" name="ORC_Fecha_Entrega" x-model="fechaEntrega" @change="validateDates()"
+                        class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
 
-    <script>
-        const productosDisp = @json($productos);
+        <div class="bg-white dark:bg-zinc-800 shadow rounded-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold dark:text-white">Productos de la Orden</h3>
+                <button type="button" @click="addRow()" class="bg-green-600 text-white px-3 py-1 rounded-md text-sm">+
+                    Añadir</button>
+            </div>
 
-        function addRow() {
-            const tbody = document.getElementById('items-body');
-            const rowId = Date.now();
-            const html = `
-            <tr id="row-${rowId}" class="border-b dark:border-zinc-700">
-                <td class="py-3">
-                    <select name="productos[]" 
-                            onchange="validateSelection(this, ${rowId})" 
-                            class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white select-product" 
-                            required>
-                        <option value="">Seleccione...</option>
-                        ${productosDisp.map(p => `<option value="${p.PRO_Codigo}" data-price="${p.PRO_Precio}">${p.PRO_Nombre}</option>`).join('')}
-                    </select>
-                </td>
-                <td class="py-3">
-                    <input type="number" name="cantidades[]" min="1" value="1" oninput="calculateSubtotal(${rowId})" class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
-                </td>
-                <td class="py-3">
-                    <input type="number" step="0.01" name="precios[]" class="w-full border-none bg-transparent dark:text-gray-300" readonly>
-                </td>
-                <td class="py-3">
-                    <input type="number" step="0.01" class="subtotal w-full border-none bg-transparent font-semibold dark:text-white" readonly value="0.00">
-                </td>
-                <td class="py-3 text-center">
-                    <button type="button" onclick="removeRow(${rowId})" class="text-red-500 hover:text-red-700">✕</button>
-                </td>
-            </tr>
-        `;
-            tbody.insertAdjacentHTML('beforeend', html);
-        }
+            <table class="w-full">
+                <thead>
+                    <tr class="text-left text-sm border-b dark:border-zinc-700">
+                        <th class="pb-2">Producto</th>
+                        <th class="pb-2 w-32">Cantidad</th>
+                        <th class="pb-2 w-32">Precio Unit.</th>
+                        <th class="pb-2 w-32">Subtotal</th>
+                        <th class="pb-2 w-16"></th>
+                    </tr>
+                </thead>
+                <tbody id="items-body">
+                    <template x-for="(row, index) in rows" :key="row.id">
+                        <tr class="border-b dark:border-zinc-700">
+                            <td class="py-3">
+                                <select name="productos[]" 
+                                        class="w-full rounded-md dark:bg-zinc-900 dark:text-white select-product" 
+                                        x-init="initSelect2($el, row)"
+                                        required>
+                                    <option value="">Seleccione...</option>
+                                    <!-- Options injected -->
+                                </select>
+                            </td>
+                            <td class="py-3">
+                                <input type="number" name="cantidades[]" min="1" x-model="row.qty"
+                                    class="w-full rounded-md dark:bg-zinc-900 dark:text-white">
+                            </td>
+                            <td class="py-3">
+                                <input type="number" step="0.01" name="precios[]" :value="row.price"
+                                    class="w-full border-none bg-transparent dark:text-gray-300" readonly>
+                            </td>
+                            <td class="py-3">
+                                <input type="number" step="0.01"
+                                    class="w-full border-none bg-transparent font-semibold dark:text-white"
+                                    :value="(row.qty * row.price).toFixed(2)" readonly>
+                            </td>
+                            <td class="py-3 text-center">
+                                <button type="button" @click="removeRow(row.id)"
+                                    class="text-red-500">✕</button>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-right font-bold py-4 dark:text-white">TOTAL:</td>
+                        <td><input type="number" step="0.01" name="ORC_Monto_Total" id="total-final"
+                                :value="totalOrden" readonly
+                                class="w-full font-bold border-none bg-transparent dark:text-blue-400"></td>
+                    </tr>
+                </tfoot>
+            </table>
 
-        // Nueva función para validar duplicados y actualizar precio
-        function validateSelection(select, rowId) {
-            const selectedValue = select.value;
-            const allSelects = document.querySelectorAll('.select-product');
-            let duplicate = false;
+            <div class="mt-6 flex justify-end gap-2">
+                <a href="{{ route('purchase-orders.index') }}" class="px-6 py-2 bg-gray-200 rounded-md">Cancelar</a>
+                <button type="submit" 
+                        :disabled="loading || rows.length === 0"
+                        class="inline-flex items-center px-6 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    <span x-show="!loading">Actualizar Orden</span>
+                    <span x-show="loading">Actualizando...</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
 
-            allSelects.forEach(s => {
-                // Comparamos si el valor existe en otro select que no sea el actual
-                if (s !== select && s.value === selectedValue && selectedValue !== "") {
-                    duplicate = true;
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('ordenFormEdit', () => ({
+            rows: [],
+            loading: false,
+            errorMessage: '',
+            productos: @json($productos),
+            fechaEmision: '',
+            fechaEntrega: '',
+
+            get totalOrden() {
+                return this.rows.reduce((sum, row) => sum + (row.qty * row.price), 0).toFixed(2);
+            },
+
+            initForm(initialRows, emision, entrega) {
+                // Init Proveedor Select2
+                $('#proveedor-select').select2({
+                    placeholder: "Seleccione Proveedor",
+                    width: '100%',
+                    allowClear: true
+                });
+
+                this.rows = initialRows;
+                this.fechaEmision = emision;
+                this.fechaEntrega = entrega;
+            },
+
+            addRow() {
+                this.rows.push({
+                    id: Date.now(),
+                    qty: 1,
+                    price: 0,
+                    code: ''
+                });
+            },
+
+            removeRow(id) {
+                this.rows = this.rows.filter(r => r.id !== id);
+            },
+
+            validateDates() {
+                if (this.fechaEntrega && this.fechaEntrega < this.fechaEmision) {
+                    this.showError("La fecha de entrega no puede ser menor a la de emisión");
+                    this.fechaEntrega = this.fechaEmision;
                 }
-            });
+            },
 
-            if (duplicate) {
-                alert("Este producto ya ha sido agregado a la orden. Por favor, ajuste la cantidad en la fila existente.");
-                select.value = ""; // Resetear el select
-                updatePrice(select, rowId); // Limpiar precio y subtotal
-                return;
-            }
+            showError(msg) {
+                this.errorMessage = msg;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => this.errorMessage = '', 5000);
+            },
 
-            updatePrice(select, rowId);
-        }
+            initSelect2(el, row) {
+                const options = this.productos.map(p => 
+                    `<option value="${p.PRO_Codigo}" data-price="${p.PRO_Precio}">${p.PRO_Nombre} - ${p.PRO_Codigo}</option>`
+                ).join('');
+                
+                $(el).html('<option value="">Seleccione...</option>' + options);
 
-        function updatePrice(select, rowId) {
-            const selectedOption = select.options[select.selectedIndex];
-            const price = selectedOption ? selectedOption.getAttribute('data-price') : 0;
-            const row = document.getElementById(`row-${rowId}`);
-            row.querySelector('input[name="precios[]"]').value = price || 0;
-            calculateSubtotal(rowId);
-        }
+                $(el).select2({
+                    placeholder: "Buscar Producto",
+                    width: '100%'
+                });
 
-        function calculateSubtotal(rowId) {
-            const row = document.getElementById(`row-${rowId}`);
-            if (!row) return;
-
-            const qty = row.querySelector('input[name="cantidades[]"]').value || 0;
-            const price = row.querySelector('input[name="precios[]"]').value || 0;
-            const subtotalInput = row.querySelector('.subtotal');
-
-            const subtotal = (qty * price).toFixed(2);
-            subtotalInput.value = subtotal;
-
-            calculateTotalFinal();
-        }
-
-        function calculateTotalFinal() {
-            let total = 0;
-            document.querySelectorAll('.subtotal').forEach(input => {
-                total += parseFloat(input.value) || 0;
-            });
-            document.getElementById('total-final').value = total.toFixed(2);
-        }
-
-        function removeRow(rowId) {
-            document.getElementById(`row-${rowId}`).remove();
-            calculateTotalFinal();
-        }
-
-        document.addEventListener('DOMContentLoaded', addRow);
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const fechaEmision = document.querySelector('input[name="ORC_Fecha_Emision"]');
-            const fechaEntrega = document.querySelector('input[name="ORC_Fecha_Entrega"]');
-
-            function validarFechas() {
-                // Establecer el mínimo de entrega basado en la emisión
-                fechaEntrega.min = fechaEmision.value;
-
-                if (fechaEntrega.value && fechaEntrega.value < fechaEmision.value) {
-                    alert("La fecha de entrega no puede ser menor a la de emisión");
-                    fechaEntrega.value = fechaEmision.value;
+                if (row.code) {
+                    $(el).val(row.code).trigger('change');
                 }
-            }
 
-            fechaEmision.addEventListener('change', validarFechas);
-            fechaEntrega.addEventListener('change', validarFechas);
-        });
-    </script>
-@endsection
+                $(el).on('select2:select', (e) => {
+                    const selectedId = e.params.data.id;
+                    
+                    const isDuplicate = this.rows.some(r => r.id !== row.id && r.code === selectedId);
+                    
+                    if (isDuplicate) {
+                       this.showError("Este producto ya ha sido agregado a la orden. Ajuste la cantidad en la fila existente.");
+                       $(el).val(null).trigger('change');
+                       return;
+                    }
+
+                    const selected = this.productos.find(p => p.PRO_Codigo == selectedId);
+                    if (selected) {
+                        row.price = selected.PRO_Precio;
+                        row.code = selected.PRO_Codigo;
+                    }
+                });
+            }
+        }));
+    });
+</script>@endsection
