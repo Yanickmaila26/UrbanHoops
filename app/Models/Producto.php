@@ -13,6 +13,7 @@ class Producto extends Model
 
     protected $fillable = [
         'PRO_Codigo',
+        'PRV_Ced_Ruc',
         'PRO_Nombre',
         'PRO_Descripcion',
         'PRO_Color',
@@ -50,10 +51,16 @@ class Producto extends Model
         return $producto->update(['activo' => false]);
     }
 
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class, 'PRV_Ced_Ruc', 'PRV_Ced_Ruc');
+    }
+
     public static function rules($id = null)
     {
         return [
             'PRO_Codigo' => 'required|string|max:15|unique:productos,PRO_Codigo,' . $id . ',PRO_Codigo',
+            'PRV_Ced_Ruc' => 'required|exists:proveedors,PRV_Ced_Ruc',
             'PRO_Nombre' => 'required|string|max:100|regex:/^[A-Za-z0-9\sáéíóúÁÉÍÓÚñÑ.]+$/',
             'PRO_Descripcion' => 'required|string|max:255',
             'PRO_Color'       => 'required|string|max:15',
@@ -75,6 +82,8 @@ class Producto extends Model
         return [
             'PRO_Codigo.required'      => 'El código es obligatorio.',
             'PRO_Codigo.unique'        => 'Este código ya ha sido registrado.',
+            'PRV_Ced_Ruc.required'     => 'El proveedor es obligatorio.',
+            'PRV_Ced_Ruc.exists'       => 'El proveedor seleccionado no es válido.',
             'PRO_Nombre.required'      => 'El nombre del producto es obligatorio.',
             'PRO_Nombre.regex'         => 'El nombre no puede contener caracteres especiales.',
             'PRO_Descripcion.required' => 'La descripción es obligatoria.',

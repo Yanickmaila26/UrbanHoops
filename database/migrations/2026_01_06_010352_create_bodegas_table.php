@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('bodegas', function (Blueprint $table) {
             $table->string('BOD_Codigo', 15)->unique()->primary();
-            $table->string('TRN_Codigo', 15);
-            $table->string('ORC_Numero', 15)->nullable();
-            $table->string('PRO_Codigo', 15)->nullable();
-            $table->integer('BOD_cantidad');
+            $table->string('BOD_Nombre', 30);
+            $table->string('BOD_Direccion', 50);
+            $table->string('BOD_Ciudad', 30);
+            $table->string('BOD_Pais', 30);
+            $table->string('BOD_CodigoPostal', 10);
+            $table->string('BOD_Responsable', 50);
             $table->timestamps();
         });
     }

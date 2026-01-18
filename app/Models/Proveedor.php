@@ -34,6 +34,11 @@ class Proveedor extends Model
             ->withQueryString();
     }
 
+    public static function getProveedoresActivos()
+    {
+        return self::activos()->orderBy('PRV_Nombre', 'asc')->get();
+    }
+
     public static function createProveedor(array $data)
     {
         return self::create($data);

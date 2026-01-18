@@ -27,7 +27,8 @@
             </div>
 
             <div class="bg-white dark:bg-zinc-800 shadow rounded-lg p-6">
-                <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" x-data="{ loading: false }" @submit="loading = true">
+                <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data"
+                    x-data="{ loading: false }" @submit="loading = true">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -40,6 +41,26 @@
                                 placeholder="P000">
                             <p class="text-xs text-gray-500 mt-1">Automático</p>
                         </div>
+
+                        <div>
+                            <label for="PRV_Ced_Ruc"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Proveedor</label>
+                            <select name="PRV_Ced_Ruc" id="PRV_Ced_Ruc"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white"
+                                required>
+                                <option value="">Seleccione Proveedor</option>
+                                @foreach ($proveedores as $proveedor)
+                                    <option value="{{ $proveedor->PRV_Ced_Ruc }}"
+                                        {{ old('PRV_Ced_Ruc') == $proveedor->PRV_Ced_Ruc ? 'selected' : '' }}>
+                                        {{ $proveedor->PRV_Nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('PRV_Ced_Ruc')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div>
                             <label for="PRO_Nombre"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre del
@@ -107,8 +128,7 @@
                             <label for="PRO_Precio"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">Precio ($)</label>
                             <input type="number" step="0.01" min="0" name="PRO_Precio" id="PRO_Precio"
-                                value="{{ old('PRO_Precio') }}" 
-                                x-on:input="$el.value < 0 ? $el.value = 0 : null"
+                                value="{{ old('PRO_Precio') }}" x-on:input="$el.value < 0 ? $el.value = 0 : null"
                                 placeholder="0.00"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white"
                                 required>
@@ -159,9 +179,13 @@
                         </a>
                         <button type="submit" :disabled="loading"
                             class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                            <svg x-show="loading" class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            <svg x-show="loading" class="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
                             </svg>
                             <span x-show="!loading">Guardar Producto</span>
                             <span x-show="loading">Guardando...</span>
@@ -172,5 +196,17 @@
         </div>
     </div>
 
-
 @endsection
+
+@push('scripts')
+    <!-- Initialize Select2 -->
+    <script>
+        $(document).ready(function() {
+            $('#PRV_Ced_Ruc').select2({
+                placeholder: "Seleccione Proveedor",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+@endpush
