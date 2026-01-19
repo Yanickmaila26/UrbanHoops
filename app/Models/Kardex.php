@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class Kardex extends Model
 {
-    protected $table = 'kardex';
+    protected $table = 'kardexes';
     protected $primaryKey = 'KAR_Codigo';
     public $incrementing = false;
     protected $keyType = 'string';

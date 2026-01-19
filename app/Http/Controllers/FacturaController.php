@@ -74,7 +74,7 @@ class FacturaController extends Controller
                     'FAC_Codigo' => $request->FAC_Codigo,
                     'CLI_Ced_Ruc' => $request->CLI_Ced_Ruc, // Asegúrate de que este campo coincida con tu vista y DB
                     'FAC_Total' => $totalCallback,
-                    'FAC_Estado' => 'Pag' // Asumimos pagada al crear o 'Pen'
+                    'FAC_Estado' => 'Pen' // Pendiente hasta que el cliente pague
                 ]);
 
                 // 3. Attach Productos
@@ -115,7 +115,6 @@ class FacturaController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Not implemented as per requirements
         return redirect()->route('invoices.show', $id);
     }
 
@@ -129,5 +128,27 @@ class FacturaController extends Controller
 
         $factura->update(['FAC_Estado' => 'Anu']);
         return redirect()->route('invoices.index')->with('success', 'Factura anulada correctamente.');
+    }
+    public function getCart($dni)
+    {
+        $carrito = Carrito::where('CLI_Ced_Ruc', $dni)->with('productos')->first();
+
+        if (!$carrito) {
+            return response()->json(['success' => false, 'message' => 'Carrito no encontrado']);
+        }
+
+        $items = $carrito->productos->map(function ($producto) {
+            return [
+                'id' => $producto->PRO_Codigo,
+                'name' => $producto->PRO_Nombre,
+                'qty' => $producto->pivot->CRD_Cantidad,
+                'price' => $producto->PRO_Precio,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'items' => $items
+        ]);
     }
 }
