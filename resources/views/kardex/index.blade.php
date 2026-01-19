@@ -43,6 +43,7 @@
                         <thead class="bg-gray-50 dark:bg-zinc-700 text-gray-700 dark:text-gray-200 uppercase font-semibold">
                             <tr>
                                 <th class="px-6 py-4">Código</th>
+                                <th class="px-6 py-4">Código Bodega</th>
                                 <th class="px-6 py-4">Fecha</th>
                                 <th class="px-6 py-4">Transacción</th>
                                 <th class="px-6 py-4">Referencia</th>
@@ -52,6 +53,9 @@
                         <tbody class="divide-y divide-gray-200 dark:divide-zinc-700">
                             @forelse($movimientos as $mov)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-zinc-700/50 transition">
+                                    <td class="px-6 py-4 font-mono font-bold text-blue-600 dark:text-blue-400">
+                                        {{ $mov->KAR_Codigo }}
+                                    </td>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600 dark:text-blue-400">
                                         {{ $mov->BOD_Codigo }}
                                     </td>
