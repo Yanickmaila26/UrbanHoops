@@ -22,8 +22,7 @@ class FacturaController extends Controller
                 return $query->where('FAC_Codigo', 'like', "%{$search}%")
                     ->orWhere('CLI_Ced_Ruc', 'like', "%{$search}%")
                     ->orWhereHas('cliente', function ($q) use ($search) {
-                        $q->where('CLI_Nombre', 'like', "%{$search}%")
-                            ->orWhere('CLI_Apellido', 'like', "%{$search}%");
+                        $q->where('CLI_Nombre', 'like', "%{$search}%");
                     });
             })
             ->orderBy('created_at', 'desc')
