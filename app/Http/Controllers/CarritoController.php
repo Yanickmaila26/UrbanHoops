@@ -46,8 +46,6 @@ class CarritoController extends Controller
 
     public function store(Request $request)
     {
-        // Validar
-        // Validar
         $request->validate(Carrito::rules(), Carrito::messages());
 
         if (count($request->productos) !== count(array_unique($request->productos))) {

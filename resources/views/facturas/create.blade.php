@@ -36,8 +36,10 @@
                             class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
                             <option value="">Seleccione Cliente</option>
                             @foreach ($clientes as $cliente)
-                                <option value="{{ $cliente->CLI_Ced_Ruc }}">{{ $cliente->CLI_Ced_Ruc }} -
-                                    {{ $cliente->CLI_Nombre }} {{ $cliente->CLI_Apellido }}</option>
+                                <option value="{{ $cliente->CLI_Ced_Ruc }}"
+                                    {{ old('CLI_Ced_Ruc') == $cliente->CLI_Ced_Ruc ? 'selected' : '' }}>
+                                    {{ $cliente->CLI_Ced_Ruc }} - {{ $cliente->CLI_Nombre }} {{ $cliente->CLI_Apellido }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -151,7 +153,29 @@
                         this.checkCart(e.params.data.id);
                     });
 
-                    this.addRow();
+                    // Check for invalid input (Old Data)
+                    const oldProductos = @json(old('productos', []));
+                    const oldCantidades = @json(old('cantidades', []));
+
+                    if (oldProductos.length > 0) {
+                        oldProductos.forEach((code, index) => {
+                            const product = this.productos.find(p => p.PRO_Codigo == code);
+                            const price = product ? parseFloat(product.PRO_Precio) : 0;
+                            const qty = oldCantidades[index] ? parseInt(oldCantidades[index]) :
+                                1;
+
+                            this.rows.push({
+                                id: Date.now() + Math.random() + index,
+                                qty: qty,
+                                price: price,
+                                code: code,
+                                isCart: false
+                            });
+                        });
+                    } else {
+                        // Only add empty row if no old data
+                        this.addRow();
+                    }
                 },
 
                 async checkCart(dni) {
@@ -162,9 +186,11 @@
                         const data = await response.json();
 
                         if (data.success && data.items.length > 0) {
-                            if (confirm('El cliente tiene un carrito de compras activo con ' + data
-                                    .items.length + ' productos. ¿Desea cargarlos a la factura?')) {
-                                this.rows = []; // Clear default row
+                            this.rows = []; // Clear default row
+
+                            // Slight delay to ensure Alpine clears the DOM before pushing new items
+                            // This prevents potential issues with key tracking if reusing keys (though we use random ID)
+                            setTimeout(() => {
                                 data.items.forEach(item => {
                                     this.rows.push({
                                         id: Date.now() + Math.random(),
@@ -174,16 +200,7 @@
                                         isCart: true
                                     });
                                 });
-                                // Re-init Select2 for new rows
-                                this.$nextTick(() => {
-                                    // Wait for DOM update
-                                    // We need to manually set values for the selects since they are dynamic
-                                    this.rows.forEach((row, index) => {
-                                        // Logic to set select2 val would go here or be handled by initSelect2 via x-init
-                                        // x-init will handle it BUT we need to ensure the Option exists or is selected
-                                    });
-                                });
-                            }
+                            }, 50);
                         }
                     } catch (error) {
                         console.error('Error fetching cart:', error);
@@ -192,7 +209,7 @@
 
                 addRow() {
                     this.rows.push({
-                        id: Date.now(),
+                        id: Date.now() + Math.random(),
                         qty: 1,
                         price: 0,
                         code: '',
@@ -202,7 +219,6 @@
 
                 removeRow(id) {
                     this.rows = this.rows.filter(r => r.id !== id);
-                    // Also trigger validation if needed
                 },
 
                 showError(msg) {
@@ -215,21 +231,23 @@
                 },
 
                 initSelect2(el, row) {
-                    // If row has pre-filled code (from Cart), set it
+                    // Inject options
                     const options = this.productos.map(p =>
                         `<option value="${p.PRO_Codigo}" data-price="${p.PRO_Precio}">${p.PRO_Nombre} - ${p.PRO_Codigo}</option>`
                     ).join('');
 
                     $(el).html('<option value="">Seleccione...</option>' + options);
 
-                    if (row.code) {
-                        $(el).val(row.code);
-                    }
-
+                    // Init Select2
                     $(el).select2({
                         placeholder: "Buscar Producto",
                         width: '100%'
                     });
+
+                    // Set initial value if exists (from Cart) and trigger change to update UI
+                    if (row.code) {
+                        $(el).val(row.code).trigger('change.select2');
+                    }
 
                     $(el).on('select2:select', (e) => {
                         const selectedId = e.params.data.id;
@@ -241,7 +259,7 @@
                         if (isDuplicate) {
                             this.showError(
                                 "Este producto ya está en la factura. Ajuste la cantidad.");
-                            $(el).val(null).trigger('change');
+                            $(el).val(null).trigger('change.select2');
                             return;
                         }
 
@@ -249,7 +267,7 @@
                         if (selected) {
                             row.price = parseFloat(selected.PRO_Precio);
                             row.code = selected.PRO_Codigo;
-                            row.isCart = false; // Reset flag if changed manually? Or keep?
+                            row.isCart = false;
                         }
                     });
                 }

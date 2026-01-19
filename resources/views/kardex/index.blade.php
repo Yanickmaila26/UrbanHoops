@@ -71,7 +71,7 @@
                                     <td
                                         class="px-6 py-4 text-center font-bold 
     {{ $mov->BOD_cantidad == 0 ? 'text-gray-500' : ($mov->transaccion->TRN_Tipo == 'E' ? 'text-green-600' : 'text-red-600') }}">
-                                        {{ $mov->BOD_cantidad }}
+                                        {{ $mov->KAR_cantidad }}
                                     </td>
 
                                 </tr>
