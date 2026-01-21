@@ -13,9 +13,8 @@
                             <div class="flex items-center p-4 border-b border-gray-200 last:border-b-0">
                                 <!-- Image -->
                                 <div class="w-20 h-20 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
-                                    <!-- Reusing product image logic, assuming generic for now or specific field -->
-                                    <img src="https://via.placeholder.com/80" alt="{{ $detalle->producto->PRO_Nombre }}"
-                                        class="w-full h-full object-cover">
+                                    <img src="{{ asset('storage/' . $detalle->producto->PRO_Imagen) }}"
+                                        alt="{{ $detalle->producto->PRO_Nombre }}" class="w-full h-full object-cover">
                                 </div>
                                 <!-- Info -->
                                 <div class="ml-4 flex-1">
@@ -24,10 +23,10 @@
                                 </div>
                                 <!-- Qty & Price -->
                                 <div class="flex items-center gap-4">
-                                    <span class="font-bold text-gray-600">{{ $detalle->DCA_Cantidad }} x
-                                        ${{ number_format($detalle->DCA_PrecioUnitario, 2) }}</span>
+                                    <span class="font-bold text-gray-600">{{ $detalle->CRD_Cantidad }} x
+                                        ${{ number_format($detalle->producto->PRO_Precio, 2) }}</span>
                                     <span
-                                        class="font-bold text-lg text-brand">${{ number_format($detalle->DCA_Total, 2) }}</span>
+                                        class="font-bold text-lg text-brand">${{ number_format($detalle->CRD_Cantidad * $detalle->producto->PRO_Precio, 2) }}</span>
                                 </div>
                             </div>
                         @endforeach
@@ -40,7 +39,11 @@
                         <h2 class="text-xl font-bold mb-4">Resumen del Pedido</h2>
                         <div class="flex justify-between mb-2 text-gray-600">
                             <span>Subtotal</span>
-                            <span>${{ number_format($carrito->getTotal(), 2) }}</span>
+                            <span>${{ number_format($carrito->getSubtotal(), 2) }}</span>
+                        </div>
+                        <div class="flex justify-between mb-2 text-gray-600">
+                            <span>IVA ({{ config('urbanhoops.iva', 15) }}%)</span>
+                            <span>${{ number_format($carrito->getIva(), 2) }}</span>
                         </div>
                         <div class="flex justify-between mb-4 text-gray-600">
                             <span>Envío</span>
