@@ -18,8 +18,16 @@ Route::get('/producto/{producto}', [App\Http\Controllers\PublicController::class
 Route::get('/contacto', function () {
     return view('contacto');
 })->name('contacto');
+Route::post('/contacto', [App\Http\Controllers\PublicController::class, 'submitContact'])->name('contacto.submit');
 
 
+
+// Client Authentication
+Route::get('/login', [App\Http\Controllers\ClientAuthController::class, 'showLoginForm'])->name('client.login');
+Route::post('/login', [App\Http\Controllers\ClientAuthController::class, 'login'])->name('client.login.submit');
+Route::get('/register', [App\Http\Controllers\ClientAuthController::class, 'showRegisterForm'])->name('client.register');
+Route::post('/register', [App\Http\Controllers\ClientAuthController::class, 'register'])->name('client.register.submit');
+Route::post('/logout', [App\Http\Controllers\ClientAuthController::class, 'logout'])->name('client.logout');
 
 Route::middleware([
     'auth:sanctum',
@@ -31,18 +39,36 @@ Route::middleware([
     })->name('dashboard');
 });
 
+// Admin Routes with Role Protections
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
-    // Inventario
-    Route::resource('productos', ProductoController::class)->names('products');
-    Route::resource('bodegas', BodegaController::class)->names('warehouse');
-    Route::resource('kardex', KardexController::class)->names('kardex');
-    Route::get('invoices/cart/{dni}', [FacturaController::class, 'getCart'])->name('invoices.cart'); // AJAX for Cart Integration
-    // Ventas
-    Route::resource('clientes', ClienteController::class)->names('customers');
-    Route::resource('carritos', CarritoController::class)->names('shopping-carts');
-    Route::resource('facturas', FacturaController::class)->names('invoices');
 
-    // Compras
-    Route::resource('proveedores', ProveedorController::class)->names('suppliers');
-    Route::resource('ordenes-compra', OrdenCompraController::class)->names('purchase-orders');
+    // Shared Resources (Multiple roles can access)
+    // Ordenes de Compra: Admin, Bodega, Finanzas
+    Route::group(['middleware' => ['role:Administrador|Bodega|Finanzas']], function () {
+        Route::resource('ordenes-compra', OrdenCompraController::class)->names('purchase-orders');
+    });
+
+    // Facturas: Admin, Ventas, Finanzas
+    Route::group(['middleware' => ['role:Administrador|Ventas|Finanzas']], function () {
+        Route::resource('facturas', FacturaController::class)->names('invoices');
+        Route::get('invoices/cart/{dni}', [FacturaController::class, 'getCart'])->name('invoices.cart');
+    });
+
+    // Clientes & Carritos: Admin, Ventas
+    Route::group(['middleware' => ['role:Administrador|Ventas']], function () {
+        Route::resource('clientes', ClienteController::class)->names('customers');
+        Route::resource('carritos', CarritoController::class)->names('shopping-carts');
+    });
+
+    // Bodega & Kardex: Admin, Bodega
+    Route::group(['middleware' => ['role:Administrador|Bodega']], function () {
+        Route::resource('bodegas', BodegaController::class)->names('warehouse');
+        Route::resource('kardex', KardexController::class)->names('kardex');
+    });
+
+    // Productos & Proveedores: Admin, Comercial
+    Route::group(['middleware' => ['role:Administrador|Comercial']], function () {
+        Route::resource('productos', ProductoController::class)->names('products');
+        Route::resource('proveedores', ProveedorController::class)->names('suppliers');
+    });
 });

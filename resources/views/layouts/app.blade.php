@@ -62,21 +62,29 @@
                 <div
                     class="flex flex-col lg:flex-row gap-4 items-center mt-6 lg:mt-0 lg:ml-6 border-t lg:border-none border-gray-700 pt-4 lg:pt-0">
 
-                    @if (Route::has('login'))
+                    @if (Route::has('client.login'))
                         <div class="flex items-center gap-4">
-                            @auth
-                                <a href="{{ url('/dashboard') }}"
-                                    class="hover:text-brand transition font-medium text-sm whitespace-nowrap">Mi Cuenta</a>
+                            @if (Auth::guard('web')->check())
+                                <a href="{{ url('/admin/dashboard') }}"
+                                    class="hover:text-brand transition font-medium text-sm whitespace-nowrap">Admin
+                                    Dashboard</a>
+                            @elseif(Auth::guard('client')->check())
+                                <span class="text-white text-sm">Hola, {{ Auth::guard('client')->user()->email }}</span>
+                                <form method="POST" action="{{ route('client.logout') }}" class="inline">
+                                    @csrf
+                                    <button type="submit"
+                                        class="hover:text-brand transition font-medium text-sm whitespace-nowrap ml-2">Salir</button>
+                                </form>
                             @else
-                                <a href="{{ route('login') }}"
+                                <a href="{{ route('client.login') }}"
                                     class="hover:text-brand transition font-medium text-sm uppercase tracking-wider">Entrar</a>
-                                @if (Route::has('register'))
-                                    <a href="{{ route('register') }}"
+                                @if (Route::has('client.register'))
+                                    <a href="{{ route('client.register') }}"
                                         class="btn-brand text-black px-4 py-2 rounded text-xs font-bold uppercase whitespace-nowrap">
                                         Registro
                                     </a>
                                 @endif
-                            @endauth
+                            @endif
                         </div>
                     @endif
 
