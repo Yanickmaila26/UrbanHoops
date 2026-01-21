@@ -72,6 +72,25 @@
                         </div>
 
                         <div>
+                            <label for="SCT_Codigo"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Subcategoría</label>
+                            <select name="SCT_Codigo" id="SCT_Codigo"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white">
+                                <option value="">Seleccione Subcategoría</option>
+                                @foreach ($subcategorias as $sub)
+                                    <option value="{{ $sub->SCT_Codigo }}"
+                                        {{ old('SCT_Codigo', $producto->SCT_Codigo) == $sub->SCT_Codigo ? 'selected' : '' }}>
+                                        {{ $sub->categoria->CAT_Nombre }} - {{ $sub->SCT_Nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('SCT_Codigo')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+
+                        <div>
                             <label for="PRO_Nombre"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nombre
                                 del
@@ -151,7 +170,8 @@
                         </div>
 
                         <div>
-                            <label for="PRO_Stock" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Stock
+                            <label for="PRO_Stock"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Stock
                                 Actual</label>
                             <input type="number" min="0" name="PRO_Stock" id="PRO_Stock"
                                 value="{{ old('PRO_Stock', $producto->PRO_Stock) }}" placeholder="Cantidad en almacén"
@@ -219,6 +239,11 @@
         $(document).ready(function() {
             $('#PRV_Ced_Ruc').select2({
                 placeholder: "Seleccione Proveedor",
+                allowClear: true,
+                width: '100%'
+            });
+            $('#SCT_Codigo').select2({
+                placeholder: "Seleccione Subcategoría",
                 allowClear: true,
                 width: '100%'
             });

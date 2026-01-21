@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Producto;
 use App\Models\Proveedor;
+use App\Models\Subcategoria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -32,8 +33,9 @@ class ProductoController extends Controller
         $nuevoCodigo = $ultimoProducto ? 'P' . str_pad((int)substr($ultimoProducto->PRO_Codigo, 1) + 1, 3, '0', STR_PAD_LEFT) : 'P001';
 
         $proveedores = Proveedor::getProveedoresActivos();
+        $subcategorias = Subcategoria::with('categoria')->get();
 
-        return view('productos.create', compact('nuevoCodigo', 'proveedores'));
+        return view('productos.create', compact('nuevoCodigo', 'proveedores', 'subcategorias'));
     }
 
     public function store(Request $request)
@@ -66,7 +68,8 @@ class ProductoController extends Controller
     public function edit(Producto $producto)
     {
         $proveedores = Proveedor::getProveedoresActivos();
-        return view('productos.edit', compact('producto', 'proveedores'));
+        $subcategorias = Subcategoria::with('categoria')->get();
+        return view('productos.edit', compact('producto', 'proveedores', 'subcategorias'));
     }
 
     public function update(Request $request, Producto $producto)

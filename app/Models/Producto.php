@@ -22,7 +22,8 @@ class Producto extends Model
         'PRO_Precio',
         'PRO_Stock',
         'PRO_Imagen',
-        'activo'
+        'activo',
+        'SCT_Codigo'
     ];
 
     public static function getProductos($search = null)
@@ -56,6 +57,11 @@ class Producto extends Model
         return $this->belongsTo(Proveedor::class, 'PRV_Ced_Ruc', 'PRV_Ced_Ruc');
     }
 
+    public function subcategoria()
+    {
+        return $this->belongsTo(Subcategoria::class, 'SCT_Codigo', 'SCT_Codigo');
+    }
+
     public static function rules($id = null)
     {
         return [
@@ -69,6 +75,7 @@ class Producto extends Model
             'PRO_Precio'      => 'required|numeric|min:0',
             'PRO_Stock'       => 'required|integer|min:0',
             'PRO_Imagen'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'SCT_Codigo'      => 'nullable|exists:subcategorias,SCT_Codigo',
         ];
     }
 
