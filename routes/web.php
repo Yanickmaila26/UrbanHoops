@@ -29,6 +29,16 @@ Route::get('/register', [App\Http\Controllers\ClientAuthController::class, 'show
 Route::post('/register', [App\Http\Controllers\ClientAuthController::class, 'register'])->name('client.register.submit');
 Route::post('/logout', [App\Http\Controllers\ClientAuthController::class, 'logout'])->name('client.logout');
 
+// Client Area (Protected)
+Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\ClientAreaController::class, 'index'])->name('dashboard');
+    Route::get('/cart', [App\Http\Controllers\ClientAreaController::class, 'cart'])->name('cart');
+    Route::get('/orders', [App\Http\Controllers\ClientAreaController::class, 'orders'])->name('orders');
+    Route::get('/invoices', [App\Http\Controllers\ClientAreaController::class, 'invoices'])->name('invoices');
+    Route::get('/addresses', [App\Http\Controllers\ClientAreaController::class, 'addresses'])->name('addresses');
+    Route::put('/addresses', [App\Http\Controllers\ClientAreaController::class, 'updateAddress'])->name('addresses.update');
+});
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),

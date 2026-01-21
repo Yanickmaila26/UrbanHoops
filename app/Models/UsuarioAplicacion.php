@@ -42,4 +42,8 @@ class UsuarioAplicacion extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function cliente()
+    {
+        return $this->hasOne(Cliente::class, 'usuario_aplicacion_id');
+    }
 }

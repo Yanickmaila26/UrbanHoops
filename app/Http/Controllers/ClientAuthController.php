@@ -55,14 +55,29 @@ class ClientAuthController extends Controller
         $request->validate([
             'email' => 'required|string|email|max:255|unique:usuario_aplicacions',
             'password' => 'required|string|min:8|confirmed',
+            'cli_ced_ruc' => 'required|string|min:10|max:13|unique:clientes,CLI_Ced_Ruc',
+            'cli_nombre' => 'required|string|max:60|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/',
+            'cli_telefono' => 'required|string|size:10|regex:/^[0-9]+$/',
+            'cli_direccion' => 'required|string|max:150',
         ]);
 
-        $user = \App\Models\UsuarioAplicacion::create([
-            'email' => $request->email,
-            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
-        ]);
+        \Illuminate\Support\Facades\DB::transaction(function () use ($request) {
+            $user = \App\Models\UsuarioAplicacion::create([
+                'email' => $request->email,
+                'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+            ]);
 
-        Auth::guard('client')->login($user);
+            \App\Models\Cliente::create([
+                'CLI_Ced_Ruc' => $request->cli_ced_ruc,
+                'CLI_Nombre' => $request->cli_nombre,
+                'CLI_Telefono' => $request->cli_telefono,
+                'CLI_Correo' => $request->email, // Sync email
+                'CLI_Direccion' => $request->cli_direccion,
+                'usuario_aplicacion_id' => $user->id,
+            ]);
+
+            Auth::guard('client')->login($user);
+        });
 
         return redirect(route('welcome'));
     }

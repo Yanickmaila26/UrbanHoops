@@ -78,5 +78,26 @@ class ClienteSeeder extends Seeder
                 $cliente
             );
         }
+
+        // Crear Cliente Usuario Específico (Yanick)
+        $yanickEmail = 'aetherin12@gmail.com';
+
+        // 1. Crear UsuarioAplicacion si no existe
+        $user = \App\Models\UsuarioAplicacion::firstOrCreate(
+            ['email' => $yanickEmail],
+            ['password' => \Illuminate\Support\Facades\Hash::make('secreto123')]
+        );
+
+        // 2. Crear Cliente asociado
+        \App\Models\Cliente::updateOrCreate(
+            ['CLI_Correo' => $yanickEmail],
+            [
+                'CLI_Ced_Ruc' => '1712294568', // Cédula ficticia para el ejemplo
+                'CLI_Nombre' => 'Yanick Maila',
+                'CLI_Telefono' => '0990339510',
+                'CLI_Direccion' => 'Quito, Ecuador',
+                'usuario_aplicacion_id' => $user->id
+            ]
+        );
     }
 }
