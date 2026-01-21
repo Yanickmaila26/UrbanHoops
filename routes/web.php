@@ -37,6 +37,16 @@ Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(fun
     Route::get('/invoices', [App\Http\Controllers\ClientAreaController::class, 'invoices'])->name('invoices');
     Route::get('/addresses', [App\Http\Controllers\ClientAreaController::class, 'addresses'])->name('addresses');
     Route::put('/addresses', [App\Http\Controllers\ClientAreaController::class, 'updateAddress'])->name('addresses.update');
+
+    // Internal Cart API
+    Route::prefix('cart-api')->name('cart-api.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Api\CartApiController::class, 'index'])->name('index');
+        Route::post('/sync', [App\Http\Controllers\Api\CartApiController::class, 'sync'])->name('sync');
+        Route::post('/add', [App\Http\Controllers\Api\CartApiController::class, 'add'])->name('add');
+        Route::post('/update', [App\Http\Controllers\Api\CartApiController::class, 'update'])->name('update');
+        Route::post('/remove', [App\Http\Controllers\Api\CartApiController::class, 'remove'])->name('remove');
+        Route::post('/clear', [App\Http\Controllers\Api\CartApiController::class, 'clear'])->name('clear');
+    });
 });
 
 Route::middleware([
