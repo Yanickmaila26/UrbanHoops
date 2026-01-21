@@ -17,6 +17,7 @@ class Cliente extends Model
         'CLI_Telefono',
         'CLI_Correo',
         'CLI_Direccion',
+        'usuario_aplicacion_id',
     ];
     public static function getClientes($search = null)
     {
@@ -86,5 +87,9 @@ class Cliente extends Model
                 ->orWhere('CLI_Correo', 'like', "%{$search}%")
                 ->orWhere('CLI_Telefono', 'like', "%{$search}%");
         });
+    }
+    public function usuarioAplicacion()
+    {
+        return $this->belongsTo(UsuarioAplicacion::class, 'usuario_aplicacion_id');
     }
 }

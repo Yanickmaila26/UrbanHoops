@@ -55,7 +55,7 @@
             </form>
             <!-- Sign up Link -->
             <div class="mt-6 text-green-500 text-center">
-                <a href="#" class="hover:underline">Regístrate aquí</a>
+                <a href="{{ route('client.register') }}" class="hover:underline">Regístrate aquí</a>
             </div>
 
             <div class="mt-4 text-center">

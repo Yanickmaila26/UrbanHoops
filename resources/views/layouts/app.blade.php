@@ -69,12 +69,54 @@
                                     class="hover:text-brand transition font-medium text-sm whitespace-nowrap">Admin
                                     Dashboard</a>
                             @elseif(Auth::guard('client')->check())
-                                <span class="text-white text-sm">Hola, {{ Auth::guard('client')->user()->email }}</span>
-                                <form method="POST" action="{{ route('client.logout') }}" class="inline">
-                                    @csrf
-                                    <button type="submit"
-                                        class="hover:text-brand transition font-medium text-sm whitespace-nowrap ml-2">Salir</button>
-                                </form>
+                                <div x-data="{ openDropdown: false }" class="relative">
+                                    <button @click="openDropdown = !openDropdown" @click.outside="openDropdown = false"
+                                        class="flex items-center gap-2 text-white hover:text-brand focus:outline-none transition">
+                                        <span class="font-medium text-sm">Hola,
+                                            {{ Auth::guard('client')->user()->cliente->CLI_Nombre ?? Auth::guard('client')->user()->email }}</span>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+
+                                    <!-- Dropdown Menu -->
+                                    <div x-show="openDropdown" x-transition:enter="transition ease-out duration-100"
+                                        x-transition:enter-start="transform opacity-0 scale-95"
+                                        x-transition:enter-end="transform opacity-100 scale-100"
+                                        x-transition:leave="transition ease-in duration-75"
+                                        x-transition:leave-start="transform opacity-100 scale-100"
+                                        x-transition:leave-end="transform opacity-0 scale-95"
+                                        class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 ring-1 ring-black ring-opacity-5"
+                                        style="display: none;">
+
+                                        <div class="px-4 py-2 border-b border-gray-100">
+                                            <p class="text-xs text-gray-500">Mi Cuenta</p>
+                                        </div>
+
+                                        <a href="{{ route('client.cart') }}"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-brand">Mi
+                                            Carrito</a>
+                                        <a href="{{ route('client.orders') }}"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-brand">Mis
+                                            Pedidos</a>
+                                        <a href="{{ route('client.invoices') }}"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-brand">Mis
+                                            Facturas</a>
+                                        <a href="{{ route('client.addresses') }}"
+                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-brand">Mis
+                                            Direcciones</a>
+
+                                        <div class="border-t border-gray-100 my-1"></div>
+
+                                        <form method="POST" action="{{ route('client.logout') }}">
+                                            @csrf
+                                            <button type="submit"
+                                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Cerrar
+                                                Sesión</button>
+                                        </form>
+                                    </div>
+                                </div>
                             @else
                                 <a href="{{ route('client.login') }}"
                                     class="hover:text-brand transition font-medium text-sm uppercase tracking-wider">Entrar</a>
