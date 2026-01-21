@@ -166,9 +166,18 @@ export class CartModel {
         return this.items.reduce((sum, item) => sum + (item.qty || 0), 0);
     }
 
-    getTotal() {
+    getSubtotal() {
         if (!this.items) return 0;
         return this.items.reduce((sum, item) => sum + (item.price || 0) * (item.qty || 0), 0);
+    }
+
+    getIva() {
+        const rate = (window.IVA_RATE || 15) / 100;
+        return this.getSubtotal() * rate;
+    }
+
+    getTotal() {
+        return this.getSubtotal() + this.getIva();
     }
 
     getItems() {

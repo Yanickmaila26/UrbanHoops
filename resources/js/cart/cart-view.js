@@ -99,11 +99,16 @@ export class CartView {
         }
     }
 
-    updateCartTotal(total) {
+    updateCartTotals(subtotal, iva, total) {
         if (!this.totalElement) this.refreshElements();
-        if (this.totalElement) {
-            this.totalElement.textContent = '$' + parseFloat(total).toFixed(2);
-        }
+
+        // Ensure elements exist (added in layout)
+        const subElement = document.getElementById('cartSubtotal');
+        const ivaElement = document.getElementById('cartIva');
+
+        if (subElement) subElement.textContent = '$' + parseFloat(subtotal).toFixed(2);
+        if (ivaElement) ivaElement.textContent = '$' + parseFloat(iva).toFixed(2);
+        if (this.totalElement) this.totalElement.textContent = '$' + parseFloat(total).toFixed(2);
     }
 
     openModal() {
