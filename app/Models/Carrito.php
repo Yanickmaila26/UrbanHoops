@@ -28,6 +28,11 @@ class Carrito extends Model
             ->withTimestamps();
     }
 
+    public function detalles()
+    {
+        return $this->hasMany(DetalleCarrito::class, 'CRC_Carrito', 'CRC_Carrito');
+    }
+
     public function getTotal()
     {
         return $this->productos->sum(function ($producto) {
