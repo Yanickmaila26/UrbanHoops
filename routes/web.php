@@ -13,12 +13,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('index');
 })->name('welcome');
-Route::get('/productos-servicios', function () {
-    return view('productos_servicios');
-})->name('productos-servicios');
-Route::get('/detalle_producto', function () {
-    return view('detalle_producto');
-})->name('detalle_producto');
+Route::get('/productos-servicios', [App\Http\Controllers\PublicController::class, 'catalogo'])->name('productos-servicios');
+Route::get('/producto/{producto}', [App\Http\Controllers\PublicController::class, 'show'])->name('public.products.show');
 Route::get('/contacto', function () {
     return view('contacto');
 })->name('contacto');

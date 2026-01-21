@@ -111,4 +111,24 @@ class Producto extends Model
                 ->orWhere('PRO_Color', 'like', "%{$search}%");
         });
     }
+
+    /**
+     * Override parameter handling to support insensitive database column names
+     * (Fixes OCI8/PDO lowercase return issue)
+     */
+    public function getAttribute($key)
+    {
+        // Try standard access
+        $value = parent::getAttribute($key);
+
+        // If null, try lowercase key if attributes exist
+        if ($value === null && $key !== strtolower($key)) {
+            $lowerKey = strtolower($key);
+            if (array_key_exists($lowerKey, $this->attributes)) {
+                return $this->attributes[$lowerKey];
+            }
+        }
+
+        return $value;
+    }
 }
