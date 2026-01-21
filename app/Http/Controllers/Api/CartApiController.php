@@ -62,6 +62,8 @@ class CartApiController extends Controller
         return response()->json([
             'items' => $items,
             'count' => $items->sum('qty'),
+            'subtotal' => $cart->getSubtotal(),
+            'iva' => $cart->getIva(),
             'total' => $cart->getTotal()
         ]);
     }

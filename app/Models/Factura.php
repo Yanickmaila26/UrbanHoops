@@ -14,6 +14,8 @@ class Factura extends Model
     protected $fillable = [
         'FAC_Codigo',
         'CLI_Ced_Ruc',
+        'FAC_Subtotal',
+        'FAC_IVA',
         'FAC_Total',
         'FAC_Estado',
     ];

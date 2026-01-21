@@ -33,11 +33,23 @@ class Carrito extends Model
         return $this->hasMany(DetalleCarrito::class, 'CRC_Carrito', 'CRC_Carrito');
     }
 
-    public function getTotal()
+    public function getSubtotal()
     {
         return $this->productos->sum(function ($producto) {
             return $producto->PRO_Precio * $producto->pivot->CRD_Cantidad;
         });
+    }
+
+    public function getIva()
+    {
+        // Rate is percentage (e.g., 15), convert to decimal (0.15)
+        $rate = config('urbanhoops.iva', 15) / 100;
+        return $this->getSubtotal() * $rate;
+    }
+
+    public function getTotal()
+    {
+        return $this->getSubtotal() + $this->getIva();
     }
 
     public static function generateId()

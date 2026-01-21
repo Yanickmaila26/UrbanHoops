@@ -202,7 +202,19 @@
                 </div>
 
                 <div class="flex justify-between items-center mt-6 pt-4 border-t">
-                    <div class="text-lg font-bold">Total: <span id="cartTotal" class="text-red-600">$0.00</span>
+                    <div class="w-full">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-gray-600">Subtotal:</span>
+                            <span id="cartSubtotal" class="font-bold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-gray-600">IVA ({{ config('urbanhoops.iva', 15) }}%):</span>
+                            <span id="cartIva" class="font-bold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between text-lg font-bold border-t pt-2 mt-2">
+                            <span>Total:</span>
+                            <span id="cartTotal" class="text-red-600">$0.00</span>
+                        </div>
                     </div>
                     <div class="flex gap-2">
                         <button @click="open = false"
@@ -219,6 +231,7 @@
     <script>
         window.AUTH_USER = {{ Auth::guard('client')->check() ? 'true' : 'false' }};
         window.CSRF_TOKEN = "{{ csrf_token() }}";
+        window.IVA_RATE = {{ config('urbanhoops.iva', 15) }};
     </script>
     <script src="{{ asset('js/alto-contraste.js') }}"></script>
     <script src="{{ asset('js/teclado-accesible.js') }}"></script>
