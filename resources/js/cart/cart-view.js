@@ -45,16 +45,19 @@ export class CartView {
                     <img src="${item.image}" alt="${item.name}" class="h-16 w-16 object-cover rounded mr-3">
                     <div>
                         <div class="font-bold text-sm">${item.name}</div>
+                        ${item.talla ? `<div class="text-xs text-brand font-bold bg-gray-100 dark:bg-zinc-800 rounded px-1 inline-block mb-1">Talla: ${item.talla}</div>` : ''}
                         <div class="text-gray-500 text-xs">$${parseFloat(item.price).toFixed(2)} x ${item.qty}</div>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
                     <input type="number" min="1" value="${item.qty}" 
                            data-product-id="${item.id}" 
+                           data-product-talla="${item.talla || ''}"
                            class="qty-input w-16 border rounded p-1 text-center" 
                            style="width: 60px;">
                     <button class="btn-remove text-red-500 hover:text-red-700" 
-                            data-product-id="${item.id}">
+                            data-product-id="${item.id}"
+                            data-product-talla="${item.talla || ''}">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
                 </div>
@@ -65,16 +68,17 @@ export class CartView {
         this.containerItems.querySelectorAll('.btn-remove').forEach(btn => {
             btn.addEventListener('click', (ev) => {
                 const id = ev.currentTarget.getAttribute('data-product-id');
-                // ID might be string or number depending on backend.
-                onRemove(id);
+                const talla = ev.currentTarget.getAttribute('data-product-talla') || null;
+                onRemove(id, talla);
             });
         });
 
         this.containerItems.querySelectorAll('.qty-input').forEach(input => {
             input.addEventListener('change', (ev) => {
                 const id = ev.currentTarget.getAttribute('data-product-id');
+                const talla = ev.currentTarget.getAttribute('data-product-talla') || null;
                 const qty = parseInt(ev.currentTarget.value, 10) || 1;
-                onQtyChange(id, qty);
+                onQtyChange(id, qty, talla);
             });
         });
     }

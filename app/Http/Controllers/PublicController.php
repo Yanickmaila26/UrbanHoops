@@ -16,20 +16,35 @@ class PublicController extends Controller
             $query->where('PRO_Precio', '<=', $request->max_price);
         }
 
-        // Category simulation via Search
-        if ($request->filled('category')) {
-            $category = $request->category;
-            $query->where(function ($q) use ($category) {
-                $q->where('PRO_Nombre', 'like', "%{$category}%")
-                    ->orWhere('PRO_Descripcion', 'like', "%{$category}%")
-                    ->orWhere('PRO_Marca', 'like', "%{$category}%");
+        // Category Filter (by ID) - Products in any subcategory of this category
+        if ($request->filled('category_id')) {
+            $query->whereHas('subcategoria', function ($q) use ($request) {
+                $q->where('CAT_Codigo', $request->category_id);
+            });
+        }
+
+        // Subcategory Filter (by ID) - Specific subcategory
+        if ($request->filled('subcategory_id')) {
+            $query->where('SCT_Codigo', $request->subcategory_id);
+        }
+
+        // Text Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('PRO_Nombre', 'like', "%{$search}%")
+                    ->orWhere('PRO_Descripcion', 'like', "%{$search}%")
+                    ->orWhere('PRO_Marca', 'like', "%{$search}%");
             });
         }
 
         $productos = $query->paginate(12)->withQueryString();
         $maxPrice = Producto::max('PRO_Precio') ?? 300;
 
-        return view('productos_servicios', compact('productos', 'maxPrice'));
+        // Fetch categories with sub-categories for the sidebar
+        $categorias = \App\Models\Categoria::with('subcategorias')->get();
+
+        return view('productos_servicios', compact('productos', 'maxPrice', 'categorias'));
     }
 
     public function show($producto)

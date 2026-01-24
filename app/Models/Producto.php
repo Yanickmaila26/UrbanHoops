@@ -70,7 +70,9 @@ class Producto extends Model
             'PRO_Nombre' => 'required|string|max:100|regex:/^[A-Za-z0-9\sáéíóúÁÉÍÓÚñÑ.]+$/',
             'PRO_Descripcion' => 'required|string|max:255',
             'PRO_Color'       => 'required|string|max:15',
-            'PRO_Talla'       => 'required|string|max:5',
+            'PRO_Talla'       => 'required|array',
+            'PRO_Talla.*.talla' => 'required|string|max:10',
+            'PRO_Talla.*.stock' => 'required|integer|min:1',
             'PRO_Marca'       => 'required|string|max:20',
             'PRO_Precio'      => 'required|numeric|min:0',
             'PRO_Stock'       => 'required|integer|min:0',
@@ -78,6 +80,11 @@ class Producto extends Model
             'SCT_Codigo'      => 'nullable|exists:subcategorias,SCT_Codigo',
         ];
     }
+
+    protected $casts = [
+        'PRO_Talla' => 'array',
+        'activo' => 'boolean'
+    ];
 
     public function scopeActivos($query)
     {
@@ -95,7 +102,10 @@ class Producto extends Model
             'PRO_Nombre.regex'         => 'El nombre no puede contener caracteres especiales.',
             'PRO_Descripcion.required' => 'La descripción es obligatoria.',
             'PRO_Color.required'       => 'El color es obligatorio.',
-            'PRO_Talla.required'       => 'La talla es obligatoria.',
+            'PRO_Talla.required'       => 'Debe ingresar al menos una talla.',
+            'PRO_Talla.array'          => 'El formato de las tallas es inválido.',
+            'PRO_Talla.*.talla.required' => 'El nombre de la talla es obligatorio.',
+            'PRO_Talla.*.stock.required' => 'El stock de la talla es obligatorio.',
             'PRO_Marca.required'       => 'La marca es obligatoria.',
             'PRO_Precio.required'      => 'El precio es obligatorio.',
             'PRO_Precio.numeric'       => 'El precio debe ser un número válido.',

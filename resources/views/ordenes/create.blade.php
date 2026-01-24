@@ -65,6 +65,7 @@
                     <thead>
                         <tr class="text-left text-sm text-gray-500 border-b">
                             <th class="pb-2">Producto</th>
+                            <th class="pb-2 w-32">Talla</th>
                             <th class="pb-2 w-32">Cantidad</th>
                             <th class="pb-2 w-32">Precio Unit.</th>
                             <th class="pb-2 w-32">Subtotal</th>
@@ -79,7 +80,16 @@
                                         class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white select-product"
                                         x-init="initSelect2($el, row)" required>
                                         <option value="">Seleccione...</option>
-                                        <!-- Options injected via JS -->
+                                    </select>
+                                </td>
+                                <td class="py-3">
+                                    <select name="tallas[]" x-model="row.talla" required
+                                        class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white"
+                                        @change="checkDuplicate(row)">
+                                        <option value="">...</option>
+                                        <template x-for="size in row.availableSizes" :key="size.talla">
+                                            <option :value="size.talla" x-text="size.talla"></option>
+                                        </template>
                                     </select>
                                 </td>
                                 <td class="py-3">
@@ -159,7 +169,9 @@
                         id: Date.now(),
                         qty: 1,
                         price: 0,
-                        code: ''
+                        code: '',
+                        talla: '',
+                        availableSizes: []
                     });
                 },
 
@@ -185,7 +197,7 @@
 
                 initSelect2(el, row) {
                     const options = this.productos.map(p =>
-                        `<option value="${p.PRO_Codigo}" data-price="${p.PRO_Precio}">${p.PRO_Nombre} - ${p.PRO_Codigo}</option>`
+                        `<option value="${p.PRO_Codigo}">${p.PRO_Nombre} - ${p.PRO_Codigo}</option>`
                     ).join('');
 
                     $(el).html('<option value="">Seleccione...</option>' + options);
@@ -197,25 +209,27 @@
 
                     $(el).on('select2:select', (e) => {
                         const selectedId = e.params.data.id;
-
-                        // Check duplicate
-                        const isDuplicate = this.rows.some(r => r.id !== row.id && r.code ===
-                            selectedId);
-
-                        if (isDuplicate) {
-                            this.showError(
-                                "Este producto ya ha sido agregado a la orden. Ajuste la cantidad en la fila existente."
-                            );
-                            $(el).val(null).trigger('change');
-                            return;
-                        }
-
                         const selected = this.productos.find(p => p.PRO_Codigo == selectedId);
+
                         if (selected) {
                             row.price = selected.PRO_Precio;
                             row.code = selected.PRO_Codigo;
+                            row.availableSizes = selected.PRO_Talla || [];
+                            row.talla = ''; // Reset talla
                         }
                     });
+                },
+
+                checkDuplicate(row) {
+                    if (!row.code || !row.talla) return;
+
+                    const isDuplicate = this.rows.some(r => r.id !== row.id && r.code === row.code && r
+                        .talla === row.talla);
+
+                    if (isDuplicate) {
+                        this.showError("Este producto y talla ya han sido agregados.");
+                        row.talla = ''; // Reset duplicate
+                    }
                 }
             }));
         });

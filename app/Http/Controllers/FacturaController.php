@@ -64,7 +64,8 @@ class FacturaController extends Controller
 
                     $detalles[$codigo] = [
                         'DFC_Cantidad' => $cantidad,
-                        'DFC_Precio' => $precio
+                        'DFC_Precio' => $precio,
+                        'DFC_Talla' => $request->tallas[$index] ?? null
                     ];
                 }
 
@@ -142,6 +143,7 @@ class FacturaController extends Controller
                 'name' => $producto->PRO_Nombre,
                 'qty' => $producto->pivot->CRD_Cantidad,
                 'price' => $producto->PRO_Precio,
+                'talla' => $producto->pivot->CRD_Talla,
             ];
         });
 

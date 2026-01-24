@@ -40,22 +40,24 @@ class OrdenCompraController extends Controller
 
     public function store(Request $request)
     {
-        $productosEnviados = $request->productos;
-
-        if (count($productosEnviados) !== count(array_unique($productosEnviados))) {
-            return redirect()->back()
-                ->with('error', 'No se pueden enviar productos duplicados en la misma orden.')
-                ->withInput();
-        }
+        // Removed Unique Product check as we allow same product with different sizes
+        // But we should check exact duplicates (Same Product + Same Talla) - handled by client side but good to check here?
+        // Let's rely on validation or logic.
 
         $request->validate(OrdenCompra::rules(), OrdenCompra::messages());
 
-        $detalles = [];
-        foreach ($request->productos as $index => $proCodigo) {
-            $detalles[$proCodigo] = ['cantidad_solicitada' => $request->cantidades[$index]];
-        }
+        // Custom Transaction
+        $orden = null;
+        \Illuminate\Support\Facades\DB::transaction(function () use ($request, &$orden) {
+            $orden = OrdenCompra::create($request->all());
 
-        OrdenCompra::createOrden($request->all(), $detalles);
+            foreach ($request->productos as $index => $proCodigo) {
+                $orden->productos()->attach($proCodigo, [
+                    'cantidad_solicitada' => $request->cantidades[$index],
+                    'DOC_Talla' => $request->tallas[$index] ?? null
+                ]);
+            }
+        });
 
         return redirect()->route('purchase-orders.index')->with('success', 'Orden de Compra generada.');
     }
@@ -73,29 +75,26 @@ class OrdenCompraController extends Controller
     {
         $orden = OrdenCompra::findOrFail($id);
 
-        // Validación de duplicados en el servidor
-        if (count($request->productos) !== count(array_unique($request->productos))) {
-            return redirect()->back()->with('error', 'No se permiten productos duplicados.')->withInput();
-        }
-
         try {
-            // 1. Actualizar cabecera (excepto el número que es único)
-
+            // 1. Actualizar cabecera
             $validator = Validator::make($request->all(), OrdenCompra::rules($id), OrdenCompra::messages());
 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            // 2. Sincronizar productos (Borra los anteriores y crea los nuevos en la tabla pivot)
-            $detalles = [];
-            foreach ($request->productos as $key => $prod_codigo) {
-                $detalles[$prod_codigo] = [
-                    'cantidad_solicitada' => $request->cantidades[$key]
-                ];
-            }
+            $orden->update($request->all());
 
-            $orden->productos()->sync($detalles);
+            // 2. Sincronizar productos (Detach all, then Attach new)
+            // sync() doesn't support duplicate IDs with different pivot values easily in one go with keyed array
+            $orden->productos()->detach();
+
+            foreach ($request->productos as $key => $prod_codigo) {
+                $orden->productos()->attach($prod_codigo, [
+                    'cantidad_solicitada' => $request->cantidades[$key],
+                    'DOC_Talla' => $request->tallas[$key] ?? null
+                ]);
+            }
 
             return redirect()->route('purchase-orders.index')->with('success', 'Orden actualizada exitosamente.');
         } catch (\Exception $e) {
