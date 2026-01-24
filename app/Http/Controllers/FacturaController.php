@@ -64,16 +64,23 @@ class FacturaController extends Controller
 
                     $detalles[$codigo] = [
                         'DFC_Cantidad' => $cantidad,
-                        'DFC_Precio' => $precio
+                        'DFC_Precio' => $precio,
+                        'DFC_Talla' => $request->tallas[$index] ?? null
                     ];
                 }
 
                 // 2. Crear Factura
+                $subtotal = $totalCallback;
+                $ivaRate = config('urbanhoops.iva', 15);
+                $totalValues = $subtotal * (1 + ($ivaRate / 100));
+
                 $factura = Factura::create([
                     'FAC_Codigo' => $request->FAC_Codigo,
-                    'CLI_Ced_Ruc' => $request->CLI_Ced_Ruc, // Asegúrate de que este campo coincida con tu vista y DB
-                    'FAC_Total' => $totalCallback,
-                    'FAC_Estado' => 'Pen' // Pendiente hasta que el cliente pague
+                    'CLI_Ced_Ruc' => $request->CLI_Ced_Ruc,
+                    'FAC_Subtotal' => $subtotal,
+                    'FAC_IVA' => $ivaRate,
+                    'FAC_Total' => $totalValues,
+                    'FAC_Estado' => 'Pen'
                 ]);
 
                 // 3. Attach Productos
@@ -142,6 +149,7 @@ class FacturaController extends Controller
                 'name' => $producto->PRO_Nombre,
                 'qty' => $producto->pivot->CRD_Cantidad,
                 'price' => $producto->PRO_Precio,
+                'talla' => $producto->pivot->CRD_Talla,
             ];
         });
 

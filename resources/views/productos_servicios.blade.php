@@ -21,61 +21,66 @@
 
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="font-bold text-lg text-gray-900">Filtros</h2>
-                        @if (request()->anyFilled(['category', 'subcategory', 'brand', 'apply_price']))
+                        @if (request()->anyFilled(['category_id', 'subcategory_id', 'max_price', 'search']))
                             <a href="{{ route('productos-servicios') }}"
                                 class="text-xs text-brand font-bold hover:underline text-danger">Limpiar</a>
                         @endif
                     </div>
 
-                    <div class="accordion" id="accordionFilters">
-                        <!-- Categorías Item -->
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingCategories">
-                                <button
-                                    class="accordion-button {{ request('category') || request('subcategory') ? '' : 'collapsed' }}"
-                                    type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategories"
-                                    aria-expanded="{{ request('category') || request('subcategory') ? 'true' : 'false' }}"
-                                    aria-controls="collapseCategories">
-                                    Categorías
-                                </button>
-                            </h2>
-                            <div id="collapseCategories"
-                                class="accordion-collapse collapse {{ request('category') || request('subcategory') ? 'show' : '' }}"
-                                aria-labelledby="headingCategories" data-bs-parent="#accordionFilters">
-                                <div class="accordion-body p-0">
-                                    <ul class="list-unstyled mb-0">
-                                        @foreach ($allCategories as $cat)
-                                            <li>
-                                                <div class="bg-gray-50 px-3 py-2 font-semibold text-sm flex justify-between items-center cursor-pointer"
-                                                    data-bs-toggle="collapse"
-                                                    data-bs-target="#subcat-{{ $cat->CAT_Codigo }}">
-                                                    {{ $cat->CAT_Nombre }}
-                                                    <small>▼</small>
-                                                </div>
-                                                <div class="collapse show" id="subcat-{{ $cat->CAT_Codigo }}">
-                                                    <ul class="list-group list-group-flush">
-                                                        <!-- Link for Parent Category -->
-                                                        <li class="list-group-item py-1 border-0">
-                                                            <a href="{{ route('productos-servicios', array_merge(request()->except(['category', 'subcategory', 'page']), ['category' => $cat->CAT_Codigo])) }}"
-                                                                class="text-sm text-gray-600 hover:text-brand {{ request('category') == $cat->CAT_Codigo ? 'fw-bold text-brand' : '' }}">
-                                                                Ver Todo {{ $cat->CAT_Nombre }}
-                                                            </a>
-                                                        </li>
-                                                        @foreach ($cat->subcategorias as $sub)
-                                                            <li class="list-group-item py-1 border-0 ps-4">
-                                                                <a href="{{ route('productos-servicios', array_merge(request()->except(['category', 'subcategory', 'page']), ['subcategory' => $sub->SCT_Codigo])) }}"
-                                                                    class="text-sm text-gray-600 hover:text-brand {{ request('subcategory') == $sub->SCT_Codigo ? 'fw-bold text-brand' : '' }}">
-                                                                    {{ $sub->SCT_Nombre }}
-                                                                </a>
-                                                            </li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
-                                            </li>
-                                        @endforeach
-                                    </ul>
+                    <h3 class="font-semibold text-gray-700 mb-2 text-sm uppercase tracking-wider">Categoría</h3>
+                    <ul class="space-y-2 mb-6">
+                        <li>
+                            <a href="{{ route('productos-servicios', request()->except(['category_id', 'subcategory_id', 'page'])) }}"
+                                class="block px-3 py-2 rounded transition-colors {{ !request('category_id') && !request('subcategory_id') ? 'bg-brand text-black font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-black' }}">
+                                Todas
+                            </a>
+                        </li>
+                        @foreach ($categorias as $cat)
+                            <li>
+                                <div x-data="{ open: {{ request('category_id') == $cat->CAT_Codigo || $cat->subcategorias->contains('SCT_Codigo', request('subcategory_id')) ? 'true' : 'false' }} }">
+                                    <div class="flex items-center justify-between group">
+                                        <a href="{{ route('productos-servicios', array_merge(request()->except(['subcategory_id', 'page']), ['category_id' => $cat->CAT_Codigo])) }}"
+                                            class="flex-1 px-3 py-2 rounded transition-colors {{ request('category_id') == $cat->CAT_Codigo ? 'bg-gray-100 text-black font-bold' : 'text-gray-600 hover:bg-gray-50 hover:text-black' }}">
+                                            {{ $cat->CAT_Nombre }}
+                                        </a>
+                                        @if ($cat->subcategorias->count() > 0)
+                                            <button @click.prevent="open = !open" type="button"
+                                                class="p-2 text-gray-400 hover:text-brand focus:outline-none transition-transform duration-200"
+                                                :class="{ 'rotate-180': open }">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </button>
+                                        @endif
+                                    </div>
+
+                                    @if ($cat->subcategorias->count() > 0)
+                                        <ul x-show="open" x-collapse
+                                            class="pl-4 mt-1 space-y-1 border-l-2 border-gray-100 ml-2">
+                                            @foreach ($cat->subcategorias as $sub)
+                                                <li>
+                                                    <a href="{{ route('productos-servicios', array_merge(request()->except(['category_id', 'page']), ['subcategory_id' => $sub->SCT_Codigo])) }}"
+                                                        class="block px-3 py-1.5 text-sm rounded transition-colors {{ request('subcategory_id') == $sub->SCT_Codigo ? 'text-brand font-bold bg-brand/10' : 'text-gray-500 hover:text-brand hover:bg-gray-50' }}">
+                                                        {{ $sub->SCT_Nombre }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @endif
                                 </div>
-                            </div>
+                            </li>
+                        @endforeach
+                    </ul>
+
+                    <h3 class="font-semibold text-gray-700 mb-2 text-sm uppercase tracking-wider">Precio Máximo</h3>
+
+                    <div class="mb-6">
+                        <div class="flex justify-between text-sm mb-2 text-gray-600">
+                            <span>$0</span>
+                            <span class="font-bold text-black">$<span
+                                    id="valorPrecio">{{ request('max_price', $maxPrice) }}</span></span>
                         </div>
 
                         <!-- Marcas Item -->
@@ -147,6 +152,21 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Retain filters when submitting form -->
+                    @if (request('category_id'))
+                        <input type="hidden" name="category_id" value="{{ request('category_id') }}">
+                    @endif
+                    @if (request('subcategory_id'))
+                        <input type="hidden" name="subcategory_id" value="{{ request('subcategory_id') }}">
+                    @endif
+                    @if (request('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+
+                    <button type="submit" class="w-full btn-brand py-2 font-bold uppercase text-sm tracking-wider">
+                        Aplicar Filtros
+                    </button>
                 </form>
             </aside>
 

@@ -29,13 +29,13 @@ export class CartView {
                     <img src="${item.image}" alt="${item.name}" class="h-16 w-16 object-cover rounded mr-3">
                     <div>
                         <div class="font-bold text-sm">${item.name}</div>
-                        ${item.talla ? `<div class="text-xs text-gray-600">Talla: <span class="font-bold">${item.talla}</span></div>` : ''}
+                        ${item.talla ? `<div class="text-xs text-brand font-bold bg-gray-100 dark:bg-zinc-800 rounded px-1 inline-block mb-1">Talla: ${item.talla}</div>` : ''}
                         <div class="text-gray-500 text-xs">$${parseFloat(item.price).toFixed(2)} x ${item.qty}</div>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
                     <input type="number" min="1" value="${item.qty}" 
-                           data-product-id="${item.id}"
+                           data-product-id="${item.id}" 
                            data-product-talla="${item.talla || ''}"
                            class="qty-input w-16 border rounded p-1 text-center" 
                            style="width: 60px;">
@@ -87,11 +87,16 @@ export class CartView {
         }
     }
 
-    updateCartTotal(total) {
+    updateCartTotals(subtotal, iva, total) {
         if (!this.totalElement) this.refreshElements();
-        if (this.totalElement) {
-            this.totalElement.textContent = '$' + parseFloat(total).toFixed(2);
-        }
+
+        // Ensure elements exist (added in layout)
+        const subElement = document.getElementById('cartSubtotal');
+        const ivaElement = document.getElementById('cartIva');
+
+        if (subElement) subElement.textContent = '$' + parseFloat(subtotal).toFixed(2);
+        if (ivaElement) ivaElement.textContent = '$' + parseFloat(iva).toFixed(2);
+        if (this.totalElement) this.totalElement.textContent = '$' + parseFloat(total).toFixed(2);
     }
 
     openModal() {

@@ -16,14 +16,25 @@ class PublicController extends Controller
             $query->where('PRO_Precio', '<=', $request->max_price);
         }
 
-        // Subcategory Filter (Direct)
-        if ($request->filled('subcategory')) {
-            $query->where('SCT_Codigo', $request->subcategory);
-        }
-        // Category Filter (Indirect via Subcategories)
-        elseif ($request->filled('category')) {
+        // Category Filter (by ID) - Products in any subcategory of this category
+        if ($request->filled('category_id')) {
             $query->whereHas('subcategoria', function ($q) use ($request) {
-                $q->where('CAT_Codigo', $request->category);
+                $q->where('CAT_Codigo', $request->category_id);
+            });
+        }
+
+        // Subcategory Filter (by ID) - Specific subcategory
+        if ($request->filled('subcategory_id')) {
+            $query->where('SCT_Codigo', $request->subcategory_id);
+        }
+
+        // Text Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('PRO_Nombre', 'like', "%{$search}%")
+                    ->orWhere('PRO_Descripcion', 'like', "%{$search}%")
+                    ->orWhere('PRO_Marca', 'like', "%{$search}%");
             });
         }
 
@@ -33,14 +44,10 @@ class PublicController extends Controller
             $query->whereIn('PRO_Marca', $brands);
         }
 
-        $productos = $query->paginate(12)->withQueryString();
+        // Fetch categories with sub-categories for the sidebar
+        $categorias = \App\Models\Categoria::with('subcategorias')->get();
 
-        // Data for Filters
-        $maxPrice = Producto::max('PRO_Precio') ?? 300;
-        $allCategories = \App\Models\Categoria::with('subcategorias')->get();
-        $allBrands = Producto::select('PRO_Marca')->distinct()->pluck('PRO_Marca');
-
-        return view('productos_servicios', compact('productos', 'maxPrice', 'allCategories', 'allBrands'));
+        return view('productos_servicios', compact('productos', 'maxPrice', 'categorias'));
     }
 
     public function show($producto)

@@ -169,9 +169,32 @@
                     <h5 class="modal-title">🛒 Carrito de Compras</h5>
                     <button type="button" class="btn-close" @click="open = false"></button>
                 </div>
-                <div class="modal-body">
-                    <div id="cartItems" class="list-group" style="max-height:400px; overflow-y:auto;">
-                        <div class="text-center py-5 text-muted">Tu carrito está vacío</div>
+
+                <div id="cartItems" class="max-h-96 overflow-y-auto py-4">
+                    <p class="text-center text-gray-500">Tu carrito está vacío</p>
+                </div>
+
+                <div id="loading" class="hidden text-center py-2">
+                    <p>Procesando...</p>
+                </div>
+                <div id="success" class="hidden text-center py-2 text-green-600 font-bold">
+                    <p>¡Compra exitosa!</p>
+                </div>
+
+                <div class="flex justify-between items-center mt-6 pt-4 border-t">
+                    <div class="w-full">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-gray-600">Subtotal:</span>
+                            <span id="cartSubtotal" class="font-bold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-gray-600">IVA ({{ config('urbanhoops.iva', 15) }}%):</span>
+                            <span id="cartIva" class="font-bold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between text-lg font-bold border-t pt-2 mt-2">
+                            <span>Total:</span>
+                            <span id="cartTotal" class="text-red-600">$0.00</span>
+                        </div>
                     </div>
                     <!-- Estados de compra -->
                     <div id="loading" class="mt-3 text-center d-none">
@@ -200,6 +223,7 @@
     <script>
         window.AUTH_USER = {{ Auth::guard('client')->check() ? 'true' : 'false' }};
         window.CSRF_TOKEN = "{{ csrf_token() }}";
+        window.IVA_RATE = {{ config('urbanhoops.iva', 15) }};
     </script>
     <script src="{{ asset('js/alto-contraste.js') }}"></script>
     <script src="{{ asset('js/teclado-accesible.js') }}"></script>

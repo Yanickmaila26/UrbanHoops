@@ -14,6 +14,8 @@ class Factura extends Model
     protected $fillable = [
         'FAC_Codigo',
         'CLI_Ced_Ruc',
+        'FAC_Subtotal',
+        'FAC_IVA',
         'FAC_Total',
         'FAC_Estado',
     ];
@@ -26,7 +28,7 @@ class Factura extends Model
     public function productos()
     {
         return $this->belongsToMany(Producto::class, 'detalle_factura', 'FAC_Codigo', 'PRO_Codigo')
-            ->withPivot('DFC_Cantidad', 'DFC_Precio')
+            ->withPivot('DFC_Cantidad', 'DFC_Precio', 'DFC_Talla')
             ->withTimestamps();
     }
 

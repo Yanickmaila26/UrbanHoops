@@ -88,6 +88,10 @@ export class CartController {
             (id, qty, talla) => this.updateQty(id, qty, talla)
         );
         this.view.updateCartCount(this.model.getCount());
-        this.view.updateCartTotal(this.model.getTotal());
+        this.view.updateCartTotals(
+            this.model.getSubtotal(),
+            this.model.getIva(),
+            this.model.getTotal()
+        );
     }
 }

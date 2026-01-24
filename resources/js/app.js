@@ -19,15 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Legacy support for inline onclicks
-    // Legacy support for inline onclicks
-    window.addToCart = (id, name, price, image, size = null) => {
+    window.addToCart = (id, name, price, image, talla = null) => {
         const product = {
             id: id,
             name: name,
             price: parseFloat(price),
             image: image,
-            qt: 9999, // Default max stock if not provided
-            talla: size
+            talla: talla,
+            qt: 9999 // Default max stock if not provided
         };
         window.cartController.add(product, 1);
     };

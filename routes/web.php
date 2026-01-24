@@ -8,6 +8,8 @@ use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\KardexController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\OrdenCompraController;
+use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\SubcategoriaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -90,5 +92,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::group(['middleware' => ['role:Administrador|Comercial']], function () {
         Route::resource('productos', ProductoController::class)->names('products');
         Route::resource('proveedores', ProveedorController::class)->names('suppliers');
+        Route::resource('categorias', CategoriaController::class)->names('categories');
+        Route::resource('subcategorias', SubcategoriaController::class)->names('subcategories');
     });
 });

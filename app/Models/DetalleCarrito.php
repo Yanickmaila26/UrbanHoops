@@ -18,7 +18,8 @@ class DetalleCarrito extends Model
     protected $fillable = [
         'CRC_Carrito',
         'PRO_Codigo',
-        'CRD_Cantidad'
+        'CRD_Cantidad',
+        'CRD_Talla'
     ];
 
     public function producto()

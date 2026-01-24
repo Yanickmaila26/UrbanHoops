@@ -22,53 +22,77 @@ class ProductoSeeder extends Seeder
                 'PRV_Correo' => 'prov@test.com',
             ]);
         }
-        // Log::info('Usando proveedor: ' . );
+
+        // Fetch Subcategory IDs helper
+        $getSubId = function ($name) {
+            return \App\Models\Subcategoria::where('SCT_Nombre', $name)->value('SCT_Codigo');
+        };
+
+        // Pre-fetch IDs to avoid queries inside loop if possible, but helper is fine for seeder
+        $catZapatillas = $getSubId('Zapatillas de competencia');
+        $catBalones = $getSubId('Balones');
+        $catCamisetas = $getSubId('Camisetas');
+        $catShorts = $getSubId('Pantalones cortos');
+        $catSudaderas = $getSubId('Sudaderas');
+        $catEntrenamiento = $getSubId('Ropa de entrenamiento'); // Niños
 
         $productos = [
             [
                 'PRO_Codigo' => 'P001',
                 'PRO_Nombre' => 'Nike LeBron 21',
-                // Truncated to < 255 chars
                 'PRO_Descripcion' => 'La Nike LeBron 21 es una zapatilla de baloncesto de élite, perfecta para jugadores que buscan una combinación de velocidad, contención y amortiguación premium. Su diseño ligero ofrece una respuesta explosiva en la cancha.',
                 'PRO_Marca' => 'Nike',
                 'PRO_Color' => 'Varios',
-                'PRO_Talla' => '40-45',
+                'PRO_Talla' => [
+                    ['talla' => '7', 'stock' => 2],
+                    ['talla' => '8', 'stock' => 2],
+                    ['talla' => '9', 'stock' => 2],
+                    ['talla' => '10', 'stock' => 2],
+                    ['talla' => '11', 'stock' => 2]
+                ],
                 'PRO_Precio' => 180.00,
                 'PRO_Stock' => 10,
                 'PRO_Imagen' => 'productos/lebron21.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT001',
+                'SCT_Codigo' => $catZapatillas,
             ],
             [
                 'PRO_Codigo' => 'P002',
                 'PRO_Nombre' => 'Adidas Harden Vol. 8',
-                // Truncated to < 255 chars
                 'PRO_Descripcion' => 'Las Adidas Harden Vol. 8 ofrecen una comodidad inigualable y un rendimiento excepcional con tecnología de amortiguación avanzada. Diseñadas para emular el estilo de juego de James Harden, brindan máxima agilidad.',
                 'PRO_Marca' => 'Adidas',
                 'PRO_Color' => 'Negro/Naranja',
-                'PRO_Talla' => '39-44',
+                'PRO_Talla' => [
+                    ['talla' => '7', 'stock' => 2],
+                    ['talla' => '8', 'stock' => 2],
+                    ['talla' => '9', 'stock' => 2],
+                    ['talla' => '10', 'stock' => 2]
+                ],
                 'PRO_Precio' => 160.00,
                 'PRO_Stock' => 8,
                 'PRO_Imagen' => 'productos/harden8.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT001',
+                'SCT_Codigo' => $catZapatillas,
             ],
             [
                 'PRO_Codigo' => 'P003',
                 'PRO_Nombre' => 'ANTA KAI 2 “Klay”',
-                // Short enough
                 'PRO_Descripcion' => 'Las ANTA KAI 2 “Klay” combinan un estilo urbano audaz con tecnología de alto rendimiento. Ofrecen excelente tracción y amortiguación, ideales para jugadores que necesitan versatilidad y buen agarre.',
                 'PRO_Marca' => 'ANTA',
                 'PRO_Color' => 'Azul',
-                'PRO_Talla' => '40-44',
+                'PRO_Talla' => [
+                    ['talla' => '8', 'stock' => 5],
+                    ['talla' => '10', 'stock' => 5],
+                    ['talla' => '12', 'stock' => 5]
+                ],
                 'PRO_Precio' => 145.00,
                 'PRO_Stock' => 15,
                 'PRO_Imagen' => 'productos/kai2klay.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT001',
+                'SCT_Codigo' => $catZapatillas,
             ],
             [
                 'PRO_Codigo' => 'P004',
@@ -76,13 +100,16 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'Las Under Armour Curry Flow 10 son conocidas por su amortiguación revolucionaria Flow, que elimina la necesidad de suela de goma, ofreciendo una ligereza y tracción superior para un juego rápido y ágil.',
                 'PRO_Marca' => 'Under Armour',
                 'PRO_Color' => 'Multicolor',
-                'PRO_Talla' => '41-43',
+                'PRO_Talla' => [
+                    ['talla' => '9', 'stock' => 3],
+                    ['talla' => '11', 'stock' => 2]
+                ],
                 'PRO_Precio' => 150.00,
                 'PRO_Stock' => 5,
                 'PRO_Imagen' => 'productos/curry10.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT001',
+                'SCT_Codigo' => $catZapatillas,
             ],
             [
                 'PRO_Codigo' => 'P005',
@@ -90,13 +117,17 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'Las Jordan Zion 3 están diseñadas para la fuerza y el poder. Ofrecen una amortiguación excepcional y una contención robusta, perfectas para jugadores que dominan la pintura y necesitan soporte en cada salto.',
                 'PRO_Marca' => 'Jordan',
                 'PRO_Color' => 'Negro',
-                'PRO_Talla' => '40-46',
+                'PRO_Talla' => [
+                    ['talla' => '10', 'stock' => 4],
+                    ['talla' => '12', 'stock' => 4],
+                    ['talla' => '14', 'stock' => 4]
+                ],
                 'PRO_Precio' => 120.00,
                 'PRO_Stock' => 12,
                 'PRO_Imagen' => 'productos/zion3.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT001',
+                'SCT_Codigo' => $catZapatillas,
             ],
             [
                 'PRO_Codigo' => 'P006',
@@ -104,13 +135,17 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'La Puma All Pro Nitro utiliza la espuma Nitro para una amortiguación ligera y responsiva. Es una zapatilla versátil que proporciona un gran retorno de energía y estabilidad.',
                 'PRO_Marca' => 'Puma',
                 'PRO_Color' => 'Blanco',
-                'PRO_Talla' => '40-44',
+                'PRO_Talla' => [
+                    ['talla' => '8', 'stock' => 3],
+                    ['talla' => '10', 'stock' => 3],
+                    ['talla' => '12', 'stock' => 3]
+                ],
                 'PRO_Precio' => 140.00,
                 'PRO_Stock' => 9,
                 'PRO_Imagen' => 'productos/pumaallpro.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT001',
+                'SCT_Codigo' => $catZapatillas,
             ],
             [
                 'PRO_Codigo' => 'P007',
@@ -118,13 +153,15 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'El Balón Spalding NBA Official está fabricado con cuero premium para una sensación de agarre profesional. Es el balón reglamentario para los partidos de la NBA, ideal para interiores.',
                 'PRO_Marca' => 'Spalding',
                 'PRO_Color' => 'Naranja',
-                'PRO_Talla' => '7',
+                'PRO_Talla' => [
+                    ['talla' => '7', 'stock' => 25]
+                ],
                 'PRO_Precio' => 70.00,
                 'PRO_Stock' => 25,
                 'PRO_Imagen' => 'productos/balonspalding.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT012',
+                'SCT_Codigo' => $catBalones,
             ],
             [
                 'PRO_Codigo' => 'P008',
@@ -132,13 +169,15 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'El Balón Wilson Evolution es considerado el mejor balón de baloncesto de interior no oficial. Su cubierta de microfibra compuesta ofrece un tacto suave y un agarre excepcional.',
                 'PRO_Marca' => 'Wilson',
                 'PRO_Color' => 'Naranja',
-                'PRO_Talla' => '7',
+                'PRO_Talla' => [
+                    ['talla' => '7', 'stock' => 30]
+                ],
                 'PRO_Precio' => 65.00,
                 'PRO_Stock' => 30,
                 'PRO_Imagen' => 'productos/balonwilson.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT012',
+                'SCT_Codigo' => $catBalones,
             ],
             [
                 'PRO_Codigo' => 'P009',
@@ -146,13 +185,15 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'El Balón Nike Elite Championship ofrece una excelente durabilidad y un tacto suave. Diseñado para la competición, mantiene la forma y la presión durante más tiempo.',
                 'PRO_Marca' => 'Nike',
                 'PRO_Color' => 'Naranja/Negro',
-                'PRO_Talla' => '7',
+                'PRO_Talla' => [
+                    ['talla' => '7', 'stock' => 18]
+                ],
                 'PRO_Precio' => 55.00,
                 'PRO_Stock' => 18,
                 'PRO_Imagen' => 'productos/balonnikeelite.jpg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT012',
+                'SCT_Codigo' => $catBalones,
             ],
             [
                 'PRO_Codigo' => 'P010',
@@ -160,13 +201,15 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'El Balón Molten GG7X es el balón oficial de la FIBA (Federación Internacional de Baloncesto). Su diseño de 12 paneles y la cubierta de cuero sintético proporcionan un agarre constante.',
                 'PRO_Marca' => 'Molten',
                 'PRO_Color' => 'Naranja/Marfil',
-                'PRO_Talla' => '7',
+                'PRO_Talla' => [
+                    ['talla' => '7', 'stock' => 14]
+                ],
                 'PRO_Precio' => 75.00,
                 'PRO_Stock' => 14,
                 'PRO_Imagen' => 'productos/balonmolten.jpg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT012',
+                'SCT_Codigo' => $catBalones,
             ],
             [
                 'PRO_Codigo' => 'P011',
@@ -174,13 +217,18 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'La Camiseta de los Lakers Edición 2025 presenta un tejido transpirable con tecnología Dri-FIT para mantenerte fresco y seco. El diseño celebra la nueva temporada con detalles y colores oficiales del equipo.',
                 'PRO_Marca' => 'Nike',
                 'PRO_Color' => 'Amaril/Purp',
-                'PRO_Talla' => 'S-XXL',
+                'PRO_Talla' => [
+                    ['talla' => 'S', 'stock' => 5],
+                    ['talla' => 'M', 'stock' => 10],
+                    ['talla' => 'L', 'stock' => 5],
+                    ['talla' => 'XL', 'stock' => 2]
+                ],
                 'PRO_Precio' => 90.00,
                 'PRO_Stock' => 22,
                 'PRO_Imagen' => 'productos/camisetalakers.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT002',
+                'SCT_Codigo' => $catCamisetas,
             ],
             [
                 'PRO_Codigo' => 'P012',
@@ -188,13 +236,17 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'La Camiseta de los Warriors Classic rinde homenaje a los uniformes históricos del equipo. Confeccionada con materiales de alta calidad, es perfecta para usar en el juego.',
                 'PRO_Marca' => 'Nike',
                 'PRO_Color' => 'Azul/Amarillo',
-                'PRO_Talla' => 'S-XXL',
+                'PRO_Talla' => [
+                    ['talla' => 'S', 'stock' => 5],
+                    ['talla' => 'M', 'stock' => 10],
+                    ['talla' => 'L', 'stock' => 4]
+                ],
                 'PRO_Precio' => 85.00,
                 'PRO_Stock' => 19,
                 'PRO_Imagen' => 'productos/camisetawarriors.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT002',
+                'SCT_Codigo' => $catCamisetas,
             ],
             [
                 'PRO_Codigo' => 'P013',
@@ -202,13 +254,17 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'El Short Jordan Performance es un esencial para el entrenamiento. Su tejido ligero con tecnología que absorbe el sudor te mantiene cómodo mientras te mueves.',
                 'PRO_Marca' => 'Jordan',
                 'PRO_Color' => 'Negro',
-                'PRO_Talla' => 'S-XL',
+                'PRO_Talla' => [
+                    ['talla' => 'S', 'stock' => 10],
+                    ['talla' => 'M', 'stock' => 15],
+                    ['talla' => 'L', 'stock' => 10]
+                ],
                 'PRO_Precio' => 45.00,
                 'PRO_Stock' => 35,
                 'PRO_Imagen' => 'productos/shortjordan.jpeg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT003',
+                'SCT_Codigo' => $catShorts,
             ],
             [
                 'PRO_Codigo' => 'P014',
@@ -216,13 +272,16 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'Esta Sudadera Nike Dri-FIT es ideal para mantener la temperatura muscular. El tejido suave y la capucha ajustable ofrecen máxima comodidad.',
                 'PRO_Marca' => 'Nike',
                 'PRO_Color' => 'Gris',
-                'PRO_Talla' => 'M-XXL',
+                'PRO_Talla' => [
+                    ['talla' => 'M', 'stock' => 8],
+                    ['talla' => 'L', 'stock' => 8]
+                ],
                 'PRO_Precio' => 75.00,
                 'PRO_Stock' => 16,
                 'PRO_Imagen' => 'productos/sudaderanike.jpeg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT005',
+                'SCT_Codigo' => $catSudaderas,
             ],
             [
                 'PRO_Codigo' => 'P015',
@@ -230,13 +289,16 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'La Chaqueta Adidas Training ofrece un corte moderno y está fabricada con materiales reciclados. Es ligera, resistente al viento y perfecta para el calentamiento.',
                 'PRO_Marca' => 'Adidas',
                 'PRO_Color' => 'Negro/Blanco',
-                'PRO_Talla' => 'M-XL',
+                'PRO_Talla' => [
+                    ['talla' => 'M', 'stock' => 5],
+                    ['talla' => 'L', 'stock' => 6]
+                ],
                 'PRO_Precio' => 95.00,
                 'PRO_Stock' => 11,
                 'PRO_Imagen' => 'productos/chaquetaadidas.jpeg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT005',
+                'SCT_Codigo' => $catSudaderas,
             ],
             [
                 'PRO_Codigo' => 'P016',
@@ -244,13 +306,16 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'Las ANTA GH4 son el modelo de Gordon Hayward, conocido por su versatilidad. Estas zapatillas ofrecen un equilibrio perfecto entre amortiguación, estabilidad y respuesta.',
                 'PRO_Marca' => 'ANTA',
                 'PRO_Color' => 'Blanco/Rojo',
-                'PRO_Talla' => '41-45',
+                'PRO_Talla' => [
+                    ['talla' => '8', 'stock' => 3],
+                    ['talla' => '9', 'stock' => 4]
+                ],
                 'PRO_Precio' => 125.00,
                 'PRO_Stock' => 7,
                 'PRO_Imagen' => 'productos/gh4.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT001',
+                'SCT_Codigo' => $catZapatillas,
             ],
             [
                 'PRO_Codigo' => 'P017',
@@ -258,13 +323,17 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'Las ANTA KT Splash están diseñadas pensando en la durabilidad. Su suela exterior resistente las hace ideales para el baloncesto de calle o canchas con superficies más rugosas.',
                 'PRO_Marca' => 'ANTA',
                 'PRO_Color' => 'Aqua',
-                'PRO_Talla' => '40-44',
+                'PRO_Talla' => [
+                    ['talla' => '7', 'stock' => 4],
+                    ['talla' => '9', 'stock' => 5],
+                    ['talla' => '11', 'stock' => 4]
+                ],
                 'PRO_Precio' => 110.00,
                 'PRO_Stock' => 13,
                 'PRO_Imagen' => 'productos/ktsplash.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT001',
+                'SCT_Codigo' => $catZapatillas,
             ],
             [
                 'PRO_Codigo' => 'P018',
@@ -272,13 +341,16 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'Las Jordan Luka 3 son las zapatillas de Luka Dončić, enfocadas en la ligereza y la amortiguación de bajo perfil para optimizar la velocidad y los cambios de dirección.',
                 'PRO_Marca' => 'Jordan',
                 'PRO_Color' => 'Blanco/Verde',
-                'PRO_Talla' => '42-46',
+                'PRO_Talla' => [
+                    ['talla' => '8', 'stock' => 3],
+                    ['talla' => '10', 'stock' => 3]
+                ],
                 'PRO_Precio' => 135.00,
                 'PRO_Stock' => 6,
                 'PRO_Imagen' => 'productos/luka3.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT001',
+                'SCT_Codigo' => $catZapatillas,
             ],
             [
                 'PRO_Codigo' => 'P019',
@@ -286,13 +358,15 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'El Balón Spalding Street Outdoor está construido para resistir las superficies de asfalto y cemento. Su cubierta de caucho garantiza la máxima durabilidad.',
                 'PRO_Marca' => 'Spalding',
                 'PRO_Color' => 'Negro',
-                'PRO_Talla' => '7',
+                'PRO_Talla' => [
+                    ['talla' => '7', 'stock' => 40]
+                ],
                 'PRO_Precio' => 40.00,
                 'PRO_Stock' => 40,
                 'PRO_Imagen' => 'productos/balonstreet.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT012',
+                'SCT_Codigo' => $catBalones,
             ],
             [
                 'PRO_Codigo' => 'P020',
@@ -300,13 +374,16 @@ class ProductoSeeder extends Seeder
                 'PRO_Descripcion' => 'Este Conjunto Puma Basketball ofrece una solución completa para el día de juego. Tanto la camiseta como el short están hechos de material transpirable.',
                 'PRO_Marca' => 'Puma',
                 'PRO_Color' => 'Rojo/Negro',
-                'PRO_Talla' => 'M-XL',
+                'PRO_Talla' => [
+                    ['talla' => 'M', 'stock' => 8],
+                    ['talla' => 'L', 'stock' => 9]
+                ],
                 'PRO_Precio' => 115.00,
                 'PRO_Stock' => 17,
                 'PRO_Imagen' => 'productos/conjuntopuma.jpeg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
-                'SCT_Codigo' => 'SCT002',
+                'SCT_Codigo' => $catCamisetas,
             ],
         ];
 

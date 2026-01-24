@@ -58,6 +58,7 @@
                     <thead>
                         <tr class="text-left text-sm text-gray-500 border-b">
                             <th class="pb-2">Producto</th>
+                            <th class="pb-2 w-32">Talla</th>
                             <th class="pb-2 w-32">Cantidad</th>
                             <th class="pb-2 w-32">Precio Unit.</th>
                             <th class="pb-2 w-32">Subtotal</th>
@@ -78,9 +79,26 @@
                                             class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white"
                                             x-init="initSelect2($el, row)" required>
                                             <option value="">Seleccione...</option>
-                                            <!-- Options injected via JS -->
                                         </select>
                                     </div>
+                                </td>
+                                <td class="py-3">
+                                    <template x-if="row.isCart">
+                                        <div>
+                                            <input type="text" name="tallas[]" :value="row.talla" readonly
+                                                class="w-full rounded-md border-gray-300 bg-gray-100 dark:bg-zinc-700 dark:text-gray-300">
+                                        </div>
+                                    </template>
+                                    <template x-if="!row.isCart">
+                                        <select name="tallas[]" x-model="row.talla" required
+                                            class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white"
+                                            @change="checkDuplicate(row)">
+                                            <option value="">...</option>
+                                            <template x-for="size in row.availableSizes" :key="size.talla">
+                                                <option :value="size.talla" x-text="size.talla"></option>
+                                            </template>
+                                        </select>
+                                    </template>
                                 </td>
                                 <td class="py-3">
                                     <input type="number" name="cantidades[]" min="1" x-model="row.qty"
@@ -197,6 +215,8 @@
                                         qty: parseInt(item.qty),
                                         price: parseFloat(item.price),
                                         code: item.id,
+                                        talla: item.talla || '',
+                                        availableSizes: [], // populated later? Or not needed for IS CART
                                         isCart: true
                                     });
                                 });
@@ -213,6 +233,8 @@
                         qty: 1,
                         price: 0,
                         code: '',
+                        talla: '',
+                        availableSizes: [],
                         isCart: false
                     });
                 },
@@ -251,25 +273,28 @@
 
                     $(el).on('select2:select', (e) => {
                         const selectedId = e.params.data.id;
-
-                        // Duplicate Check
-                        const isDuplicate = this.rows.some(r => r.id !== row.id && r.code ===
-                            selectedId);
-
-                        if (isDuplicate) {
-                            this.showError(
-                                "Este producto ya está en la factura. Ajuste la cantidad.");
-                            $(el).val(null).trigger('change.select2');
-                            return;
-                        }
-
                         const selected = this.productos.find(p => p.PRO_Codigo == selectedId);
+
                         if (selected) {
                             row.price = parseFloat(selected.PRO_Precio);
                             row.code = selected.PRO_Codigo;
                             row.isCart = false;
+                            row.availableSizes = selected.PRO_Talla || [];
+                            row.talla = '';
                         }
                     });
+                },
+
+                checkDuplicate(row) {
+                    if (!row.code || !row.talla) return;
+                    // Check duplicate
+                    const isDuplicate = this.rows.some(r => r.id !== row.id && r.code === row.code && r
+                        .talla === row.talla);
+
+                    if (isDuplicate) {
+                        this.showError("Este producto y talla ya está en la factura.");
+                        row.talla = '';
+                    }
                 }
             }));
         });
