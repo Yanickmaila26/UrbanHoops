@@ -117,28 +117,64 @@
                             @enderror
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="PRO_Color"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Color</label>
-                                <input type="text" name="PRO_Color" id="PRO_Color" value="{{ old('PRO_Color') }}"
-                                    placeholder="Ej: Negro/Rojo"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white"
-                                    required>
-                                @error('PRO_Color')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
+                        <div class="md:col-span-2" x-data="{
+                            sizes: [{ talla: '', stock: 1 }],
+                            get totalStock() {
+                                return this.sizes.reduce((sum, item) => sum + (parseInt(item.stock) || 0), 0);
+                            },
+                            addSize() {
+                                this.sizes.push({ talla: '', stock: 1 });
+                            },
+                            removeSize(index) {
+                                if (this.sizes.length > 1) {
+                                    this.sizes.splice(index, 1);
+                                }
+                            }
+                        }">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Tallas y Stock
+                            </label>
+
+                            <div class="space-y-3">
+                                <template x-for="(size, index) in sizes" :key="index">
+                                    <div class="flex gap-4 items-start">
+                                        <div class="flex-1">
+                                            <input type="text" :name="`PRO_Talla[${index}][talla]`" x-model="size.talla"
+                                                placeholder="Talla (ej: S, 42)" required
+                                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white sm:text-sm">
+                                        </div>
+                                        <div class="w-32">
+                                            <input type="number" :name="`PRO_Talla[${index}][stock]`" x-model="size.stock"
+                                                min="1" placeholder="Cant." required
+                                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white sm:text-sm">
+                                        </div>
+                                        <button type="button" @click="removeSize(index)"
+                                            class="mt-1 text-red-500 hover:text-red-700">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </template>
                             </div>
-                            <div>
-                                <label for="PRO_Talla"
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Talla</label>
-                                <input type="text" name="PRO_Talla" id="PRO_Talla" value="{{ old('PRO_Talla') }}"
-                                    placeholder="Ej: M, 42, L"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white"
-                                    required>
-                                @error('PRO_Talla')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
+
+                            <button type="button" @click="addSize()"
+                                class="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Agregar otra talla
+                            </button>
+
+                            <div class="mt-4 p-3 bg-gray-50 dark:bg-zinc-700 rounded-md">
+                                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                    Stock Total Calculado: <span x-text="totalStock"
+                                        class="font-bold text-blue-600 dark:text-blue-400"></span>
+                                </p>
+                                <input type="hidden" name="PRO_Stock" :value="totalStock">
                             </div>
                         </div>
 
@@ -155,18 +191,9 @@
                             @enderror
                         </div>
 
-                        <div>
-                            <label for="PRO_Stock"
-                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Stock
-                                Inicial</label>
-                            <input type="number" min="0" name="PRO_Stock" id="PRO_Stock"
-                                value="{{ old('PRO_Stock', 0) }}" min="0" step="1"
-                                placeholder="Cantidad en almacén"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white"
-                                required>
-                            @error('PRO_Stock')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                        <!-- Stock field removed as it is now calculated dynamically -->
+                        <div class="hidden">
+                            <!-- PRO_Stock is hidden input above -->
                         </div>
 
                         <div class="md:col-span-2">

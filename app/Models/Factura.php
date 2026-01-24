@@ -28,7 +28,7 @@ class Factura extends Model
     public function productos()
     {
         return $this->belongsToMany(Producto::class, 'detalle_factura', 'FAC_Codigo', 'PRO_Codigo')
-            ->withPivot('DFC_Cantidad', 'DFC_Precio')
+            ->withPivot('DFC_Cantidad', 'DFC_Precio', 'DFC_Talla')
             ->withTimestamps();
     }
 

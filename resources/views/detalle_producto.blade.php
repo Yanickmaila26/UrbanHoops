@@ -41,31 +41,55 @@
                         </p>
                     </div>
 
-                    <div class="mb-5">
-                        <h3 class="h5 fw-bold mb-3">Talla Disponible (US) / Color</h3>
-                        <div class="d-flex flex-wrap gap-2">
-                            <div class="p-3 border rounded bg-white font-monospace fw-bold shadow-sm">
-                                {{ $producto->PRO_Talla }}
+                    <div x-data="{
+                        selectedSize: null,
+                        sizes: {{ json_encode($producto->PRO_Talla ?? []) }}
+                    }">
+                        <div class="mb-5">
+                            <h3 class="h5 fw-bold mb-3">Talla Disponible (US) / Color</h3>
+
+                            <div class="mb-3">
+                                <span class="d-block mb-2 font-bold text-sm text-gray-700">Selecciona Talla:</span>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <template x-for="size in sizes" :key="size.talla">
+                                        <button type="button" @click="selectedSize = size.talla"
+                                            :class="selectedSize === size.talla ? 'bg-black text-white border-black' :
+                                                'bg-white text-gray-900 border-gray-300 hover:border-black'"
+                                            class="px-4 py-2 border rounded font-bold transition-colors min-w-[3rem]"
+                                            x-text="size.talla">
+                                        </button>
+                                    </template>
+                                    <template x-if="!sizes || sizes.length === 0">
+                                        <div class="p-3 border rounded bg-white font-monospace fw-bold shadow-sm">
+                                            {{ is_string($producto->PRO_Talla) ? $producto->PRO_Talla : 'Única' }}
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
-                            <div class="p-3 border rounded bg-white font-monospace fw-bold shadow-sm">
-                                {{ $producto->PRO_Color }}
+
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="font-bold text-sm text-gray-700">Color:</span>
+                                <span
+                                    class="px-3 py-1 bg-gray-100 rounded text-dark font-bold border">{{ $producto->PRO_Color }}</span>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="d-grid gap-2">
-                        <button
-                            class="btn btn-dark btn-lg py-3 fw-bold text-uppercase tracking-wider transition-transform hover:scale-105"
-                            onclick="window.addToCart('{{ $producto->PRO_Codigo }}', '{{ $producto->PRO_Nombre }}', {{ $producto->PRO_Precio }}, '{{ asset('storage/' . $producto->PRO_Imagen) }}')">
-                            Añadir al Carrito
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                class="bi bi-cart-plus inline-block ms-2 mb-1" viewBox="0 0 16 16">
-                                <path
-                                    d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9z" />
-                                <path
-                                    d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
-                            </svg>
-                        </button>
+                        <div class="d-grid gap-2">
+                            <button
+                                class="btn btn-dark btn-lg py-3 fw-bold text-uppercase tracking-wider transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                :disabled="sizes.length > 0 && !selectedSize"
+                                @click="window.addToCart('{{ $producto->PRO_Codigo }}', '{{ $producto->PRO_Nombre }}', {{ $producto->PRO_Precio }}, '{{ asset('storage/' . $producto->PRO_Imagen) }}', selectedSize)">
+                                <span x-show="sizes.length === 0 || selectedSize">Añadir al Carrito</span>
+                                <span x-show="sizes.length > 0 && !selectedSize">Selecciona una Talla</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                    class="bi bi-cart-plus inline-block ms-2 mb-1" viewBox="0 0 16 16">
+                                    <path
+                                        d="M9 5.5a.5.5 0 0 0-1 0V7H6.5a.5.5 0 0 0 0 1H8v1.5a.5.5 0 0 0 1 0V8h1.5a.5.5 0 0 0 0-1H9z" />
+                                    <path
+                                        d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
                     @if ($producto->PRO_Stock <= 5 && $producto->PRO_Stock > 0)

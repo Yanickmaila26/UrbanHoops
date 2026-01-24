@@ -28,7 +28,7 @@ class OrdenCompra extends Model
     public function productos()
     {
         return $this->belongsToMany(Producto::class, 'detalle_ord_com', 'ORC_Numero', 'PRO_Codigo')
-            ->withPivot('cantidad_solicitada');
+            ->withPivot('cantidad_solicitada', 'DOC_Talla');
     }
 
     public static function getOrdenes($search = null)

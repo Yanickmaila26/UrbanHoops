@@ -72,20 +72,20 @@ export class CartController {
         this.view.showMessage('Producto agregado correctamente');
     }
 
-    remove(id) {
-        this.model.remove(id);
+    remove(id, talla = null) {
+        this.model.remove(id, talla);
     }
 
-    updateQty(id, qty) {
-        this.model.updateQty(id, qty);
+    updateQty(id, qty, talla = null) {
+        this.model.updateQty(id, qty, talla);
     }
 
     render() {
         const items = this.model.getItems();
         this.view.renderCartItems(
             items,
-            (id) => this.remove(id),
-            (id, qty) => this.updateQty(id, qty)
+            (id, talla) => this.remove(id, talla),
+            (id, qty, talla) => this.updateQty(id, qty, talla)
         );
         this.view.updateCartCount(this.model.getCount());
         this.view.updateCartTotals(
