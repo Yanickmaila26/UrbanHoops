@@ -38,6 +38,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/lebron21.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT001',
             ],
             [
                 'PRO_Codigo' => 'P002',
@@ -52,6 +53,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/harden8.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT001',
             ],
             [
                 'PRO_Codigo' => 'P003',
@@ -66,6 +68,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/kai2klay.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT001',
             ],
             [
                 'PRO_Codigo' => 'P004',
@@ -79,6 +82,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/curry10.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT001',
             ],
             [
                 'PRO_Codigo' => 'P005',
@@ -92,6 +96,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/zion3.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT001',
             ],
             [
                 'PRO_Codigo' => 'P006',
@@ -105,6 +110,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/pumaallpro.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT001',
             ],
             [
                 'PRO_Codigo' => 'P007',
@@ -118,6 +124,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/balonspalding.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT012',
             ],
             [
                 'PRO_Codigo' => 'P008',
@@ -131,6 +138,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/balonwilson.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT012',
             ],
             [
                 'PRO_Codigo' => 'P009',
@@ -144,6 +152,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/balonnikeelite.jpg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT012',
             ],
             [
                 'PRO_Codigo' => 'P010',
@@ -157,6 +166,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/balonmolten.jpg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT012',
             ],
             [
                 'PRO_Codigo' => 'P011',
@@ -170,6 +180,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/camisetalakers.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT002',
             ],
             [
                 'PRO_Codigo' => 'P012',
@@ -183,6 +194,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/camisetawarriors.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT002',
             ],
             [
                 'PRO_Codigo' => 'P013',
@@ -196,6 +208,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/shortjordan.jpeg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT003',
             ],
             [
                 'PRO_Codigo' => 'P014',
@@ -209,6 +222,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/sudaderanike.jpeg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT005',
             ],
             [
                 'PRO_Codigo' => 'P015',
@@ -222,6 +236,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/chaquetaadidas.jpeg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT005',
             ],
             [
                 'PRO_Codigo' => 'P016',
@@ -235,6 +250,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/gh4.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT001',
             ],
             [
                 'PRO_Codigo' => 'P017',
@@ -248,6 +264,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/ktsplash.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT001',
             ],
             [
                 'PRO_Codigo' => 'P018',
@@ -261,6 +278,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/luka3.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT001',
             ],
             [
                 'PRO_Codigo' => 'P019',
@@ -274,6 +292,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/balonstreet.png',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT012',
             ],
             [
                 'PRO_Codigo' => 'P020',
@@ -287,6 +306,7 @@ class ProductoSeeder extends Seeder
                 'PRO_Imagen' => 'productos/conjuntopuma.jpeg',
                 'activo' => true,
                 'PRV_Ced_Ruc' => '1792345678001',
+                'SCT_Codigo' => 'SCT002',
             ],
         ];
 

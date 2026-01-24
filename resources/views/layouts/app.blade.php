@@ -7,214 +7,195 @@
     <meta name="description" content="UrbanHoops - Tienda de baloncesto urbano">
     <title>@yield('title', 'Inicio') | UrbanHoops</title>
 
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
+    <!-- Bootstrap 5.3 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- App Styles & Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
 </head>
 
-<body class="font-sans antialiased text-gray-900 bg-gray-100 flex flex-col min-h-screen">
-    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
-        <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
-            <path
-                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-        </symbol>
-        <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
-            <path
-                d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0 2 1 1 0 0 1 0 2z" />
-        </symbol>
-        <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
-            <path
-                d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-        </symbol>
-    </svg>
+<body class="font-sans antialiased bg-gray-100 flex flex-col min-h-screen">
 
-    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    <!-- Menú de Accesibilidad -->
+    <div id="accesibilidad-menu" class="d-flex flex-column gap-2" style="z-index: 9999; width: 160px;">
+        <!-- Fixed position handled in CSS now, or inline? User CSS had fixed. -->
 
-    <div id="accesibilidad-menu"
-        class="fixed top-1/2 right-0 -translate-y-1/2 bg-dark-surface p-3 rounded-l-lg shadow-xl flex flex-col gap-2 z-40 text-sm">
-        <button id="btn-contraste" class="bg-brand text-black px-2 py-1 rounded font-bold hover:bg-white">Alto
-            Contraste</button>
-        <button id="btn-aumentar" class="bg-white text-black px-2 py-1 rounded hover:bg-gray-200">Aumentar
-            letra</button>
-        <button id="btn-disminuir" class="bg-white text-black px-2 py-1 rounded hover:bg-gray-200">Disminuir
-            letra</button>
-        <button id="btn-normal" class="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600">Tamaño
-            normal</button>
+        <button id="btn-contraste" class="btn btn-warning btn-sm fw-bold w-100">
+            Alto Contraste
+        </button>
+
+        <button id="btn-aumentar" class="btn btn-light btn-sm fw-bold w-100">
+            Aumentar letra
+        </button>
+
+        <button id="btn-disminuir" class="btn btn-light btn-sm fw-bold w-100">
+            Disminuir letra
+        </button>
+
+        <button id="btn-normal" class="btn btn-secondary btn-sm fw-bold w-100">
+            Tamaño normal
+        </button>
     </div>
 
-    <header x-data="{ open: false, cartOpen: false }" class="bg-dark text-white fixed w-full top-0 z-30 shadow-md">
-        <div class="container mx-auto px-4 py-2 flex items-center justify-between min-h-[80px]">
-
-            <a href="{{ route('welcome') }}" class="flex-shrink-0 mr-4" aria-label="UrbanHoops Inicio">
-                <img src="{{ asset('images/logo_fondo_UH.png') }}" alt="UrbanHoops Logo" class="h-10 md:h-12 w-auto">
+    <!-- Header / Navbar -->
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand" href="{{ route('welcome') }}">
+                <img src="{{ asset('images/logo_fondo_UH.png') }}" alt="UrbanHoops Logo"
+                    style="height: 50px; width: auto;">
             </a>
 
-            <button @click="open = !open" class="lg:hidden text-white order-last ml-4 focus:outline-none"
-                aria-label="Menú">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path x-show="!open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 6h16M4 12h16M4 18h16"></path>
-                    <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
+            <!-- Botón hamburguesa -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
             </button>
 
-            <nav :class="{ 'flex': open, 'hidden': !open }"
-                class="hidden lg:flex flex-1 justify-between items-center absolute lg:relative top-full left-0 w-full lg:w-auto bg-dark lg:bg-transparent p-6 lg:p-0 flex-col lg:flex-row shadow-xl lg:shadow-none">
+            <!-- Menú -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('welcome') ? 'active' : '' }}"
+                            href="{{ route('welcome') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('productos-servicios') ? 'active' : '' }}"
+                            href="{{ route('productos-servicios') }}">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('contacto') ? 'active' : '' }}"
+                            href="{{ route('contacto') }}">Contacto</a>
+                    </li>
 
-                <div class="flex flex-col lg:flex-row gap-4 lg:gap-6 items-center lg:mx-auto">
-                    <a href="{{ route('welcome') }}"
-                        class="hover:text-brand transition font-medium whitespace-nowrap">Inicio</a>
-                    <a href="{{ route('productos-servicios') }}"
-                        class="hover:text-brand transition font-medium whitespace-nowrap">Productos</a>
-                    <a href="{{ route('contacto') }}"
-                        class="hover:text-brand transition font-medium whitespace-nowrap">Contacto</a>
-                </div>
-
-                <div
-                    class="flex flex-col lg:flex-row gap-4 items-center mt-6 lg:mt-0 lg:ml-6 border-t lg:border-none border-gray-700 pt-4 lg:pt-0">
-
+                    <!-- Auth Links -->
                     @if (Route::has('client.login'))
-                        <div class="flex items-center gap-4">
-                            @if (Auth::guard('web')->check())
+                        @if (Auth::guard('web')->check())
+                            <li class="nav-item ms-3">
                                 <a href="{{ url('/admin/dashboard') }}"
-                                    class="hover:text-brand transition font-medium text-sm whitespace-nowrap">Admin
-                                    Dashboard</a>
-                            @elseif(Auth::guard('client')->check())
-                                <div x-data="{ openDropdown: false }" class="relative">
-                                    <button @click="openDropdown = !openDropdown" @click.outside="openDropdown = false"
-                                        class="flex items-center gap-2 text-white hover:text-brand focus:outline-none transition">
-                                        <span class="font-medium text-sm">Hola,
-                                            {{ Auth::guard('client')->user()->cliente->CLI_Nombre ?? Auth::guard('client')->user()->email }}</span>
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 9l-7 7-7-7"></path>
-                                        </svg>
-                                    </button>
-
-                                    <!-- Dropdown Menu -->
-                                    <div x-show="openDropdown" x-transition:enter="transition ease-out duration-100"
-                                        x-transition:enter-start="transform opacity-0 scale-95"
-                                        x-transition:enter-end="transform opacity-100 scale-100"
-                                        x-transition:leave="transition ease-in duration-75"
-                                        x-transition:leave-start="transform opacity-100 scale-100"
-                                        x-transition:leave-end="transform opacity-0 scale-95"
-                                        class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 ring-1 ring-black ring-opacity-5"
-                                        style="display: none;">
-
-                                        <div class="px-4 py-2 border-b border-gray-100">
-                                            <p class="text-xs text-gray-500">Mi Cuenta</p>
-                                        </div>
-
-                                        <a href="{{ route('client.cart') }}"
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-brand">Mi
-                                            Carrito</a>
-                                        <a href="{{ route('client.orders') }}"
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-brand">Mis
-                                            Pedidos</a>
-                                        <a href="{{ route('client.invoices') }}"
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-brand">Mis
-                                            Facturas</a>
-                                        <a href="{{ route('client.addresses') }}"
-                                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-brand">Mis
-                                            Direcciones</a>
-
-                                        <div class="border-t border-gray-100 my-1"></div>
-
+                                    class="btn btn-warning btn-sm fw-bold text-dark">Admin</a>
+                            </li>
+                        @elseif(Auth::guard('client')->check())
+                            <li class="nav-item dropdown ms-3">
+                                <a class="nav-link dropdown-toggle text-warning" href="#" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Hola, {{ Auth::guard('client')->user()->cliente->CLI_Nombre ?? 'Cliente' }}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{{ route('client.cart') }}">Mi Carrito</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('client.orders') }}">Mis Pedidos</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('client.invoices') }}">Mis Facturas</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="{{ route('client.addresses') }}">Mis
+                                            Direcciones</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li>
                                         <form method="POST" action="{{ route('client.logout') }}">
                                             @csrf
-                                            <button type="submit"
-                                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Cerrar
+                                            <button type="submit" class="dropdown-item text-danger">Cerrar
                                                 Sesión</button>
                                         </form>
-                                    </div>
-                                </div>
-                            @else
-                                <a href="{{ route('client.login') }}"
-                                    class="hover:text-brand transition font-medium text-sm uppercase tracking-wider">Entrar</a>
-                                @if (Route::has('client.register'))
+                                    </li>
+                                </ul>
+                            </li>
+                        @else
+                            <li class="nav-item ms-3">
+                                <a href="{{ route('client.login') }}" class="nav-link">Entrar</a>
+                            </li>
+                            @if (Route::has('client.register'))
+                                <li class="nav-item ms-2">
                                     <a href="{{ route('client.register') }}"
-                                        class="btn-brand text-black px-4 py-2 rounded text-xs font-bold uppercase whitespace-nowrap">
-                                        Registro
-                                    </a>
-                                @endif
+                                        class="btn btn-warning btn-sm fw-bold text-dark">Registro</a>
+                                </li>
                             @endif
-                        </div>
+                        @endif
                     @endif
 
-                    <div class="hidden lg:block w-px h-6 bg-gray-600 mx-2"></div>
-
-                    <button @click="$dispatch('open-cart')"
-                        class="btn-outline-brand p-2 rounded-full relative hover:bg-brand hover:text-black transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            viewBox="0 0 16 16">
-                            <path
-                                d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352l.798 1.594H15.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H1.832a.5.5 0 0 1-.493-.416l-1.5-8A.5.5 0 0 1 0 1.5zm4.541 6a.5.5 0 0 0-.542.493l.541.432.541-.432a.5.5 0 0 0-.541-.493zM13 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-4-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
-                        </svg>
-                        <span id="cartCount"
-                            class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold">0</span>
-                    </button>
-                </div>
-            </nav>
+                    <!-- Cart Icon -->
+                    <li class="nav-item">
+                        <button id="btnOpenCart" class="btn btn-outline-warning position-relative ms-3"
+                            @click="$dispatch('open-cart')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                viewBox="0 0 16 16">
+                                <path
+                                    d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.352l.798 1.594H15.5a.5.5 0 0 1 .491.592l-1.5 8a.5.5 0 0 1-.491.408H1.832a.5.5 0 0 1-.493-.416l-1.5-8A.5.5 0 0 1 0 1.5zm4.541 6a.5.5 0 0 0-.542.493l.541.432.541-.432a.5.5 0 0 0-.541-.493zM13 12a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-4-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2z" />
+                            </svg>
+                            <span id="cartCount"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="display:none;">0</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </div>
     </header>
 
-    <main id="main-content" class=" pt-10">
+    <main id="main-content" class="pt-4 mt-5">
         @yield('content')
     </main>
 
-    <footer class="bg-dark text-white py-8 mt-auto">
-        <div class="container mx-auto px-4 text-center">
-            <div class="flex flex-wrap justify-center gap-4 mb-4 text-brand">
-                <a href="{{ route('welcome') }}" class="hover:underline">Inicio</a> |
-                <a href="{{ route('productos-servicios') }}" class="hover:underline">Productos</a> |
-                <a href="{{ route('contacto') }}" class="hover:underline">Contacto</a>
+    <footer class="bg-dark text-white text-center py-4 mt-auto">
+        <div class="container">
+            <div class="mt-2">
+                <a href="{{ route('welcome') }}" class="text-warning text-decoration-none me-3">Inicio</a>
+                <span class="text-white">|</span>
+                <a href="{{ route('productos-servicios') }}"
+                    class="text-warning text-decoration-none mx-3">Productos</a>
+                <span class="text-white">|</span>
+                <a href="{{ route('contacto') }}" class="text-warning text-decoration-none ms-3">Contacto</a>
             </div>
-            <p class="text-gray-400">&copy; 2026 UrbanHoops. Todos los derechos reservados.</p>
+            <p class="mt-3 mb-0 text-light small">
+                &copy; 2026 UrbanHoops. Todos los derechos reservados.
+            </p>
         </div>
     </footer>
 
-    <div x-data="{ open: false }" @open-cart.window="open = true" x-show="open"
-        class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-transition.opacity>
-
-        <div class="fixed inset-0 bg-black bg-opacity-50" @click="open = false"></div>
-
-        <div class="relative min-h-screen flex items-center justify-center p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full p-6 relative z-10" role="dialog"
-                aria-modal="true">
-                <div class="flex justify-between items-center mb-4 border-b pb-2">
-                    <h5 class="text-xl font-bold">🛒 Carrito de Compras</h5>
-                    <button @click="open = false"
-                        class="text-gray-500 hover:text-black font-bold text-2xl">&times;</button>
+    <!-- Modal del Carrito (Reusing existing structure but adapting classes) -->
+    <div x-data="{ open: false }" @open-cart.window="open = true" @close-cart.window="open = false"
+        class="modal fade" :class="{ 'show d-block': open }" tabindex="-1" aria-hidden="true"
+        style="background-color: rgba(0,0,0,0.5);" x-show="open" x-transition.opacity>
+        <div class="modal-dialog modal-lg modal-dialog-centered"> <!-- Centered -->
+            <div class="modal-content" @click.outside="open = false">
+                <div class="modal-header">
+                    <h5 class="modal-title">🛒 Carrito de Compras</h5>
+                    <button type="button" class="btn-close" @click="open = false"></button>
                 </div>
-
-                <div id="cartItems" class="max-h-96 overflow-y-auto py-4">
-                    <p class="text-center text-gray-500">Tu carrito está vacío</p>
-                </div>
-
-                <div id="loading" class="hidden text-center py-2">
-                    <p>Procesando...</p>
-                </div>
-                <div id="success" class="hidden text-center py-2 text-green-600 font-bold">
-                    <p>¡Compra exitosa!</p>
-                </div>
-
-                <div class="flex justify-between items-center mt-6 pt-4 border-t">
-                    <div class="text-lg font-bold">Total: <span id="cartTotal" class="text-red-600">$0.00</span>
+                <div class="modal-body">
+                    <div id="cartItems" class="list-group" style="max-height:400px; overflow-y:auto;">
+                        <div class="text-center py-5 text-muted">Tu carrito está vacío</div>
                     </div>
-                    <div class="flex gap-2">
-                        <button @click="open = false"
-                            class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition">Cerrar</button>
-                        <button id="btnCheckout"
-                            class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition font-bold">Comprar
-                            Ahora</button>
+                    <!-- Estados de compra -->
+                    <div id="loading" class="mt-3 text-center d-none">
+                        <p class="text-muted">Procesando pago...</p>
+                    </div>
+                    <div id="success" class="mt-3 text-center d-none">
+                        <p class="text-success fw-bold">¡Compra realizada con éxito!</p>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between align-items-center">
+                    <div class="text-lg font-weight-bold">
+                        Total: <span id="cartTotal" class="text-danger">$0.00</span>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary" @click="open = false">Cerrar</button>
+                        <button id="btnCheckout" type="button" class="btn btn-success">Comprar Ahora</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Scripts Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         window.AUTH_USER = {{ Auth::guard('client')->check() ? 'true' : 'false' }};

@@ -6,11 +6,14 @@ export class CartModel {
     constructor(storageKey = 'uh_cart_v1') {
         this.storageKey = storageKey;
         this.items = [];
-        this.isAuthenticated = window.AUTH_USER === true;
+        this.isAuthenticated = false;
         this.initialized = false;
     }
 
     async init() {
+        // Check window global here to ensure it is defined
+        this.isAuthenticated = window.AUTH_USER === true;
+
         if (this.isAuthenticated) {
             // If logged in, look for local items to sync first
             const local = this.loadLocal();
@@ -111,9 +114,9 @@ export class CartModel {
 
     async add(product, qty = 1) {
         if (this.isAuthenticated) {
-            await this.apiCall('add', { id: product.id, qty });
+            await this.apiCall('add', { id: product.id, qty, talla: product.talla });
         } else {
-            const existing = this.items.find(i => i.id === product.id);
+            const existing = this.items.find(i => i.id === product.id && i.talla === product.talla);
             if (existing) {
                 existing.qty = Math.min((existing.qty || 0) + qty, product.qt || 9999);
             } else {
@@ -124,26 +127,26 @@ export class CartModel {
         }
     }
 
-    async remove(productId) {
+    async remove(productId, talla = null) {
         if (this.isAuthenticated) {
-            await this.apiCall('remove', { id: productId });
+            await this.apiCall('remove', { id: productId, talla });
         } else {
-            this.items = this.items.filter(i => i.id !== productId);
+            this.items = this.items.filter(i => !(i.id === productId && i.talla === talla));
             this.saveLocal();
             this.notify();
         }
     }
 
-    async updateQty(productId, qty) {
+    async updateQty(productId, qty, talla = null) {
         if (this.isAuthenticated) {
             // If qty is 0, backend handles remove
-            await this.apiCall('update', { id: productId, qty });
+            await this.apiCall('update', { id: productId, qty, talla });
         } else {
-            const it = this.items.find(i => i.id === productId);
+            const it = this.items.find(i => i.id === productId && i.talla === talla);
             if (!it) return;
             it.qty = Math.max(0, qty);
             if (it.qty === 0) {
-                this.remove(productId);
+                this.remove(productId, talla);
             } else {
                 this.saveLocal();
                 this.notify();

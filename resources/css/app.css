@@ -5,7 +5,9 @@
 /* --- Lógica base del sitio --- */
 @layer base {
     *:focus {
-        @apply outline-none ring-4 ring-brand ring-offset-2;
+        outline: 3px solid #ff9500 !important;
+        /* WCAG 2.4.7 */
+        outline-offset: 2px !important;
     }
 
     html {
@@ -19,78 +21,181 @@
     }
 
     .btn-brand {
-        @apply bg-brand text-black hover:bg-brand-dark;
+        background-color: #ff9500 !important;
+        color: #000 !important;
+        /* WCAG 1.4.11 */
+    }
+
+    .btn-brand:hover {
+        background-color: #e68a00 !important;
     }
 
     .btn-outline-brand {
-        @apply border-2 border-brand text-brand hover:bg-brand hover:text-black bg-transparent;
+        color: #ff9500 !important;
+        border: 2px solid #ff9500 !important;
+        background-color: transparent;
     }
 
+    .btn-outline-brand:hover {
+        color: #000 !important;
+        background-color: #ff9500 !important;
+    }
+
+    /* Skip Link */
     .skip-link {
-        @apply absolute -top-10 left-0 bg-brand text-black px-4 py-2 z-50 font-bold transition-all duration-300;
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: #ff9500;
+        color: #000;
+        padding: 8px 16px;
+        z-index: 10000;
+        text-decoration: none;
+        font-weight: bold;
+        transition: top 0.3s;
     }
 
     .skip-link:focus {
-        @apply top-0;
+        top: 0;
+    }
+
+    /* Product Detail specific styles */
+    .opcion-talla {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 45px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+        /* Bootstrap-like border */
+    }
+
+    .opcion-talla:hover:not(.activo):not(.deshabilitada) {
+        background-color: #f8f9fa;
+        border-color: #ffc107;
+        /* Warning color matching design */
+    }
+
+    .opcion-talla.activo {
+        background-color: #212529;
+        color: white;
+        border-color: #212529;
+    }
+
+    .opcion-talla.deshabilitada {
+        cursor: not-allowed;
+        opacity: 0.5;
+        text-decoration: line-through;
+        background-color: #f8f9fa;
+    }
+
+    #detalleProductoContainer {
+        min-height: 500px;
+    }
+
+    #detalleImagen {
+        object-fit: contain;
+        max-height: 500px;
+        background-color: #f8f9fa;
+        padding: 20px;
+    }
+
+    /* Force Navbar Visibility/Color Overrides */
+    .navbar-dark .navbar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.75) !important;
+    }
+
+    .navbar-dark .navbar-nav .nav-link:hover,
+    .navbar-dark .navbar-nav .nav-link.active {
+        color: #ff9500 !important;
+        /* Brand Warning Color */
+    }
+
+    .text-warning {
+        color: #ff9500 !important;
+    }
+
+    /* Ensure collapse is visible on large screens properly */
+    @media (min-width: 992px) {
+        .navbar-collapse {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
     }
 }
 
-/* --- SOLUCIÓN DE ALTO CONTRASTE (Fuera de @layer para máxima prioridad) --- */
+/* --- SOLUCIÓN DE ALTO CONTRASTE (WCAG AAA) --- */
 
-/* 1. Fondo negro y texto blanco FORZOSO en todo el body y contenedores principales */
 body.high-contrast,
-body.high-contrast header,
-body.high-contrast footer,
-body.high-contrast section,
-body.high-contrast main,
-body.high-contrast div {
-    background-color: #000000 !important;
-    background-image: none !important;
-    /* Elimina gradientes y fotos de fondo CSS */
-    color: #ffffff !important;
-    box-shadow: none !important;
-    /* Elimina sombras que puedan parecer grises */
-}
-
-/* 2. Eliminar superposiciones semitransparentes (como el overlay del Hero) */
-body.high-contrast .absolute.inset-0.bg-black\/70 {
-    background-color: #000000 !important;
-    opacity: 1 !important;
-}
-
-/* 3. Forzar el color de todos los textos a blanco (excepto botones de marca) */
-body.high-contrast p,
-body.high-contrast h1,
-body.high-contrast h2,
-body.high-contrast h3,
-body.high-contrast span,
-body.high-contrast a:not(.btn) {
-    color: #ffffff !important;
-}
-
-/* 4. Bordes naranjas para mantener la estructura y accesibilidad */
 body.high-contrast * {
+    color: #ffffff !important;
+    background-color: #000000 !important;
     border-color: #ff9500 !important;
 }
 
-/* 5. Manejo de Botones e Inputs en Alto Contraste */
+/* Excepciones para mantener jerarquía visual en Alto Contraste */
+body.high-contrast .text-warning,
+body.high-contrast .btn-warning,
+body.high-contrast .btn-outline-warning,
+body.high-contrast a.text-warning,
+body.high-contrast .opcion-talla.activo {
+    color: #ff9500 !important;
+}
+
 body.high-contrast .btn-brand,
-body.high-contrast .btn-outline-brand {
-    background-color: #000000 !important;
+body.high-contrast .btn-warning {
+    background-color: #ff9500 !important;
+    color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    font-weight: bold !important;
+}
+
+body.high-contrast .btn-outline-brand,
+body.high-contrast .btn-outline-warning {
+    background-color: transparent !important;
     color: #ff9500 !important;
     border: 2px solid #ff9500 !important;
 }
 
-/* 6. Ocultar imágenes decorativas de fondo en el Hero para que no molesten */
-body.high-contrast .hero-bg-img {
-    display: none !important;
-}
-
-/* 7. Asegurar que los inputs se vean */
 body.high-contrast input,
 body.high-contrast select,
 body.high-contrast textarea {
     background-color: #000000 !important;
     color: #ffffff !important;
     border: 2px solid #ff9500 !important;
+}
+
+body.high-contrast *:focus {
+    outline: 3px solid #ffffff !important;
+    outline-offset: 3px !important;
+}
+
+/* Accessibility Menu Fixed */
+#accesibilidad-menu {
+    position: fixed;
+    top: 50%;
+    right: 0px;
+    /* Adjusted to stick to edge like in app.blade */
+    transform: translateY(-50%);
+    z-index: 9999;
+    background: #1e1e2f;
+    /* Dark background from snippet */
+    padding: 12px;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    width: 160px;
+}
+
+#accesibilidad-menu button {
+    margin-bottom: 6px;
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 12px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .detalle-producto {
+        flex-direction: column;
+    }
 }

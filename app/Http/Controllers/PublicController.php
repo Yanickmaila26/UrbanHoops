@@ -11,25 +11,36 @@ class PublicController extends Controller
     {
         $query = Producto::query()->where('activo', true);
 
-        // Price Filter
-        if ($request->filled('max_price')) {
+        // Price Filter (Optional - only if explicitly set and less than max)
+        if ($request->filled('apply_price') && $request->filled('max_price')) {
             $query->where('PRO_Precio', '<=', $request->max_price);
         }
 
-        // Category simulation via Search
-        if ($request->filled('category')) {
-            $category = $request->category;
-            $query->where(function ($q) use ($category) {
-                $q->where('PRO_Nombre', 'like', "%{$category}%")
-                    ->orWhere('PRO_Descripcion', 'like', "%{$category}%")
-                    ->orWhere('PRO_Marca', 'like', "%{$category}%");
+        // Subcategory Filter (Direct)
+        if ($request->filled('subcategory')) {
+            $query->where('SCT_Codigo', $request->subcategory);
+        }
+        // Category Filter (Indirect via Subcategories)
+        elseif ($request->filled('category')) {
+            $query->whereHas('subcategoria', function ($q) use ($request) {
+                $q->where('CAT_Codigo', $request->category);
             });
         }
 
-        $productos = $query->paginate(12)->withQueryString();
-        $maxPrice = Producto::max('PRO_Precio') ?? 300;
+        // Brand Filter
+        if ($request->filled('brand')) {
+            $brands = is_array($request->brand) ? $request->brand : [$request->brand];
+            $query->whereIn('PRO_Marca', $brands);
+        }
 
-        return view('productos_servicios', compact('productos', 'maxPrice'));
+        $productos = $query->paginate(12)->withQueryString();
+
+        // Data for Filters
+        $maxPrice = Producto::max('PRO_Precio') ?? 300;
+        $allCategories = \App\Models\Categoria::with('subcategorias')->get();
+        $allBrands = Producto::select('PRO_Marca')->distinct()->pluck('PRO_Marca');
+
+        return view('productos_servicios', compact('productos', 'maxPrice', 'allCategories', 'allBrands'));
     }
 
     public function show($producto)

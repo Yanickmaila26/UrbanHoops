@@ -13,6 +13,7 @@ class Producto extends Model
 
     protected $fillable = [
         'PRO_Codigo',
+        'SCT_Codigo',
         'PRV_Ced_Ruc',
         'PRO_Nombre',
         'PRO_Descripcion',
@@ -54,6 +55,11 @@ class Producto extends Model
     public function proveedor()
     {
         return $this->belongsTo(Proveedor::class, 'PRV_Ced_Ruc', 'PRV_Ced_Ruc');
+    }
+
+    public function subcategoria()
+    {
+        return $this->belongsTo(Subcategoria::class, 'SCT_Codigo', 'SCT_Codigo');
     }
 
     public static function rules($id = null)
