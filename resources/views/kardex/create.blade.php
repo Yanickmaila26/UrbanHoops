@@ -9,8 +9,30 @@
                 <h2 class="text-xl font-bold dark:text-white uppercase">Nuevo Registro en Kardex</h2>
             </div>
 
-            <form action="{{ route('kardex.store') }}" method="POST" id="kardex-form" class="p-6">
+            <form action="{{ route('kardex.store') }}" method="POST" id="kardex-form" class="p-6" x-data="{ loading: false, validationError: '' }"
+                @submit.prevent="validateAndSubmit">
                 @csrf
+
+                <!-- Error Banner -->
+                <div x-show="validationError" x-transition
+                    class="bg-red-50 border-l-4 border-red-400 p-4 mb-4 rounded-r dark:bg-red-900/20 dark:border-red-600">
+                    <div class="flex items-start">
+                        <svg class="h-5 w-5 text-red-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <p class="ml-3 text-sm font-medium text-red-800 dark:text-red-200" x-text="validationError"></p>
+                        <button @click="validationError = ''" type="button"
+                            class="ml-auto text-red-500 hover:text-red-700">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div>
@@ -108,9 +130,25 @@
                         class="px-6 py-2 bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-white rounded-md hover:bg-gray-300 transition uppercase font-bold text-sm">
                         Cancelar
                     </a>
-                    <button type="submit"
-                        class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow-lg transition uppercase font-bold text-sm">
-                        Procesar Movimiento
+                    <button type="submit" :disabled="loading"
+                        class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 shadow-lg transition uppercase font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span x-show="!loading" class="flex items-center gap-2">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            Procesar Movimiento
+                        </span>
+                        <span x-show="loading" class="flex items-center gap-2">
+                            <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            Procesando...
+                        </span>
                     </button>
                 </div>
             </form>
@@ -128,7 +166,6 @@
             if (modo === 'oc') {
                 sectionOc.classList.remove('hidden');
                 sectionManual.classList.add('hidden');
-                // Limpiamos manual
                 inputProd.value = "";
                 inputCant.value = "";
                 inputOc.required = true;
@@ -136,46 +173,77 @@
             } else {
                 sectionOc.classList.add('hidden');
                 sectionManual.classList.remove('hidden');
-                // Limpiamos OC
                 inputOc.value = "";
                 inputOc.required = false;
                 inputProd.required = true;
             }
         }
 
-        // Validación especial para transacciones de tipo Cancelado (T07)
+        // Validar tipo T07 (Cancelado) - debe ser por OC
         function checkTransactionType() {
             const selectTrn = document.getElementById('TRN_Codigo');
-            const selectedOption = selectTrn.options[selectTrn.selectedIndex];
-            const tipo = selectedOption.getAttribute('data-tipo');
-
-            // Si el código es T07 (Cancelado), forzamos a que sea por Orden de Compra
             if (selectTrn.value === 'T07') {
-                alert('Las cancelaciones (T07) deben estar asociadas obligatoriamente a una Orden de Compra.');
+                const form = document.getElementById('kardex-form');
+                const alpineData = Alpine.$data(form);
+                alpineData.validationError =
+                    'Las cancelaciones (T07) deben estar asociadas obligatoriamente a una Orden de Compra.';
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
                 document.querySelector('input[value="oc"]').checked = true;
                 toggleModo('oc');
             }
         }
 
-        // Prevenir envío si falta información según el modo
-        document.getElementById('kardex-form').addEventListener('submit', function(e) {
+        // Función de validación integrada con Alpine.js
+        function validateAndSubmit() {
+            const form = document.getElementById('kardex-form');
+            // Fix: Access Alpine data safely
+            const alpineData = Alpine.$data(form);
             const modo = document.querySelector('input[name="modo"]:checked').value;
             const trn = document.getElementById('TRN_Codigo').value;
+            const ocNumero = document.getElementById('ORC_Numero').value;
+            const proCodig = document.getElementById('PRO_Codigo').value;
+            const cantidad = document.getElementById('KAR_cantidad').value;
 
+            // Validar tipo de transacción
             if (!trn) {
-                e.preventDefault();
-                alert('Por favor, seleccione un tipo de transacción.');
-                return;
+                alpineData.validationError = 'Por favor, seleccione un tipo de transacción.';
+                alpineData.loading = false;
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                return false;
             }
 
-            if (modo === 'oc' && !document.getElementById('ORC_Numero').value) {
-                e.preventDefault();
-                alert('Debe seleccionar una Orden de Compra.');
-            } else if (modo === 'manual' && (!document.getElementById('PRO_Codigo').value || !document
-                    .getElementById('KAR_cantidad').value)) {
-                e.preventDefault();
-                alert('Debe completar el producto y la cantidad para el ajuste manual.');
+            // Validar modo Orden de Compra
+            if (modo === 'oc' && !ocNumero) {
+                alpineData.validationError = 'Debe seleccionar una Orden de Compra.';
+                alpineData.loading = false;
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                return false;
             }
-        });
+
+            // Validar modo Manual
+            if (modo === 'manual' && (!proCodig || !cantidad)) {
+                alpineData.validationError = 'Debe completar el producto y la cantidad para el ajuste manual.';
+                alpineData.loading = false;
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                return false;
+            }
+
+            // Si todas las validaciones pasan
+            alpineData.validationError = '';
+            alpineData.loading = true;
+            form.submit();
+        }
     </script>
 @endsection

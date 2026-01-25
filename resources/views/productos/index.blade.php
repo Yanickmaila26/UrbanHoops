@@ -149,7 +149,8 @@
                                 <div class="flex-shrink-0 h-12 w-12">
                                     @if ($producto->PRO_Imagen)
                                         <img class="h-12 w-12 rounded-lg object-cover border border-gray-200 dark:border-zinc-600"
-                                            src="{{ asset($producto->PRO_Imagen) }}" alt="{{ $producto->PRO_Nombre }}">
+                                            src="{{ asset('storage/' . $producto->PRO_Imagen) }}"
+                                            alt="{{ $producto->PRO_Nombre }}">
                                     @else
                                         <div
                                             class="h-12 w-12 rounded-lg bg-gray-100 dark:bg-zinc-700 flex items-center justify-center">

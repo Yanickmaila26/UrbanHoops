@@ -13,7 +13,7 @@
     <div class="bg-sky-100 flex justify-center items-center h-screen">
         <!-- Left: Image -->
         <div class="w-1/2 h-screen hidden lg:block">
-            <img src="https://img.freepik.com/fotos-premium/imagen-fondo_910766-187.jpg?w=826" alt="UrbanHoops Background"
+            <img src="{{ asset('images/fondo_inicio.jpg') }}" alt="UrbanHoops Background"
                 class="object-cover w-full h-full">
         </div>
         <!-- Right: Login Form -->

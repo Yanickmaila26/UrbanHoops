@@ -3,7 +3,7 @@
 @section('page-title', 'Facturas')
 
 @section('content')
-    <div class="max-w-7xl mx-auto p-6">
+    <div class="max-w-7xl mx-auto p-6" x-data="{ anularModal: false, selectedFactura: {} }">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold dark:text-white">Facturas</h2>
             <a href="{{ route('invoices.create') }}"
@@ -80,19 +80,16 @@
                                 </a>
 
                                 @if ($factura->FAC_Estado !== 'Anu')
-                                    <form action="{{ route('invoices.destroy', $factura->FAC_Codigo) }}" method="POST"
-                                        onsubmit="return confirm('¿Está seguro de anular esta factura?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                            title="Anular Factura">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                                            </svg>
-                                        </button>
-                                    </form>
+                                    <button
+                                        @click="anularModal = true; selectedFactura = { codigo: '{{ $factura->FAC_Codigo }}', cliente: '{{ $factura->cliente->CLI_Nombre }} {{ $factura->cliente->CLI_Apellido }}', total: '{{ number_format($factura->FAC_Total, 2) }}', fecha: '{{ $factura->created_at->format('d/m/Y') }}' }"
+                                        type="button"
+                                        class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                                        title="Anular Factura">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                        </svg>
+                                    </button>
                                 @endif
                             </td>
                         </tr>
@@ -108,6 +105,61 @@
 
         <div class="mt-4">
             {{ $facturas->links() }}
+        </div>
+
+        <!-- Anular Modal -->
+        <div x-show="anularModal" x-cloak @click.away="anularModal = false" class="fixed inset-0 z-50 overflow-y-auto"
+            style="display: none;">
+            <div class="flex items-center justify-center min-h-screen px-4">
+                <div class="fixed inset-0 bg-black opacity-50"></div>
+
+                <div class="relative bg-white dark:bg-zinc-800 rounded-lg shadow-xl max-w-md w-full p-6">
+                    <div class="flex items-start mb-4">
+                        <div
+                            class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30">
+                            <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-1.96-1.333-2.73 0L3.732 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Anular Factura</h3>
+                            <div class="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                <p class="mb-2">¿Estás seguro de que deseas anular esta factura?</p>
+                                <div
+                                    class="bg-gray-50 dark:bg-zinc-900/50 p-3 rounded border border-gray-200 dark:border-zinc-700">
+                                    <p><strong class="text-gray-700 dark:text-gray-200"># Factura:</strong> <span
+                                            x-text="selectedFactura.codigo" class="font-mono"></span></p>
+                                    <p><strong class="text-gray-700 dark:text-gray-200">Cliente:</strong> <span
+                                            x-text="selectedFactura.cliente"></span></p>
+                                    <p><strong class="text-gray-700 dark:text-gray-200">Total:</strong> $<span
+                                            x-text="selectedFactura.total"></span></p>
+                                    <p><strong class="text-gray-700 dark:text-gray-200">Fecha:</strong> <span
+                                            x-text="selectedFactura.fecha"></span></p>
+                                </div>
+                                <p class="mt-3 text-red-600 dark:text-red-400 font-medium">Esta acción no se puede deshacer.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button @click="anularModal = false" type="button"
+                            class="px-4 py-2 bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-white rounded-md text-sm font-semibold hover:bg-gray-300 dark:hover:bg-zinc-600 transition">
+                            Cancelar
+                        </button>
+                        <form :action="`/admin/facturas/${selectedFactura.codigo}`" method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-semibold hover:bg-red-700 transition">
+                                Anular Factura
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection

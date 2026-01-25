@@ -16,7 +16,6 @@ class Cliente extends Model
         'CLI_Nombre',
         'CLI_Telefono',
         'CLI_Correo',
-        'CLI_Direccion',
         'usuario_aplicacion_id',
     ];
     public static function getClientes($search = null)
@@ -54,7 +53,6 @@ class Cliente extends Model
             'CLI_Nombre' => 'required|string|max:60|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/',
             'CLI_Telefono' => 'required|string|size:10|regex:/^[0-9]+$/',
             'CLI_Correo' => 'required|email|max:60|unique:clientes,CLI_Correo,' . $id . ',CLI_Ced_Ruc',
-            'CLI_Direccion' => 'required|string|max:150',
         ];
     }
 
@@ -75,8 +73,6 @@ class Cliente extends Model
             'CLI_Correo.email' => 'El correo electrónico no es válido.',
             'CLI_Correo.max' => 'El correo electrónico no debe exceder los 60 caracteres.',
             'CLI_Correo.unique' => 'El correo electrónico ya está registrado.',
-            'CLI_Direccion.required' => 'La dirección es obligatoria.',
-            'CLI_Direccion.max' => 'La dirección no debe exceder los 150 caracteres.',
         ];
     }
     public function scopeSearch($query, $search)

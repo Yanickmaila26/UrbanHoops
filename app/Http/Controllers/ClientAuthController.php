@@ -58,7 +58,6 @@ class ClientAuthController extends Controller
             'cli_ced_ruc' => 'required|string|min:10|max:13|unique:clientes,CLI_Ced_Ruc',
             'cli_nombre' => 'required|string|max:60|regex:/^[a-zA-Z\sñÑáéíóúÁÉÍÓÚ]+$/',
             'cli_telefono' => 'required|string|size:10|regex:/^[0-9]+$/',
-            'cli_direccion' => 'required|string|max:150',
         ]);
 
         \Illuminate\Support\Facades\DB::transaction(function () use ($request) {
@@ -72,7 +71,6 @@ class ClientAuthController extends Controller
                 'CLI_Nombre' => $request->cli_nombre,
                 'CLI_Telefono' => $request->cli_telefono,
                 'CLI_Correo' => $request->email, // Sync email
-                'CLI_Direccion' => $request->cli_direccion,
                 'usuario_aplicacion_id' => $user->id,
             ]);
 

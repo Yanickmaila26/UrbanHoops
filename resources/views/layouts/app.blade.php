@@ -122,12 +122,12 @@
                             </li>
                         @else
                             <li class="nav-item ms-3">
-                                <a href="{{ route('client.login') }}" class="nav-link">Entrar</a>
+                                <a href="{{ route('client.login') }}" class="nav-link">Iniciar Sesión</a>
                             </li>
                             @if (Route::has('client.register'))
                                 <li class="nav-item ms-2">
                                     <a href="{{ route('client.register') }}"
-                                        class="btn btn-warning btn-sm fw-bold text-dark">Registro</a>
+                                        class="btn btn-warning btn-sm fw-bold text-dark">Registrarse</a>
                                 </li>
                             @endif
                         @endif

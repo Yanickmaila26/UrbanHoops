@@ -387,12 +387,26 @@ class ProductoSeeder extends Seeder
             ],
         ];
 
+
         foreach ($productos as $productoData) {
             $productoData['PRV_Ced_Ruc'] = '1792345678001';
             Producto::updateOrCreate(
                 ['PRO_Codigo' => $productoData['PRO_Codigo']],
                 $productoData
             );
+        }
+
+        // Assign all products to all warehouses with initial stock 0
+        $allProductos = Producto::all();
+        $allBodegas = \App\Models\Bodega::all();
+
+        foreach ($allProductos as $producto) {
+            foreach ($allBodegas as $bodega) {
+                // Attach product to warehouse if not already attached
+                if (!$producto->bodegas()->where('bodegas.BOD_Codigo', $bodega->BOD_Codigo)->exists()) {
+                    $producto->bodegas()->attach($bodega->BOD_Codigo, ['PXB_Stock' => 0]);
+                }
+            }
         }
     }
 }

@@ -184,14 +184,9 @@
                         wire:navigate>
                         <div
                             class="h-8 w-8 rounded-lg bg-blue-500 flex items-center justify-center text-white font-bold">
-                            @if (file_exists(public_path('logo_fondo_claro_admin.png')))
-                                <img src="{{ asset('logo.png') }}" alt="Logo" class="h-6 w-6">
-                            @else
-                                {{ substr(config('app.name'), 0, 2) }}
-                            @endif
+                            UH
                         </div>
-                        <span
-                            class="sidebar-text sidebar-logo-text text-lg font-semibold">{{ config('app.name') }}</span>
+                        <span class="sidebar-text sidebar-logo-text text-lg font-semibold">UrbanHoops</span>
                     </a>
 
                     <!-- Toggle button - solo visible en desktop -->
