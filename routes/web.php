@@ -38,7 +38,13 @@ Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(fun
     Route::get('/orders', [App\Http\Controllers\ClientAreaController::class, 'orders'])->name('orders');
     Route::get('/invoices', [App\Http\Controllers\ClientAreaController::class, 'invoices'])->name('invoices');
     Route::get('/addresses', [App\Http\Controllers\ClientAreaController::class, 'addresses'])->name('addresses');
-    Route::put('/addresses', [App\Http\Controllers\ClientAreaController::class, 'updateAddress'])->name('addresses.update');
+    Route::post('/billing', [App\Http\Controllers\ClientAreaController::class, 'storeBillingProfile'])->name('billing.store');
+    Route::delete('/billing/{id}', [App\Http\Controllers\ClientAreaController::class, 'destroyBillingProfile'])->name('billing.destroy');
+
+    // Checkout Routes
+    Route::get('/checkout', [App\Http\Controllers\Client\CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/checkout', [App\Http\Controllers\Client\CheckoutController::class, 'process'])->name('checkout.process');
+    Route::get('/checkout/success/{order}', [App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
 });
 
 // Cart Sync Routes (Session Auth directly)

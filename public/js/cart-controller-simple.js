@@ -182,21 +182,8 @@ function initializeCart() {
                     return;
                 }
 
-                // TODO: Implement actual checkout logic
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Compra Exitosa!',
-                    text: 'Tu pedido ha sido procesado',
-                    confirmButtonColor: '#198754'
-                }).then(() => {
-                    // Clear cart after successful purchase
-                    if (window.cart) {
-                        window.cart.clear();
-                    }
-                    // Close modal
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('modalCarrito'));
-                    if (modal) modal.hide();
-                });
+                // Redirect to Checkout page
+                window.location.href = '/client/checkout';
             }
         });
     }

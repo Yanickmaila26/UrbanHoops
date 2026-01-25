@@ -21,25 +21,43 @@
 <body class="font-sans antialiased bg-gray-100 flex flex-col min-h-screen">
 
     <!-- Menú de Accesibilidad -->
-    <div id="accesibilidad-menu" class="d-flex flex-column gap-2" style="z-index: 9999; width: 160px;">
-        <!-- Fixed position handled in CSS now, or inline? User CSS had fixed. -->
-
-        <button id="btn-contraste" class="btn btn-warning btn-sm fw-bold w-100">
-            Alto Contraste
+    <div id="accesibilidad-widget" style="position: fixed; bottom: 20px; left: 20px; z-index: 9999;">
+        <button id="btn-toggle-accesibilidad"
+            class="btn btn-primary rounded-circle shadow-lg p-0 d-flex align-items-center justify-content-center"
+            style="width: 50px; height: 50px;" title="Menú de Accesibilidad">
+            <span style="font-size: 24px;">♿</span>
         </button>
 
-        <button id="btn-aumentar" class="btn btn-light btn-sm fw-bold w-100">
-            Aumentar letra
-        </button>
+        <div id="accesibilidad-menu" class="d-none bg-white p-3 rounded shadow-lg border"
+            style="width: 300px; position: absolute; bottom: 80px; left: 0;">
+            <div class="d-grid gap-2" style="grid-template-columns: 1fr 1fr;">
+                <button id="btn-contraste" class="btn btn-warning btn-sm fw-bold">
+                    Alto Contraste
+                </button>
 
-        <button id="btn-disminuir" class="btn btn-light btn-sm fw-bold w-100">
-            Disminuir letra
-        </button>
+                <button id="btn-normal" class="btn btn-secondary btn-sm fw-bold">
+                    Normal
+                </button>
 
-        <button id="btn-normal" class="btn btn-secondary btn-sm fw-bold w-100">
-            Tamaño normal
-        </button>
+                <button id="btn-aumentar" class="btn btn-light btn-sm fw-bold">
+                    Aumentar +
+                </button>
+
+                <button id="btn-disminuir" class="btn btn-light btn-sm fw-bold">
+                    Disminuir -
+                </button>
+            </div>
+        </div>
     </div>
+
+    <script>
+        document.getElementById('btn-toggle-accesibilidad').addEventListener('click', function() {
+            var menu = document.getElementById('accesibilidad-menu');
+            menu.classList.toggle('d-none');
+            // Using d-block because d-grid is inside, or d-block wrapper is fine
+            menu.classList.toggle('d-block');
+        });
+    </script>
 
     <!-- Header / Navbar -->
     <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
@@ -51,7 +69,7 @@
             </a>
 
             <!-- Botón hamburguesa -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button id="navbarToggler" class="navbar-toggler" type="button">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -86,12 +104,10 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li><a class="dropdown-item" href="{{ route('client.cart') }}">Mi Carrito</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('client.orders') }}">Mis Pedidos</a>
-                                    </li>
                                     <li><a class="dropdown-item" href="{{ route('client.invoices') }}">Mis Facturas</a>
                                     </li>
                                     <li><a class="dropdown-item" href="{{ route('client.addresses') }}">Mis
-                                            Direcciones</a></li>
+                                            Datos de Facturación</a></li>
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
@@ -202,6 +218,26 @@
 
     <script src="{{ asset('js/alto-contraste.js') }}"></script>
     <script src="{{ asset('js/teclado-accesible.js') }}"></script>
+
+    <!-- Navbar Toggler Script (Vanilla JS) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggler = document.getElementById('navbarToggler');
+            const collapse = document.getElementById('navbarNav');
+
+            if (toggler && collapse) {
+                toggler.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Toggle the 'show' class to control visibility
+                    if (collapse.classList.contains('show')) {
+                        collapse.classList.remove('show');
+                    } else {
+                        collapse.classList.add('show');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

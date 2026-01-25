@@ -84,64 +84,74 @@
                         </div>
 
                         <!-- Marcas Item -->
-                        <div class="accordion-item" x-data="{ open: {{ request('brand') ? 'true' : 'false' }} }">
-                            <h2 class="accordion-header" id="headingBrands">
-                                <button class="accordion-button" :class="{ 'collapsed': !open }" type="button"
-                                    @click="open = !open" aria-expanded="true" aria-controls="collapseBrands">
-                                    Marcas
+                        <div class="border-t border-gray-100" x-data="{ open: {{ request('brand') ? 'true' : 'false' }} }">
+                            <div class="flex justify-between items-center mb-2 cursor-pointer group" @click="open = !open">
+                                <h3 class="font-semibold text-gray-700 text-sm uppercase tracking-wider">Marcas</h3>
+                                <button type="button"
+                                    class="p-2 text-gray-400 group-hover:text-brand transition-transform duration-200"
+                                    :class="{ 'rotate-180': open }">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
                                 </button>
-                            </h2>
-                            <div id="collapseBrands" class="accordion-collapse" x-show="open"
-                                aria-labelledby="headingBrands">
-                                <div class="accordion-body">
-                                    <div class="d-flex flex-column gap-2">
-                                        @foreach ($allBrands as $marca)
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="brand[]"
-                                                    value="{{ $marca }}" id="brand-{{ $marca }}"
-                                                    {{ in_array($marca, (array) request('brand', [])) ? 'checked' : '' }}>
-                                                <label class="form-check-label text-sm" for="brand-{{ $marca }}">
-                                                    {{ $marca }}
-                                                </label>
-                                            </div>
-                                        @endforeach
-                                    </div>
+                            </div>
+                            <div x-show="open" class="pl-1">
+                                <div class="d-flex flex-column gap-2">
+                                    @foreach ($allBrands as $marca)
+                                        <div class="form-check">
+                                            <input class="form-check-input accent-brand" type="checkbox" name="brand[]"
+                                                value="{{ $marca }}" id="brand-{{ $marca }}"
+                                                {{ in_array($marca, (array) request('brand', [])) ? 'checked' : '' }}>
+                                            <label
+                                                class="form-check-label text-sm text-gray-600 hover:text-black cursor-pointer"
+                                                for="brand-{{ $marca }}">
+                                                {{ $marca }}
+                                            </label>
+                                        </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
 
                         <!-- Precio Item -->
-                        <div class="accordion-item" x-data="{ open: {{ request('apply_price') ? 'true' : 'false' }} }">
-                            <h2 class="accordion-header" id="headingPrice">
-                                <button class="accordion-button" :class="{ 'collapsed': !open }" type="button"
-                                    @click="open = !open" aria-expanded="true" aria-controls="collapsePrice">
-                                    Precio
+                        <div class="border-t border-gray-100" x-data="{ open: {{ request('apply_price') ? 'true' : 'false' }} }">
+                            <div class="flex justify-between items-center mb-2 cursor-pointer group" @click="open = !open">
+                                <h3 class="font-semibold text-gray-700 text-sm uppercase tracking-wider">Precio</h3>
+                                <button type="button"
+                                    class="p-2 text-gray-400 group-hover:text-brand transition-transform duration-200"
+                                    :class="{ 'rotate-180': open }">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
                                 </button>
-                            </h2>
-                            <div id="collapsePrice" class="accordion-collapse" x-show="open"
-                                aria-labelledby="headingPrice">
-                                <div class="accordion-body">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" type="checkbox" name="apply_price" value="1"
-                                            id="enablePrice" {{ request('apply_price') ? 'checked' : '' }}>
-                                        <label class="form-check-label text-sm font-bold" for="enablePrice">
-                                            Filtrar por precio
-                                        </label>
-                                    </div>
-                                    <div class="mb-2">
-                                        <div class="flex justify-between text-sm mb-1 text-gray-600">
-                                            <span>$0</span>
-                                            <span class="font-bold text-black">$<span
-                                                    id="valorPrecio">{{ request('max_price', $maxPrice) }}</span></span>
-                                        </div>
-                                        <input id="rangePrecio" name="max_price" type="range" min="0"
-                                            max="{{ $maxPrice }}" step="10"
-                                            value="{{ request('max_price', $maxPrice) }}"
-                                            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand"
-                                            oninput="updatePriceDisplay(this.value)">
-                                    </div>
-                                    <button type="submit" class="btn btn-sm btn-brand w-100 mt-2">Aplicar</button>
+                            </div>
+
+                            <div x-show="open" class="pl-1">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input accent-brand" type="checkbox" name="apply_price"
+                                        value="1" id="enablePrice" {{ request('apply_price') ? 'checked' : '' }}>
+                                    <label class="form-check-label text-sm font-bold text-gray-700 cursor-pointer"
+                                        for="enablePrice">
+                                        Habilitar filtro
+                                    </label>
                                 </div>
+                                <div class="mb-2">
+                                    <div class="flex justify-between text-sm mb-1 text-gray-600">
+                                        <span>$0</span>
+                                        <span class="font-bold text-black">$<span
+                                                id="valorPrecio">{{ request('max_price', $maxPrice) }}</span></span>
+                                    </div>
+                                    <input id="rangePrecio" name="max_price" type="range" min="0"
+                                        max="{{ $maxPrice }}" step="10"
+                                        value="{{ request('max_price', $maxPrice) }}"
+                                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand"
+                                        oninput="updatePriceDisplay(this.value)">
+                                </div>
+                                <button type="submit"
+                                    class="btn btn-sm btn-brand w-100 mt-3 font-bold uppercase text-xs tracking-wider">Actualizar
+                                    Precio</button>
                             </div>
                         </div>
                     </div>
