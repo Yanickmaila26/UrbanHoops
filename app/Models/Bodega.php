@@ -56,4 +56,11 @@ class Bodega extends Model
             'BOD_Responsable.required' => 'El responsable es obligatorio.',
         ];
     }
+
+    public function productos()
+    {
+        return $this->belongsToMany(Producto::class, 'producto_bodega', 'BOD_Codigo', 'PRO_Codigo')
+            ->withPivot('PXB_Stock')
+            ->withTimestamps();
+    }
 }

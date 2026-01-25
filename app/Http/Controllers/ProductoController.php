@@ -34,8 +34,9 @@ class ProductoController extends Controller
 
         $proveedores = Proveedor::getProveedoresActivos();
         $subcategorias = Subcategoria::with('categoria')->get();
+        $bodegas = \App\Models\Bodega::all();
 
-        return view('productos.create', compact('nuevoCodigo', 'proveedores', 'subcategorias'));
+        return view('productos.create', compact('nuevoCodigo', 'proveedores', 'subcategorias', 'bodegas'));
     }
 
     public function store(Request $request)
@@ -53,7 +54,15 @@ class ProductoController extends Controller
         }
 
         try {
-            Producto::createProducto($data);
+            $producto = Producto::createProducto($data);
+
+            // Assign product to selected warehouses with initial stock 0
+            if ($request->has('bodegas') && is_array($request->bodegas)) {
+                foreach ($request->bodegas as $bodegaCodigo) {
+                    $producto->bodegas()->attach($bodegaCodigo, ['PXB_Stock' => 0]);
+                }
+            }
+
             return redirect()->route('products.index')->with('success', 'Producto creado correctamente.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error al crear producto: ' . $e->getMessage())->withInput();

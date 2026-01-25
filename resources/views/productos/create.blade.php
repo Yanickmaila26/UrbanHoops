@@ -118,12 +118,12 @@
                         </div>
 
                         <div class="md:col-span-2" x-data="{
-                            sizes: [{ talla: '', stock: 1 }],
+                            sizes: [{ talla: '', stock: 0 }],
                             get totalStock() {
                                 return this.sizes.reduce((sum, item) => sum + (parseInt(item.stock) || 0), 0);
                             },
                             addSize() {
-                                this.sizes.push({ talla: '', stock: 1 });
+                                this.sizes.push({ talla: '', stock: 0 });
                             },
                             removeSize(index) {
                                 if (this.sizes.length > 1) {
@@ -145,7 +145,7 @@
                                         </div>
                                         <div class="w-32">
                                             <input type="number" :name="`PRO_Talla[${index}][stock]`" x-model="size.stock"
-                                                min="1" placeholder="Cant." required
+                                                min="0" placeholder="Cant." required
                                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white sm:text-sm">
                                         </div>
                                         <button type="button" @click="removeSize(index)"
@@ -176,6 +176,26 @@
                                 </p>
                                 <input type="hidden" name="PRO_Stock" :value="totalStock">
                             </div>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Asignar a Bodegas
+                            </label>
+                            <p class="text-xs text-gray-500 mb-2">Selecciona las bodegas donde estará disponible este
+                                producto (stock inicial: 0)</p>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                @foreach ($bodegas as $bodega)
+                                    <label
+                                        class="flex items-center p-3 border border-gray-300 dark:border-zinc-700 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-700 cursor-pointer transition">
+                                        <input type="checkbox" name="bodegas[]" value="{{ $bodega->BOD_Codigo }}"
+                                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2">
+                                        <span class="text-sm dark:text-white">{{ $bodega->BOD_Nombre }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2 italic">Si no seleccionas ninguna bodega, el producto no
+                                estará disponible en inventario.</p>
                         </div>
 
                         <div>

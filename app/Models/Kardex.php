@@ -72,7 +72,7 @@ class Kardex extends Model
                     $talla = $prod->pivot->DOC_Talla;
 
                     if (!$esCancelacion) {
-                        self::actualizarStockFisico($prod, $trn->TRN_Tipo, $cantidad, $talla);
+                        self::actualizarStockFisico($prod, $trn->TRN_Tipo, $cantidad, $data['BOD_Codigo'], $talla);
                     }
 
                     self::create([
@@ -95,7 +95,7 @@ class Kardex extends Model
                     $cantidad = $prod->pivot->DFC_Cantidad;
                     $talla = $prod->pivot->DFC_Talla;
 
-                    self::actualizarStockFisico($prod, $trn->TRN_Tipo, $cantidad, $talla);
+                    self::actualizarStockFisico($prod, $trn->TRN_Tipo, $cantidad, $data['BOD_Codigo'], $talla);
 
                     self::create([
                         'KAR_Codigo'   => self::generateId(),
@@ -113,7 +113,7 @@ class Kardex extends Model
             else if (!empty($data['PRO_Codigo'])) {
                 $prod = Producto::where('PRO_Codigo', $data['PRO_Codigo'])->firstOrFail();
                 $talla = $data['talla'] ?? null; // Assuming passed in data for manual adjustment
-                self::actualizarStockFisico($prod, $trn->TRN_Tipo, $data['KAR_cantidad'], $talla);
+                self::actualizarStockFisico($prod, $trn->TRN_Tipo, $data['KAR_cantidad'], $data['BOD_Codigo'], $talla);
 
                 $data['KAR_Codigo'] = self::generateId();
                 return self::create($data);
@@ -121,19 +121,55 @@ class Kardex extends Model
         });
     }
 
-    private static function actualizarStockFisico($producto, $tipo, $cantidad, $talla = null)
+    private static function actualizarStockFisico($producto, $tipo, $cantidad, $bodegaCodigo, $talla = null)
     {
-        // Update Total Stock
+        // 1. Update Total Stock (Product Level)
         if ($tipo === 'E') {
             $producto->PRO_Stock += $cantidad;
         } else {
             if ($producto->PRO_Stock < $cantidad) {
                 throw new \Exception("Stock insuficiente para: {$producto->PRO_Nombre}. Disponible: {$producto->PRO_Stock}");
             }
-            $producto->PRO_Stock -= $cantidad; // Decrement locally, will save later
+            $producto->PRO_Stock -= $cantidad;
         }
 
-        // Update JSON Size Stock if talla provided
+        // 2. Update Warehouse-Product Stock (producto_bodega.PXB_Stock)
+        $pivotRecord = DB::table('producto_bodega')
+            ->where('PRO_Codigo', $producto->PRO_Codigo)
+            ->where('BOD_Codigo', $bodegaCodigo)
+            ->first();
+
+        if ($pivotRecord) {
+            $newWarehouseStock = $pivotRecord->PXB_Stock;
+            if ($tipo === 'E') {
+                $newWarehouseStock += $cantidad;
+            } else {
+                if ($pivotRecord->PXB_Stock < $cantidad) {
+                    throw new \Exception("Stock insuficiente en bodega para: {$producto->PRO_Nombre}. Disponible en bodega: {$pivotRecord->PXB_Stock}");
+                }
+                $newWarehouseStock -= $cantidad;
+            }
+
+            DB::table('producto_bodega')
+                ->where('PRO_Codigo', $producto->PRO_Codigo)
+                ->where('BOD_Codigo', $bodegaCodigo)
+                ->update(['PXB_Stock' => $newWarehouseStock, 'updated_at' => now()]);
+        } else {
+            // If relationship doesn't exist, create it (Entry only)
+            if ($tipo === 'E') {
+                DB::table('producto_bodega')->insert([
+                    'PRO_Codigo' => $producto->PRO_Codigo,
+                    'BOD_Codigo' => $bodegaCodigo,
+                    'PXB_Stock' => $cantidad,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            } else {
+                throw new \Exception("El producto {$producto->PRO_Nombre} no está asignado a la bodega seleccionada.");
+            }
+        }
+
+        // 3. Update JSON Size Stock if talla provided
         if ($talla) {
             $sizes = $producto->PRO_Talla; // Array access because cast
             if (is_array($sizes)) {
@@ -156,7 +192,7 @@ class Kardex extends Model
                 if (!$found && $tipo === 'E') {
                     $sizes[] = ['talla' => $talla, 'stock' => $cantidad];
                 }
-                // If Exit and size not found -> Error? Or ignore? Error is safer.
+                // If Exit and size not found -> Error
                 if (!$found && $tipo !== 'E') {
                     throw new \Exception("La talla {$talla} no existe para el producto {$producto->PRO_Nombre}.");
                 }

@@ -17,16 +17,25 @@
             </div>
 
             <div class="bg-white dark:bg-zinc-800 p-4 rounded-lg shadow mb-6">
-                <form action="{{ route('kardex.index') }}" method="GET" class="flex gap-2">
+                <form action="{{ route('kardex.index') }}" method="GET" class="flex gap-2" x-data="{ searching: false }"
+                    @submit="searching = true">
                     <input type="text" name="search" value="{{ $search }}"
                         placeholder="Buscar por código, OC o producto..."
                         class="flex-1 rounded-md border-gray-300 dark:bg-zinc-700 dark:text-white focus:ring-blue-500">
-                    <button type="submit"
-                        class="inline-flex items-center px-4 py-2 bg-zinc-800 dark:bg-zinc-600 text-white rounded-md hover:bg-zinc-700 transition">
-                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <button type="submit" :disabled="searching"
+                        class="inline-flex items-center px-4 py-2 bg-zinc-800 dark:bg-zinc-600 text-white rounded-md hover:bg-zinc-700 transition disabled:opacity-50 gap-2">
+                        <svg x-show="!searching" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
-                        Buscar
+                        <svg x-show="searching" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        <span x-show="!searching">Buscar</span>
+                        <span x-show="searching">Buscando...</span>
                     </button>
                     @if ($search)
                         <a href="{{ route('kardex.index') }}"

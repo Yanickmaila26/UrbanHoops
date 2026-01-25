@@ -63,6 +63,13 @@ class Producto extends Model
         return $this->belongsTo(Subcategoria::class, 'SCT_Codigo', 'SCT_Codigo');
     }
 
+    public function bodegas()
+    {
+        return $this->belongsToMany(Bodega::class, 'producto_bodega', 'PRO_Codigo', 'BOD_Codigo')
+            ->withPivot('PXB_Stock')
+            ->withTimestamps();
+    }
+
     public static function rules($id = null)
     {
         return [

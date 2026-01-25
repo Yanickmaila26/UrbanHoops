@@ -29,7 +29,29 @@
 
             <!-- Formulario -->
             <div class="bg-white dark:bg-zinc-800 overflow-hidden shadow rounded-lg">
-                <form action="{{ route('customers.store') }}" method="POST" class="p-6">
+                <form action="{{ route('customers.store') }}" method="POST" class="p-6" x-data="{ loading: false, validationError: '' }"
+                    @submit="if (!validationError) loading = true">
+
+                    <!-- Error Banner -->
+                    <div x-show="validationError" x-transition
+                        class="bg-red-50 border-l-4 border-red-400 p-4 mb-4 rounded-r dark:bg-red-900/20 dark:border-red-600">
+                        <div class="flex items-start">
+                            <svg class="h-5 w-5 text-red-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <p class="ml-3 text-sm font-medium text-red-800 dark:text-red-200" x-text="validationError"></p>
+                            <button @click="validationError = ''" type="button"
+                                class="ml-auto text-red-500 hover:text-red-700">
+                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                     @csrf
 
                     <div class="space-y-6">
@@ -135,12 +157,23 @@
                             class="inline-flex items-center px-4 py-2 bg-gray-200 border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:hover:bg-zinc-600">
                             Cancelar
                         </a>
-                        <button type="submit"
-                            class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                            <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        <button type="submit" :disabled="loading"
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition ease-in-out duration-150">
+                            <svg x-show="loading" class="animate-spin -ml-1 mr-3 h-4 w-4" fill="none"
+                                viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
                             </svg>
-                            Crear Cliente
+                            <svg x-show="!loading" class="h-4 w-4 mr-2" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span x-show="!loading">Crear Cliente</span>
+                            <span x-show="loading">Creando...</span>
                         </button>
                     </div>
                 </form>
@@ -174,17 +207,33 @@
             });
 
             document.querySelector('form').addEventListener('submit', function(e) {
+                const alpineData = this.__x.$data;
+
                 if (cedulaInput.value.length !== 13) {
-                    alert('La cédula/RUC debe tener 13 dígitos');
-                    cedulaInput.focus();
                     e.preventDefault();
+                    alpineData.validationError = 'La cédula/RUC debe tener exactamente 13 dígitos';
+                    alpineData.loading = false;
+                    cedulaInput.focus();
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    return;
                 }
 
-                if (telefonoInput.value.length !== 10) {
-                    alert('El teléfono debe tener 10 dígitos');
-                    telefonoInput.focus();
+                if (telefonoInput.value.length !== 10 && telefonoInput.value.length > 0) {
                     e.preventDefault();
+                    alpineData.validationError = 'El teléfono debe tener exactamente 10 dígitos';
+                    alpineData.loading = false;
+                    telefonoInput.focus();
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    return;
                 }
+
+                alpineData.validationError = '';
             });
         });
     </script>

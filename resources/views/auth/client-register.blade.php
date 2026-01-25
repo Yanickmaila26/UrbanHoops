@@ -13,7 +13,7 @@
     <div class="bg-sky-100 flex justify-center items-center min-h-screen py-10">
         <!-- Left: Image -->
         <div class="w-1/2 h-screen hidden lg:block fixed left-0 top-0">
-            <img src="https://img.freepik.com/fotos-premium/imagen-fondo_910766-187.jpg?w=826" alt="UrbanHoops Background"
+            <img src="{{ asset('images/fondo_inicio.jpg') }}" alt="UrbanHoops Background"
                 class="object-cover w-full h-full">
         </div>
         <!-- Right: Register Form -->
@@ -58,17 +58,6 @@
                             class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
                             required placeholder="Tu nombre y apellido">
                         @error('cli_nombre')
-                            <span class="text-red-500 text-sm block">{{ $message }}</span>
-                        @enderror
-                    </div>
-
-                    <!-- Direccion Input -->
-                    <div class="mb-4">
-                        <label for="cli_direccion" class="block text-gray-600 text-sm font-bold mb-1">Dirección</label>
-                        <input type="text" id="cli_direccion" name="cli_direccion" value="{{ old('cli_direccion') }}"
-                            class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                            required placeholder="Calle Principal y Secundaria">
-                        @error('cli_direccion')
                             <span class="text-red-500 text-sm block">{{ $message }}</span>
                         @enderror
                     </div>
