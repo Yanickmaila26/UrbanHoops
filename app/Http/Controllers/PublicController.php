@@ -44,10 +44,19 @@ class PublicController extends Controller
             $query->whereIn('PRO_Marca', $brands);
         }
 
+        // Execute Query
+        $productos = $query->paginate(12)->withQueryString();
+
+        // Max Price for slider
+        $maxPrice = Producto::max('PRO_Precio') ?? 300;
+
         // Fetch categories with sub-categories for the sidebar
         $categorias = \App\Models\Categoria::with('subcategorias')->get();
 
-        return view('productos_servicios', compact('productos', 'maxPrice', 'categorias'));
+        // Fetch distinct brands for filter
+        $allBrands = Producto::select('PRO_Marca')->distinct()->pluck('PRO_Marca');
+
+        return view('productos_servicios', compact('productos', 'maxPrice', 'categorias', 'allBrands'));
     }
 
     public function show($producto)

@@ -18,16 +18,9 @@ export class CartController {
 
     setupEventListeners() {
         // Open Cart Button
-        const btnOpen = document.getElementById('btnOpenCart');
-        if (btnOpen) {
-            // Clone to remove old listeners
-            const newBtn = btnOpen.cloneNode(true);
-            btnOpen.parentNode.replaceChild(newBtn, btnOpen);
-            newBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.view.openModal();
-            });
-        }
+        // Handled by AlpineJS in app.blade.php (@click="$dispatch('open-cart')")
+        // const btnOpen = document.getElementById('btnOpenCart');
+        // if (btnOpen) { ... }
 
         // Close Cart Button (modal overlay or X button)
         const btnClose = document.getElementById('btnCloseCart'); // Assuming an ID, or modal background

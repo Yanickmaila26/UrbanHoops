@@ -3,6 +3,14 @@
  */
 export class CartView {
     constructor() {
+        this.refreshElements();
+    }
+
+    refreshElements() {
+        this.containerItems = document.getElementById('cartItems');
+        // If strict elements are needed
+        this.totalElement = document.getElementById('cartTotal');
+        this.countElement = document.getElementById('cartCount') || document.querySelector('.badge');
     }
 
     renderCartItems(items, onRemove, onQtyChange) {
