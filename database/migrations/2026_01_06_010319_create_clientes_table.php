@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('CLI_Nombre', 60);
             $table->string('CLI_Telefono', 10);
             $table->string('CLI_Correo', 60)->unique();
-            $table->string('CLI_Direccion', 150);
             $table->timestamps();
         });
     }

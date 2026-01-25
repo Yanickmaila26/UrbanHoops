@@ -53,7 +53,8 @@
                             <span>Total</span>
                             <span>${{ number_format($carrito->getTotal(), 2) }}</span>
                         </div>
-                        <button class="w-full btn btn-brand py-3 text-lg">Proceder al Pago</button>
+                        <a href="{{ route('client.checkout') }}"
+                            class="block w-full btn btn-brand py-3 text-lg text-center">Proceder al Pago</a>
                         <a href="{{ route('productos-servicios') }}"
                             class="block text-center mt-4 text-gray-500 hover:text-gray-800">Seguir comprando</a>
                     </div>

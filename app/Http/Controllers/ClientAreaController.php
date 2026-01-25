@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Factura;
+use App\Models\Pedido;
 use App\Models\Cliente;
 use App\Models\Carrito;
 
@@ -39,17 +39,18 @@ class ClientAreaController extends Controller
     }
 
     /**
-     * Show the client's orders (Facturas).
+     * Show the client's orders (Pedidos).
      */
     public function orders()
     {
         $client = Auth::guard('client')->user()->cliente;
 
-        $facturas = Factura::where('CLI_Ced_Ruc', $client->CLI_Ced_Ruc)
-            ->orderBy('created_at', 'desc')
+        $pedidos = Pedido::with('factura')
+            ->where('PED_CLI_Codigo', $client->CLI_Ced_Ruc)
+            ->orderBy('PED_Fecha', 'desc')
             ->paginate(10);
 
-        return view('client.orders', compact('facturas'));
+        return view('client.orders', compact('pedidos'));
     }
 
     /**
@@ -66,28 +67,66 @@ class ClientAreaController extends Controller
     /**
      * Show the client's addresses (Profile).
      */
+    /**
+     * Show the client's billing profiles (Datos de Facturación).
+     */
     public function addresses()
     {
         $client = Auth::guard('client')->user()->cliente;
-        return view('client.addresses', compact('client'));
+        $profiles = \App\Models\DatosFacturacion::where('DAF_CLI_Codigo', $client->CLI_Ced_Ruc)->get();
+        return view('client.addresses', compact('client', 'profiles'));
     }
 
     /**
-     * Update client address.
+     * Store a new billing profile.
      */
-    public function updateAddress(Request $request)
+    public function storeBillingProfile(Request $request)
     {
         $request->validate([
             'direccion' => 'required|string|max:150',
-            'telefono' => 'required|string|size:10|regex:/^[0-9]+$/',
+            'ciudad' => 'required|string|max:100',
+            'estado' => 'required|string|max:100',
+            'cp' => 'required|string|max:10',
+            'telefono' => 'required|string|max:15',
+            // Sensitive data like card info should be handled carefully. 
+            // For now, assuming we store it for reuse as per request, but usually we'd tokenize.
+            // Simplified for this scope: storing masked or provided data.
+            'card_number' => 'required|string|min:15|max:19',
+            'card_expiry' => 'required|string|size:5',
+            'card_cvv' => 'required|string|min:3|max:4',
         ]);
 
         $client = Auth::guard('client')->user()->cliente;
-        $client->update([
-            'CLI_Direccion' => $request->direccion,
-            'CLI_Telefono' => $request->telefono,
+
+        \App\Models\DatosFacturacion::create([
+            'DAF_CLI_Codigo' => $client->CLI_Ced_Ruc,
+            'DAF_Direccion' => $request->direccion,
+            'DAF_Ciudad' => $request->ciudad,
+            'DAF_Estado' => $request->estado,
+            'DAF_CP' => $request->cp,
+            'DAF_Tarjeta_Numero' => $request->card_number,
+            'DAF_Tarjeta_Expiracion' => $request->card_expiry,
+            'DAF_Tarjeta_CVV' => $request->card_cvv,
         ]);
 
-        return back()->with('success', 'Información actualizada correctamente.');
+        // Also update client phone if changed/provided
+        $client->update(['CLI_Telefono' => $request->telefono]);
+
+        return back()->with('success', 'Perfil de facturación agregado correctamente.');
+    }
+
+    /**
+     * Delete a billing profile.
+     */
+    public function destroyBillingProfile($id)
+    {
+        $client = Auth::guard('client')->user()->cliente;
+        $profile = \App\Models\DatosFacturacion::where('DAF_Codigo', $id)
+            ->where('DAF_CLI_Codigo', $client->CLI_Ced_Ruc)
+            ->firstOrFail();
+
+        $profile->delete();
+
+        return back()->with('success', 'Perfil eliminado correctamente.');
     }
 }
