@@ -16,9 +16,6 @@
     <!-- App Styles & Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
 </head>
 
 <body class="font-sans antialiased bg-gray-100 flex flex-col min-h-screen">
@@ -123,7 +120,7 @@
                     <!-- Cart Icon -->
                     <li class="nav-item">
                         <button id="btnOpenCart" class="btn btn-outline-warning position-relative ms-3"
-                            @click="$dispatch('open-cart')">
+                            data-bs-toggle="modal" data-bs-target="#modalCarrito">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                 viewBox="0 0 16 16">
                                 <path
@@ -159,57 +156,26 @@
         </div>
     </footer>
 
-    <!-- Modal del Carrito (Reusing existing structure but adapting classes) -->
-    <div x-data="{ open: false }" @open-cart.window="open = true" @close-cart.window="open = false"
-        class="modal fade" :class="{ 'show d-block': open }" tabindex="-1" aria-hidden="true"
-        style="background-color: rgba(0,0,0,0.5);" x-show="open" x-transition.opacity>
-        <div class="modal-dialog modal-lg modal-dialog-centered"> <!-- Centered -->
-            <div class="modal-content" @click.outside="open = false">
+    <!-- Modal del Carrito - Bootstrap Nativo -->
+    <div class="modal fade" id="modalCarrito" tabindex="-1" aria-labelledby="modalCarritoLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">🛒 Carrito de Compras</h5>
-                    <button type="button" class="btn-close" @click="open = false"></button>
+                    <h5 class="modal-title" id="modalCarritoLabel">🛒 Carrito de Compras</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <div id="cartItems" class="max-h-96 overflow-y-auto py-4">
-                    <p class="text-center text-gray-500">Tu carrito está vacío</p>
+                <div class="modal-body" id="cartItems" style="max-height: 400px; overflow-y: auto;">
+                    <p class="text-center text-muted">Tu carrito está vacío</p>
                 </div>
 
-                <div id="loading" class="hidden text-center py-2">
-                    <p>Procesando...</p>
-                </div>
-                <div id="success" class="hidden text-center py-2 text-green-600 font-bold">
-                    <p>¡Compra exitosa!</p>
-                </div>
-
-                <div class="flex justify-between items-center mt-6 pt-4 border-t">
-                    <div class="w-full">
-                        <div class="flex justify-between mb-1">
-                            <span class="text-gray-600">Subtotal:</span>
-                            <span id="cartSubtotal" class="font-bold">$0.00</span>
-                        </div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-gray-600">IVA ({{ config('urbanhoops.iva', 15) }}%):</span>
-                            <span id="cartIva" class="font-bold">$0.00</span>
-                        </div>
-                        <div class="flex justify-between text-lg font-bold border-t pt-2 mt-2">
-                            <span>Total:</span>
-                            <span id="cartTotal" class="text-red-600">$0.00</span>
-                        </div>
-                    </div>
-                    <!-- Estados de compra -->
-                    <div id="loading" class="mt-3 text-center d-none">
-                        <p class="text-muted">Procesando pago...</p>
-                    </div>
-                    <div id="success" class="mt-3 text-center d-none">
-                        <p class="text-success fw-bold">¡Compra realizada con éxito!</p>
-                    </div>
-                </div>
                 <div class="modal-footer d-flex justify-content-between align-items-center">
-                    <div class="text-lg font-weight-bold">
+                    <div class="fw-bold">
                         Total: <span id="cartTotal" class="text-danger">$0.00</span>
                     </div>
                     <div>
-                        <button type="button" class="btn btn-secondary" @click="open = false">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                         <button id="btnCheckout" type="button" class="btn btn-success">Comprar Ahora</button>
                     </div>
                 </div>
@@ -217,14 +183,23 @@
         </div>
     </div>
 
-    <!-- Scripts Bootstrap -->
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        // Global variables
         window.AUTH_USER = {{ Auth::guard('client')->check() ? 'true' : 'false' }};
         window.CSRF_TOKEN = "{{ csrf_token() }}";
         window.IVA_RATE = {{ config('urbanhoops.iva', 15) }};
     </script>
+
+    <!-- Simple Cart Scripts (localStorage based) -->
+    <script src="{{ asset('js/cart-model-simple.js') }}"></script>
+    <script src="{{ asset('js/cart-view-simple.js') }}"></script>
+    <script src="{{ asset('js/cart-controller-simple.js') }}"></script>
+
     <script src="{{ asset('js/alto-contraste.js') }}"></script>
     <script src="{{ asset('js/teclado-accesible.js') }}"></script>
 </body>

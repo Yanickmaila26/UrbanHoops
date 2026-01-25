@@ -84,26 +84,22 @@
                         </div>
 
                         <!-- Marcas Item -->
-                        <div class="accordion-item">
+                        <div class="accordion-item" x-data="{ open: {{ request('brand') ? 'true' : 'false' }} }">
                             <h2 class="accordion-header" id="headingBrands">
-                                <button class="accordion-button {{ request('brand') ? '' : 'collapsed' }}" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#collapseBrands"
-                                    aria-expanded="{{ request('brand') ? 'true' : 'false' }}"
-                                    aria-controls="collapseBrands">
+                                <button class="accordion-button" :class="{ 'collapsed': !open }" type="button"
+                                    @click="open = !open" aria-expanded="true" aria-controls="collapseBrands">
                                     Marcas
                                 </button>
                             </h2>
-                            <div id="collapseBrands"
-                                class="accordion-collapse collapse {{ request('brand') ? 'show' : '' }}"
-                                aria-labelledby="headingBrands" data-bs-parent="#accordionFilters">
+                            <div id="collapseBrands" class="accordion-collapse" x-show="open"
+                                aria-labelledby="headingBrands">
                                 <div class="accordion-body">
                                     <div class="d-flex flex-column gap-2">
                                         @foreach ($allBrands as $marca)
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" name="brand[]"
                                                     value="{{ $marca }}" id="brand-{{ $marca }}"
-                                                    {{ in_array($marca, (array) request('brand', [])) ? 'checked' : '' }}
-                                                    onchange="this.form.submit()">
+                                                    {{ in_array($marca, (array) request('brand', [])) ? 'checked' : '' }}>
                                                 <label class="form-check-label text-sm" for="brand-{{ $marca }}">
                                                     {{ $marca }}
                                                 </label>
@@ -115,18 +111,15 @@
                         </div>
 
                         <!-- Precio Item -->
-                        <div class="accordion-item">
+                        <div class="accordion-item" x-data="{ open: {{ request('apply_price') ? 'true' : 'false' }} }">
                             <h2 class="accordion-header" id="headingPrice">
-                                <button class="accordion-button {{ request('apply_price') ? '' : 'collapsed' }}"
-                                    type="button" data-bs-toggle="collapse" data-bs-target="#collapsePrice"
-                                    aria-expanded="{{ request('apply_price') ? 'true' : 'false' }}"
-                                    aria-controls="collapsePrice">
+                                <button class="accordion-button" :class="{ 'collapsed': !open }" type="button"
+                                    @click="open = !open" aria-expanded="true" aria-controls="collapsePrice">
                                     Precio
                                 </button>
                             </h2>
-                            <div id="collapsePrice"
-                                class="accordion-collapse collapse {{ request('apply_price') ? 'show' : '' }}"
-                                aria-labelledby="headingPrice" data-bs-parent="#accordionFilters">
+                            <div id="collapsePrice" class="accordion-collapse" x-show="open"
+                                aria-labelledby="headingPrice">
                                 <div class="accordion-body">
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="apply_price" value="1"
@@ -145,7 +138,7 @@
                                             max="{{ $maxPrice }}" step="10"
                                             value="{{ request('max_price', $maxPrice) }}"
                                             class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-brand"
-                                            oninput="document.getElementById('valorPrecio').innerText = this.value">
+                                            oninput="updatePriceDisplay(this.value)">
                                     </div>
                                     <button type="submit" class="btn btn-sm btn-brand w-100 mt-2">Aplicar</button>
                                 </div>
@@ -163,6 +156,13 @@
                     @if (request('search'))
                         <input type="hidden" name="search" value="{{ request('search') }}">
                     @endif
+
+                    <script>
+                        function updatePriceDisplay(value) {
+                            const displays = document.querySelectorAll('#valorPrecio');
+                            displays.forEach(el => el.innerText = value);
+                        }
+                    </script>
 
                     <button type="submit" class="w-full btn-brand py-2 font-bold uppercase text-sm tracking-wider">
                         Aplicar Filtros
@@ -202,7 +202,8 @@
                                     <a href="{{ route('public.products.show', $producto->PRO_Codigo) }}"
                                         class="hover:text-brand transition-colors">{{ $producto->PRO_Nombre }}</a>
                                 </h3>
-                                <p class="text-gray-600 text-sm mb-4 line-clamp-2 flex-1">{{ $producto->PRO_Descripcion }}
+                                <p class="text-gray-600 text-sm mb-4 line-clamp-2 flex-1" style="min-height: 40px;">
+                                    {{ $producto->PRO_Descripcion }}
                                 </p>
 
                                 <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
@@ -213,15 +214,16 @@
                                             class="btn btn-warning px-4 py-2 text-sm font-bold flex items-center gap-2 text-black hover:bg-yellow-400 transition-colors">
                                             Ver
                                         </a>
-                                        <a href="{{ route('public.products.show', $producto->PRO_Codigo) }}"
-                                            class="btn-brand px-4 py-2 text-sm font-bold flex items-center gap-2 group-hover:bg-brand-dark transition-colors text-black">
+                                        <button type="button"
+                                            onclick="window.addToCart('{{ $producto->PRO_Codigo }}', '{{ addslashes($producto->PRO_Nombre) }}', {{ $producto->PRO_Precio }}, '{{ $producto->PRO_Imagen ? asset('storage/' . $producto->PRO_Imagen) : asset('images/default.jpg') }}', '{{ json_encode($producto->PRO_Talla) }}')"
+                                            class="btn btn-brand px-4 py-2 text-sm font-bold flex items-center gap-2 hover:bg-yellow-500 transition-colors text-black">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
                                                 </path>
                                             </svg>
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

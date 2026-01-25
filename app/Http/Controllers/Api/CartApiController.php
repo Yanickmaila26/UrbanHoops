@@ -5,20 +5,25 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\Carrito;
 use App\Models\DetalleCarrito;
 use App\Models\Producto;
 
 class CartApiController extends Controller
 {
-    // Helper to get current client
+    /**
+     * Helper: Get current client from authenticated user
+     */
     private function getCliente()
     {
-        $user = Auth::guard('client')->user();
+        $user = Auth::guard('client')->user() ?? Auth::guard('web')->user() ?? Auth::user();
         return $user ? $user->cliente : null;
     }
 
-    // Helper to get or create active cart
+    /**
+     * Helper: Get or Create active cart for client
+     */
     private function getCart($cliente)
     {
         if (!$cliente) return null;
@@ -26,7 +31,6 @@ class CartApiController extends Controller
         $cart = Carrito::where('CLI_Ced_Ruc', $cliente->CLI_Ced_Ruc)->first();
 
         if (!$cart) {
-            // Manual ID generation required since it's not auto-increment
             $cart = Carrito::create([
                 'CRC_Carrito' => Carrito::generateId(),
                 'CLI_Ced_Ruc' => $cliente->CLI_Ced_Ruc
@@ -36,232 +40,196 @@ class CartApiController extends Controller
         return $cart;
     }
 
-    public function index()
+    /**
+     * Get cart items formatted for frontend
+     */
+    public function index(Request $request)
     {
         $cliente = $this->getCliente();
-        if (!$cliente) return response()->json(['items' => [], 'count' => 0, 'total' => 0]);
+        if (!$cliente) {
+            return response()->json(['items' => []]);
+        }
 
-        $cart = Carrito::where('CLI_Ced_Ruc', $cliente->CLI_Ced_Ruc)->with('detalles.producto')->first();
+        $cart = Carrito::where('CLI_Ced_Ruc', $cliente->CLI_Ced_Ruc)
+            ->with('detalles.producto')
+            ->first();
 
         if (!$cart) {
-            return response()->json(['items' => [], 'count' => 0, 'total' => 0]);
+            return response()->json(['items' => []]);
         }
 
         $items = $cart->detalles->map(function ($detail) {
             $product = $detail->producto;
-            $talla = $detail->CRD_Talla;
+            if (!$product) return null;
 
-            // Determine max stock for this specific size item
-            $maxStock = $product->PRO_Stock;
+            $talla = $detail->CRD_Talla;
+            $stock = 9999;
+
             if ($talla && is_array($product->PRO_Talla)) {
                 foreach ($product->PRO_Talla as $s) {
-                    if (isset($s['talla']) && $s['talla'] == $talla) {
-                        $maxStock = $s['stock'];
+                    if (is_array($s) && isset($s['talla']) && $s['talla'] == $talla) {
+                        $stock = $s['stock'];
                         break;
                     }
                 }
+            } elseif (is_numeric($product->PRO_Stock)) {
+                $stock = $product->PRO_Stock;
             }
 
             return [
                 'id' => $product->PRO_Codigo,
                 'name' => $product->PRO_Nombre,
                 'price' => (float) $product->PRO_Precio,
-                'qty' => $detail->CRD_Cantidad,
+                'qty' => (int) $detail->CRD_Cantidad,
+                'image' => $product->PRO_Imagen ? asset('storage/' . $product->PRO_Imagen) : asset('images/default.jpg'),
                 'talla' => $talla,
-                'image' => asset('storage/' . $product->PRO_Imagen),
-                'qt' => $maxStock
+                'qt' => $stock
             ];
-        });
+        })->filter()->values();
 
-        return response()->json([
-            'items' => $items,
-            'count' => $items->sum('qty'),
-            'subtotal' => $cart->getSubtotal(),
-            'iva' => $cart->getIva(),
-            'total' => $cart->getTotal()
-        ]);
+        return response()->json(['items' => $items]);
     }
 
+    /**
+     * Sync localStorage cart with Database
+     */
     public function sync(Request $request)
     {
         $cliente = $this->getCliente();
-        if (!$cliente) return response()->json(['message' => 'Unauthenticated'], 401);
+        if (!$cliente) return response()->json(['message' => 'Unauthorized'], 401);
 
-        $cart = $this->getCart($cliente);
-        $localItems = $request->input('items', []);
+        DB::beginTransaction();
+        try {
+            $cart = $this->getCart($cliente);
 
-        foreach ($localItems as $item) {
-            $product = Producto::find($item['id']);
-            if ($product) {
-                $talla = $item['talla'] ?? null;
+            // Check if DB has items
+            $dbCount = DetalleCarrito::where('CRC_Carrito', $cart->CRC_Carrito)->count();
 
-                // Calculate max stock
-                $maxStock = $product->PRO_Stock;
-                if ($talla && is_array($product->PRO_Talla)) {
-                    foreach ($product->PRO_Talla as $s) {
-                        if (isset($s['talla']) && $s['talla'] == $talla) {
-                            $maxStock = $s['stock'];
-                            break;
-                        }
-                    }
-                }
-
-                $detail = DetalleCarrito::where('CRC_Carrito', $cart->CRC_Carrito)
-                    ->where('PRO_Codigo', $product->PRO_Codigo)
-                    ->where('CRD_Talla', $talla)
-                    ->first();
-
-                if ($detail) {
-                    $newQty = $detail->CRD_Cantidad + $item['qty'];
-                    $detail->CRD_Cantidad = min($newQty, $maxStock);
-                    $detail->save();
-                } else {
-                    DetalleCarrito::create([
-                        'CRC_Carrito' => $cart->CRC_Carrito,
-                        'PRO_Codigo' => $product->PRO_Codigo,
-                        'CRD_Cantidad' => min($item['qty'], $maxStock),
-                        'CRD_Talla' => $talla,
-                    ]);
-                }
+            if ($dbCount > 0) {
+                // DB has priority, return current DB state
+                DB::commit();
+                return $this->index($request);
             }
-        }
 
-        return $this->index();
+            // DB is empty, import logic
+            $localItems = $request->input('items', []);
+
+            foreach ($localItems as $item) {
+                $prod = Producto::find($item['id']);
+                if (!$prod) continue;
+
+                DetalleCarrito::create([
+                    'CRC_Carrito' => $cart->CRC_Carrito,
+                    'PRO_Codigo' => $prod->PRO_Codigo,
+                    'CRD_Cantidad' => $item['qty'],
+                    'CRD_Talla' => $item['talla'] ?? null
+                ]);
+            }
+
+            DB::commit();
+            return $this->index($request);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function add(Request $request)
     {
         $cliente = $this->getCliente();
-        if (!$cliente) return response()->json(['message' => 'Unauthenticated'], 401);
+        if (!$cliente) return response()->json(['message' => 'Unauthorized'], 401);
 
-        $request->validate([
-            'id' => 'required', // PRO_Codigo
-            'qty' => 'required|integer|min:1',
-            'talla' => 'nullable|string'
-        ]);
+        $item = $request->all();
 
         $cart = $this->getCart($cliente);
-        $product = Producto::find($request->id);
 
-        if (!$product) return response()->json(['message' => 'Product not found'], 404);
+        // Build the query to find the specific item (Product + Talla)
+        $query = DetalleCarrito::where('CRC_Carrito', $cart->CRC_Carrito)
+            ->where('PRO_Codigo', $item['id']);
 
-        $talla = $request->talla;
-
-        // Size Stock Validation
-        $maxStock = $product->PRO_Stock;
-        if ($talla && is_array($product->PRO_Talla)) {
-            foreach ($product->PRO_Talla as $s) {
-                if (isset($s['talla']) && $s['talla'] == $talla) {
-                    $maxStock = $s['stock'];
-                    break;
-                }
-            }
+        if (isset($item['talla']) && $item['talla']) {
+            $query->where('CRD_Talla', $item['talla']);
+        } else {
+            $query->whereNull('CRD_Talla');
         }
 
-        $detail = DetalleCarrito::where('CRC_Carrito', $cart->CRC_Carrito)
-            ->where('PRO_Codigo', $product->PRO_Codigo)
-            ->where('CRD_Talla', $talla)
-            ->first();
+        $existing = $query->first();
 
-        if ($detail) {
-            $newQty = $detail->CRD_Cantidad + $request->qty;
-            if ($newQty > $maxStock) {
-                return response()->json(['message' => 'Stock insuficiente para la talla seleccionada'], 422);
-            }
-            $detail->CRD_Cantidad = $newQty;
-            $detail->save();
+        if ($existing) {
+            // Update using Query Builder logic to avoid composite key issues with Eloquent save()
+            $newQty = $existing->CRD_Cantidad + $item['qty'];
+
+            // Re-build query to ensure exact match update
+            DetalleCarrito::where('CRC_Carrito', $cart->CRC_Carrito)
+                ->where('PRO_Codigo', $item['id'])
+                ->where(function ($q) use ($item) {
+                    if (isset($item['talla']) && $item['talla']) {
+                        $q->where('CRD_Talla', $item['talla']);
+                    } else {
+                        $q->whereNull('CRD_Talla');
+                    }
+                })
+                ->update(['CRD_Cantidad' => $newQty]);
         } else {
-            if ($request->qty > $maxStock) {
-                return response()->json(['message' => 'Stock insuficiente para la talla seleccionada'], 422);
-            }
             DetalleCarrito::create([
                 'CRC_Carrito' => $cart->CRC_Carrito,
-                'PRO_Codigo' => $product->PRO_Codigo,
-                'CRD_Cantidad' => $request->qty,
-                'CRD_Talla' => $talla
+                'PRO_Codigo' => $item['id'],
+                'CRD_Cantidad' => $item['qty'],
+                'CRD_Talla' => $item['talla'] ?? null
             ]);
         }
 
-        return $this->index();
+        return response()->json(['success' => true]);
     }
 
-    public function update(Request $request)
+    public function remove(Request $request, $itemId)
     {
         $cliente = $this->getCliente();
-        if (!$cliente) return response()->json(['message' => 'Unauthenticated'], 401);
+        if (!$cliente) return response()->json(['message' => 'Unauthorized'], 401);
 
-        $request->validate([
-            'id' => 'required',
-            'qty' => 'required|integer|min:0',
-            'talla' => 'nullable|string'
-        ]);
-
-        $cart = $this->getCart($cliente);
-
-        if ($request->qty == 0) {
-            return $this->remove($request);
-        }
-
-        $talla = $request->talla;
-
-        $detail = DetalleCarrito::where('CRC_Carrito', $cart->CRC_Carrito)
-            ->where('PRO_Codigo', $request->id)
-            ->where('CRD_Talla', $talla)
-            ->first();
-
-        if ($detail) {
-            $product = Producto::find($request->id);
-
-            // Size Stock Validation
-            $maxStock = $product->PRO_Stock;
-            if ($talla && is_array($product->PRO_Talla)) {
-                foreach ($product->PRO_Talla as $s) {
-                    if (isset($s['talla']) && $s['talla'] == $talla) {
-                        $maxStock = $s['stock'];
-                        break;
-                    }
-                }
-            }
-
-            if ($request->qty > $maxStock) {
-                return response()->json(['message' => 'Stock insuficiente para la talla seleccionada'], 422);
-            }
-            $detail->CRD_Cantidad = $request->qty;
-            $detail->save();
-        }
-
-        return $this->index();
-    }
-
-    public function remove(Request $request)
-    {
-        $cliente = $this->getCliente();
-        if (!$cliente) return response()->json(['message' => 'Unauthenticated'], 401);
+        $talla = $request->input('talla');
+        if ($talla === 'null') $talla = null;
 
         $cart = $this->getCart($cliente);
 
         $query = DetalleCarrito::where('CRC_Carrito', $cart->CRC_Carrito)
-            ->where('PRO_Codigo', $request->id);
+            ->where('PRO_Codigo', $itemId);
 
-        // If talla is provided, remove precise item. If not (legacy/fallback), remove all instances of product?
-        // Better to be precise.
-        if ($request->has('talla')) {
-            $query->where('CRD_Talla', $request->talla);
+        if ($talla) {
+            $query->where('CRD_Talla', $talla);
+        } else {
+            $query->whereNull('CRD_Talla');
         }
 
         $query->delete();
 
-        return $this->index();
+        return response()->json(['success' => true]);
     }
 
-    public function clear()
+    public function update(Request $request, $itemId)
     {
         $cliente = $this->getCliente();
-        if (!$cliente) return response()->json(['message' => 'Unauthenticated'], 401);
+        if (!$cliente) return response()->json(['message' => 'Unauthorized'], 401);
+
+        $qty = $request->input('qty');
+        $talla = $request->input('talla');
+        if ($talla === 'null') $talla = null;
 
         $cart = $this->getCart($cliente);
-        DetalleCarrito::where('CRC_Carrito', $cart->CRC_Carrito)->delete();
 
-        return $this->index();
+        // Update directly using Query Builder
+        $query = DetalleCarrito::where('CRC_Carrito', $cart->CRC_Carrito)
+            ->where('PRO_Codigo', $itemId);
+
+        if ($talla) {
+            $query->where('CRD_Talla', $talla);
+        } else {
+            $query->whereNull('CRD_Talla');
+        }
+
+        // Perform update on the query builder directly, avoiding model->save()
+        $query->update(['CRD_Cantidad' => $qty]);
+
+        return response()->json(['success' => true]);
     }
 }

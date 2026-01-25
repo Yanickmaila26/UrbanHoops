@@ -27,7 +27,7 @@ return new class extends Migration
 
         Schema::table('productos', function (Blueprint $table) {
             // Re-add as JSON (or long text for wider compatibility if JSON type issues arise, but JSON is goal)
-            $table->json('PRO_Talla')->nullable(); // Stores [{"talla": "M", "stock": 10}, ...]
+            $table->json('PRO_Talla'); // Stores [{"talla": "M", "stock": 10}, ...]
         });
 
         // 2. Add size columns to detail tables
@@ -66,7 +66,7 @@ return new class extends Migration
         });
 
         Schema::table('productos', function (Blueprint $table) {
-            $table->string('PRO_Talla', 50)->nullable();
+            $table->string('PRO_Talla', 50);
         });
     }
 };
