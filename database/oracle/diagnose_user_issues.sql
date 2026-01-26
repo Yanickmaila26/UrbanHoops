@@ -1,0 +1,40 @@
+-- ============================================================================
+-- SCRIPT: diagnose_user_issues.sql
+-- Descripción: Diagnostica problemas de conexión de usuarios
+-- ============================================================================
+
+SET LINESIZE 200;
+SET PAGESIZE 100;
+
+PROMPT ===== 1. Estado de los Usuarios =====
+COL USERNAME FORMAT A20;
+COL ACCOUNT_STATUS FORMAT A20;
+COL LOCK_DATE FORMAT A12;
+COL EXPIRY_DATE FORMAT A12;
+
+SELECT USERNAME, ACCOUNT_STATUS, LOCK_DATE, EXPIRY_DATE, CREATED
+FROM DBA_USERS
+WHERE USERNAME IN ('U_ADMIN_PROD', 'U_GESTOR_INV', 'U_APP_FRONTEND')
+ORDER BY USERNAME;
+
+PROMPT ===== 2. Privilegios del Sistema =====
+COL GRANTEE FORMAT A20;
+COL PRIVILEGE FORMAT A30;
+
+SELECT GRANTEE, PRIVILEGE
+FROM DBA_SYS_PRIVS
+WHERE GRANTEE IN ('U_ADMIN_PROD', 'U_GESTOR_INV', 'U_APP_FRONTEND')
+ORDER BY GRANTEE, PRIVILEGE;
+
+PROMPT ===== 3. Roles Asignados =====
+COL GRANTED_ROLE FORMAT A30;
+
+SELECT GRANTEE, GRANTED_ROLE, ADMIN_OPTION, DEFAULT_ROLE
+FROM DBA_ROLE_PRIVS
+WHERE GRANTEE IN ('U_ADMIN_PROD', 'U_GESTOR_INV', 'U_APP_FRONTEND')
+ORDER BY GRANTEE, GRANTED_ROLE;
+
+PROMPT ===== 4. Verificación de Roles Existentes =====
+SELECT ROLE FROM DBA_ROLES WHERE ROLE LIKE 'ROLE_%';
+
+EXIT;

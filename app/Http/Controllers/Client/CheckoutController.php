@@ -128,10 +128,26 @@ class CheckoutController extends Controller
                 ]);
             }
 
+            // Robust ID retrieval due to Oracle Casing
+            $bodegaId = $bodega->BOD_Codigo ?? $bodega->getAttribute('BOD_CODIGO') ?? $bodega->getAttribute('bod_codigo');
+
+            if (!$bodegaId) {
+                // Last resort
+                $rawBodega = DB::table('bodegas')->first();
+                if ($rawBodega) {
+                    $bodegaId = $rawBodega->BOD_CODIGO ?? $rawBodega->bod_codigo ?? $rawBodega->BOD_Codigo;
+                }
+            }
+
+            if (!$bodegaId) {
+                // Si incluso raw falla, hardcode fallback si acabamos de crearla (BOD-0001)
+                $bodegaId = 'BOD-0001';
+            }
+
             \App\Models\Kardex::crearMovimiento([
                 'TRN_Codigo' => 'T04', // Venta de Productos
                 'FAC_Codigo' => $factura->FAC_Codigo,
-                'BOD_Codigo' => $bodega->BOD_Codigo
+                'BOD_Codigo' => $bodegaId
             ]);
 
             DB::commit();

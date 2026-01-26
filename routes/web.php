@@ -32,7 +32,7 @@ Route::post('/register', [App\Http\Controllers\ClientAuthController::class, 'reg
 Route::post('/logout', [App\Http\Controllers\ClientAuthController::class, 'logout'])->name('client.logout');
 
 // Client Area (Protected)
-Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(function () {
+Route::middleware(['auth:client', 'role:ROLE_APP_FRONTEND,client'])->prefix('client')->name('client.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\ClientAreaController::class, 'index'])->name('dashboard');
     Route::get('/cart', [App\Http\Controllers\ClientAreaController::class, 'cart'])->name('cart');
     Route::get('/orders', [App\Http\Controllers\ClientAreaController::class, 'orders'])->name('orders');
@@ -48,14 +48,16 @@ Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(fun
     Route::get('/checkout/invoice/{order}', [App\Http\Controllers\Client\CheckoutController::class, 'downloadInvoice'])->name('checkout.invoice');
 });
 
-// Cart Sync Routes (Session Auth directly)
-Route::middleware(['auth:client'])->prefix('api/cart')->group(function () {
+
+// Cart API Routes (Allow Guest Access)
+Route::prefix('api/cart')->group(function () {
     Route::get('/', [App\Http\Controllers\Api\CartApiController::class, 'index']);
     Route::post('/sync', [App\Http\Controllers\Api\CartApiController::class, 'sync']);
     Route::post('/add', [App\Http\Controllers\Api\CartApiController::class, 'add']);
     Route::delete('/{itemId}', [App\Http\Controllers\Api\CartApiController::class, 'remove']);
     Route::put('/{itemId}', [App\Http\Controllers\Api\CartApiController::class, 'update']);
 });
+
 
 Route::middleware([
     'auth:sanctum',
@@ -71,31 +73,34 @@ Route::middleware([
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
     // Shared Resources (Multiple roles can access)
-    // Ordenes de Compra: Admin, Bodega, Finanzas
-    Route::group(['middleware' => ['role:Administrador|Bodega|Finanzas']], function () {
+    // Ordenes de Compra: ROLE_ADMIN_PROD (Total), ROLE_GESTOR_INV (Operativo)
+    Route::group(['middleware' => ['role:ROLE_ADMIN_PROD|ROLE_GESTOR_INV']], function () {
         Route::resource('ordenes-compra', OrdenCompraController::class)->names('purchase-orders');
     });
 
-    // Facturas: Admin, Ventas, Finanzas
-    Route::group(['middleware' => ['role:Administrador|Ventas|Finanzas']], function () {
+    // Facturas: ROLE_ADMIN_PROD (Access Total - Ventas)
+    // Gestor Inv usually doesn't manage billing unless specified? 
+    // User Grant: ROLE_ADMIN_PROD has SELECT on FACTURA. u_prod (system) has INSERT.
+    // We allow ROLE_ADMIN_PROD to access basic invoice management.
+    Route::group(['middleware' => ['role:ROLE_ADMIN_PROD']], function () {
         Route::resource('facturas', FacturaController::class)->names('invoices');
         Route::get('invoices/cart/{dni}', [FacturaController::class, 'getCart'])->name('invoices.cart');
     });
 
-    // Clientes & Carritos: Admin, Ventas
-    Route::group(['middleware' => ['role:Administrador|Ventas']], function () {
+    // Clientes & Carritos: ROLE_ADMIN_PROD
+    Route::group(['middleware' => ['role:ROLE_ADMIN_PROD']], function () {
         Route::resource('clientes', ClienteController::class)->names('customers');
         Route::resource('carritos', CarritoController::class)->names('shopping-carts');
     });
 
-    // Bodega & Kardex: Admin, Bodega
-    Route::group(['middleware' => ['role:Administrador|Bodega']], function () {
+    // Bodega & Kardex: ROLE_ADMIN_PROD, ROLE_GESTOR_INV
+    Route::group(['middleware' => ['role:ROLE_ADMIN_PROD|ROLE_GESTOR_INV']], function () {
         Route::resource('bodegas', BodegaController::class)->names('warehouse');
         Route::resource('kardex', KardexController::class)->names('kardex');
     });
 
-    // Productos & Proveedores: Admin, Comercial
-    Route::group(['middleware' => ['role:Administrador|Comercial']], function () {
+    // Productos & Proveedores: ROLE_ADMIN_PROD, ROLE_GESTOR_INV
+    Route::group(['middleware' => ['role:ROLE_ADMIN_PROD|ROLE_GESTOR_INV']], function () {
         Route::resource('productos', ProductoController::class)->names('products');
         Route::resource('proveedores', ProveedorController::class)->names('suppliers');
         Route::resource('categorias', CategoriaController::class)->names('categories');

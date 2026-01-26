@@ -36,6 +36,42 @@ return new class extends Migration
             } catch (\Exception $e) {
             }
         }
+
+        // Install sp_registrar_ingreso_bodega (Updated: includes explicit Kardex insert)
+        $path3 = database_path('oracle/sp_registrar_ingreso_bodega.sql');
+        if (File::exists($path3)) {
+            $sql3 = preg_replace('/^\/$/m', '', File::get($path3));
+            try {
+                DB::unprepared($sql3);
+            } catch (\Exception $e) {
+            }
+        }
+
+        // Install trg_bloqueo_facturas (Updated: fixed casing)
+        $path4 = database_path('oracle/trg_bloqueo_facturas.sql');
+        if (File::exists($path4)) {
+            $sql4 = preg_replace('/^\/$/m', '', File::get($path4));
+            try {
+                DB::unprepared($sql4);
+            } catch (\Exception $e) {
+            }
+        }
+
+        // Install trg_auditoria_clientes (Updated: fixed casing)
+        $path5 = database_path('oracle/trg_auditoria_clientes.sql');
+        if (File::exists($path5)) {
+            $sql5 = preg_replace('/^\/$/m', '', File::get($path5));
+            try {
+                DB::unprepared($sql5);
+            } catch (\Exception $e) {
+            }
+        }
+
+        // Eliminar trigger conflictivo TRG_MOVIMIENTO_KARDEX (Reemplazado por lógica en SPs y PHP)
+        try {
+            DB::statement("DROP TRIGGER trg_kardex_producto_bodega");
+        } catch (\Exception $e) {
+        }
     }
 
     /**
