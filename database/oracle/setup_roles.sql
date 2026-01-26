@@ -1,0 +1,76 @@
+-- ============================================================================
+-- SCRIPT: setup_roles.sql
+-- Descripción: Crea roles y asigna permisos en Oracle según requerimientos.
+-- EJECUTAR COMO: u_prod (dueño de las tablas)
+-- Los GRANTs deben ser otorgados por el dueño del schema para que funcionen.
+-- ============================================================================
+
+BEGIN
+    -- 1. Creación de Roles (Si no existen)
+    BEGIN
+        EXECUTE IMMEDIATE 'CREATE ROLE ROLE_ADMIN_PROD';
+    EXCEPTION
+        WHEN OTHERS THEN
+            IF SQLCODE != -1921 THEN -- ORA-01921: role name conflicts with another user or role name
+                RAISE;
+            END IF;
+    END;
+
+    BEGIN
+        EXECUTE IMMEDIATE 'CREATE ROLE ROLE_GESTOR_INV';
+    EXCEPTION
+        WHEN OTHERS THEN
+            IF SQLCODE != -1921 THEN RAISE; END IF;
+    END;
+    
+    BEGIN
+        EXECUTE IMMEDIATE 'CREATE ROLE ROLE_APP_FRONTEND';
+    EXCEPTION
+        WHEN OTHERS THEN
+            IF SQLCODE != -1921 THEN RAISE; END IF;
+    END;
+
+    -- 2. Permisos para ROLE_ADMIN_PROD (Acceso Total)
+    -- IMPORTANTE: Este script debe ejecutarse como u_prod (dueño de las tablas)
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."users" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."categorias" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."subcategorias" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."productos" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."producto_bodega" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."bodegas" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."kardexes" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."transaccions" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."orden_compras" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."detalle_ord_com" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."proveedors" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."facturas" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."detalle_factura" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."clientes" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."carritos" TO ROLE_ADMIN_PROD';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."detalle_carrito" TO ROLE_ADMIN_PROD';
+
+    -- 3. Permisos para ROLE_GESTOR_INV (Operativo de Inventario)
+    EXECUTE IMMEDIATE 'GRANT SELECT ON u_prod."users" TO ROLE_GESTOR_INV';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE ON u_prod."categorias" TO ROLE_GESTOR_INV';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE ON u_prod."subcategorias" TO ROLE_GESTOR_INV';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE ON u_prod."productos" TO ROLE_GESTOR_INV';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE ON u_prod."producto_bodega" TO ROLE_GESTOR_INV';
+    EXECUTE IMMEDIATE 'GRANT SELECT ON u_prod."bodegas" TO ROLE_GESTOR_INV';
+    EXECUTE IMMEDIATE 'GRANT INSERT, SELECT ON u_prod."kardexes" TO ROLE_GESTOR_INV';
+    EXECUTE IMMEDIATE 'GRANT INSERT, SELECT ON u_prod."transaccions" TO ROLE_GESTOR_INV';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE ON u_prod."orden_compras" TO ROLE_GESTOR_INV';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE ON u_prod."detalle_ord_com" TO ROLE_GESTOR_INV';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE ON u_prod."proveedors" TO ROLE_GESTOR_INV';
+
+    -- 4. Permisos para ROLE_APP_FRONTEND (Limitados)
+    EXECUTE IMMEDIATE 'GRANT SELECT ON u_prod."productos" TO ROLE_APP_FRONTEND';
+    EXECUTE IMMEDIATE 'GRANT SELECT ON u_prod."producto_bodega" TO ROLE_APP_FRONTEND';
+    EXECUTE IMMEDIATE 'GRANT SELECT ON u_prod."categorias" TO ROLE_APP_FRONTEND';
+    EXECUTE IMMEDIATE 'GRANT SELECT ON u_prod."subcategorias" TO ROLE_APP_FRONTEND';
+    EXECUTE IMMEDIATE 'GRANT SELECT ON u_prod."carritos" TO ROLE_APP_FRONTEND';
+    EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE, DELETE ON u_prod."detalle_carrito" TO ROLE_APP_FRONTEND';
+    EXECUTE IMMEDIATE 'GRANT SELECT ON u_prod."facturas" TO ROLE_APP_FRONTEND';
+    EXECUTE IMMEDIATE 'GRANT SELECT ON u_prod."clientes" TO ROLE_APP_FRONTEND';
+    
+END;
+/

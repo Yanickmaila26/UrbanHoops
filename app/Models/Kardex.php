@@ -93,8 +93,16 @@ class Kardex extends Model
                 $factura = Factura::with('productos')->where('FAC_Codigo', $data['FAC_Codigo'])->firstOrFail();
                 $productos = $factura->productos;
 
-                // Fallback if Eloquent returns empty due to Oracle casing
-                if ($productos->isEmpty()) {
+                // Fallback check: Eloquent might return models with null attributes due to casing
+                $useFallback = $productos->isEmpty();
+                if (!$useFallback) {
+                    $first = $productos->first();
+                    if (!$first->PRO_Nombre && !$first->getAttribute('PRO_NOMBRE')) {
+                        $useFallback = true;
+                    }
+                }
+
+                if ($useFallback) {
                     $detalles = DB::table('detalle_factura')
                         ->where(DB::raw('UPPER(FAC_CODIGO)'), strtoupper($data['FAC_Codigo']))
                         ->get();
@@ -105,6 +113,11 @@ class Kardex extends Model
                         $productoData = DB::table('productos')->where(DB::raw('UPPER(PRO_CODIGO)'), strtoupper($proCodigo))->first();
                         if ($productoData) {
                             $prod = new Producto((array)$productoData);
+                            // Force attributes
+                            $prod->PRO_Codigo = $productoData->PRO_CODIGO ?? $productoData->pro_codigo ?? $productoData->PRO_Codigo;
+                            $prod->PRO_Nombre = $productoData->PRO_NOMBRE ?? $productoData->pro_nombre ?? $productoData->PRO_Nombre;
+                            $prod->PRO_Stock = $productoData->PRO_STOCK ?? $productoData->pro_stock ?? 0;
+
                             // Pivot simulation
                             $pivot = new \stdClass();
                             $pivot->DFC_CANTIDAD = $detalle->DFC_CANTIDAD ?? $detalle->dfc_cantidad ?? $detalle->DFC_Cantidad;
@@ -118,6 +131,17 @@ class Kardex extends Model
                 foreach ($productos as $prod) {
                     $cantidad = $prod->pivot->DFC_CANTIDAD ?? $prod->pivot->DFC_Cantidad;
                     $talla = $prod->pivot->DFC_TALLA ?? $prod->pivot->DFC_Talla;
+
+                    // Final safety check
+                    if (!$prod->PRO_Nombre) {
+                        $fresh = DB::table('productos')->where('PRO_Codigo', $prod->PRO_Codigo)->first();
+                        if ($fresh) {
+                            $prod->PRO_Nombre = $fresh->PRO_NOMBRE ?? $fresh->pro_nombre ?? $fresh->PRO_Nombre;
+                            $prod->PRO_Stock = $fresh->PRO_STOCK ?? $fresh->pro_stock ?? 0;
+                            // Force Talla json decoding if needed by accessor logic, or just raw
+                            $prod->setAttribute('PRO_Talla', $fresh->PRO_TALLA ?? $fresh->pro_talla);
+                        }
+                    }
 
                     self::actualizarStockFisico($prod, $trn->TRN_Tipo, $cantidad, $data['BOD_Codigo'], $talla);
 
@@ -145,7 +169,125 @@ class Kardex extends Model
         });
     }
 
-    // ... actualizarStockFisico remains checks
+    private static function actualizarStockFisico($producto, $tipo, $cantidad, $bodegaCodigo, $talla = null)
+    {
+        // 1. Update Total Stock (Product Level)
+        if ($tipo === 'E') {
+            $producto->PRO_Stock += $cantidad;
+        } else {
+            if ($producto->PRO_Stock < $cantidad) {
+                throw new \Exception("Stock insuficiente para: {$producto->PRO_Nombre}. Disponible: {$producto->PRO_Stock}");
+            }
+            $producto->PRO_Stock -= $cantidad; // Si el producto no usa stock general estricto, esto podría ser opcional
+        }
+
+        // 2. Update Warehouse-Product Stock (producto_bodega.PXB_Stock)
+        $pivotRecord = DB::table('producto_bodega')
+            ->where('PRO_Codigo', $producto->PRO_Codigo)
+            ->where('BOD_Codigo', $bodegaCodigo)
+            ->first();
+
+        if ($pivotRecord) {
+            $newWarehouseStock = $pivotRecord->PXB_Stock;
+            if ($tipo === 'E') {
+                $newWarehouseStock += $cantidad;
+            } else {
+                if ($pivotRecord->PXB_Stock < $cantidad) {
+                    throw new \Exception("Stock insuficiente en bodega para: {$producto->PRO_Nombre}. Disponible en bodega: {$pivotRecord->PXB_Stock}");
+                }
+                $newWarehouseStock -= $cantidad;
+            }
+
+            DB::table('producto_bodega')
+                ->where('PRO_Codigo', $producto->PRO_Codigo)
+                ->where('BOD_Codigo', $bodegaCodigo)
+                ->update(['PXB_Stock' => $newWarehouseStock, 'updated_at' => now()]);
+        } else {
+            // If relationship doesn't exist
+            if ($tipo === 'E') {
+                DB::table('producto_bodega')->insert([
+                    'PRO_Codigo' => $producto->PRO_Codigo,
+                    'BOD_Codigo' => $bodegaCodigo,
+                    'PXB_Stock' => $cantidad,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            } else {
+                // AUTO-HEAL: Si no existe en bodega pero estamos vendiendo, 
+                // y ya pasamos la validación de stock global (punto 1),
+                // asumimos que el stock global pertenece a esta bodega.
+                $stockGlobalActual = $producto->PRO_Stock; // Ya descontado en punto 1
+                $stockInicialBodega = $stockGlobalActual + $cantidad;
+
+                DB::table('producto_bodega')->insert([
+                    'PRO_Codigo' => $producto->PRO_Codigo,
+                    'BOD_Codigo' => $bodegaCodigo,
+                    'PXB_Stock' => $stockGlobalActual, // Ya restado la cantidad de venta
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // No lanzamos excepción, permitimos la venta y corregimos la inconsistencia.
+            }
+        }
+
+        // 3. Update JSON Size Stock if talla provided
+        if ($talla) {
+            $sizes = $producto->PRO_Talla; // Accessor handles JSON decoding if defined in casting
+            // Ensure array
+            if (is_string($sizes)) {
+                $sizes = json_decode($sizes, true) ?? [];
+            }
+
+            if (is_array($sizes)) {
+                $found = false;
+                foreach ($sizes as &$s) {
+                    if (isset($s['talla']) && trim($s['talla']) == trim($talla)) {
+                        if ($tipo === 'E') {
+                            $s['stock'] = (int)($s['stock'] ?? 0) + $cantidad;
+                        } else {
+                            if ((int)($s['stock'] ?? 0) < $cantidad) {
+                                throw new \Exception("Stock insuficiente para: {$producto->PRO_Nombre} Talla: {$talla}.");
+                            }
+                            $s['stock'] = (int)($s['stock'] ?? 0) - $cantidad;
+                        }
+                        $found = true;
+                        break;
+                    }
+                }
+                // If Entry and size not found, add it
+                if (!$found && $tipo === 'E') {
+                    $sizes[] = ['talla' => $talla, 'stock' => $cantidad];
+                }
+                // If Exit and size not found -> Error
+                if (!$found && $tipo !== 'E') {
+                    // Tolerancia: Si no se encuentra talla, quizás es producto sin talla o error de data
+                    // throw new \Exception("La talla {$talla} no existe para el producto {$producto->PRO_Nombre}.");
+                    // Mejor log y continuar si el stock global valida
+                }
+
+                $producto->PRO_Talla = $sizes;
+            } elseif ($tipo === 'E') {
+                $producto->PRO_Talla = [['talla' => $talla, 'stock' => $cantidad]];
+            }
+        }
+
+        // Use direct DB update instead of save() to avoid INSERT attempts on manually hydrated models
+        // caused by Oracle/Eloquent mismatch issues
+        $updatePayload = [
+            'PRO_Stock' => $producto->PRO_Stock,
+            'updated_at' => now()
+        ];
+
+        // Only update PRO_Talla if we actually have a value (avoid ORA-01407 NULL constraint)
+        if ($producto->PRO_Talla !== null) {
+            $updatePayload['PRO_Talla'] = is_array($producto->PRO_Talla) ? json_encode($producto->PRO_Talla) : $producto->PRO_Talla;
+        }
+
+        DB::table('productos')
+            ->where('PRO_Codigo', $producto->PRO_Codigo)
+            ->update($updatePayload);
+    }
 
     public static function generateId()
     {

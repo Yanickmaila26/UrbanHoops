@@ -13,27 +13,52 @@ use App\Models\Producto;
 class CartApiController extends Controller
 {
     /**
-     * Helper: Get current client from authenticated user
+     * Helper: Get current client from authenticated user OR session
      */
     private function getCliente()
     {
         $user = Auth::guard('client')->user() ?? Auth::guard('web')->user() ?? Auth::user();
-        return $user ? $user->cliente : null;
+        return $user && isset($user->cliente) ? $user->cliente : null;
     }
 
     /**
-     * Helper: Get or Create active cart for client
+     * Helper: Get guest cart ID from session
      */
-    private function getCart($cliente)
+    private function getGuestCartId()
     {
-        if (!$cliente) return null;
+        if (!session()->has('guest_cart_id')) {
+            session(['guest_cart_id' => 'GUEST_' . uniqid()]);
+        }
+        return session('guest_cart_id');
+    }
 
-        $cart = Carrito::where('CLI_Ced_Ruc', $cliente->CLI_Ced_Ruc)->first();
+    /**
+     * Helper: Get or Create active cart for client OR guest
+     */
+    private function getCart($cliente = null)
+    {
+        // Authenticated user cart
+        if ($cliente) {
+            $cart = Carrito::where('CLI_Ced_Ruc', $cliente->CLI_Ced_Ruc)->first();
+
+            if (!$cart) {
+                $cart = Carrito::create([
+                    'CRC_Carrito' => Carrito::generateId(),
+                    'CLI_Ced_Ruc' => $cliente->CLI_Ced_Ruc
+                ]);
+            }
+
+            return $cart;
+        }
+
+        // Guest cart (Session-based)
+        $guestCartId = $this->getGuestCartId();
+        $cart = Carrito::where('CRC_Carrito', $guestCartId)->first();
 
         if (!$cart) {
             $cart = Carrito::create([
-                'CRC_Carrito' => Carrito::generateId(),
-                'CLI_Ced_Ruc' => $cliente->CLI_Ced_Ruc
+                'CRC_Carrito' => $guestCartId,
+                'CLI_Ced_Ruc' => null // Guest cart has no client
             ]);
         }
 
@@ -137,11 +162,9 @@ class CartApiController extends Controller
     public function add(Request $request)
     {
         $cliente = $this->getCliente();
-        if (!$cliente) return response()->json(['message' => 'Unauthorized'], 401);
+        $cart = $this->getCart($cliente); // Works for both authenticated and guest
 
         $item = $request->all();
-
-        $cart = $this->getCart($cliente);
 
         // Build the query to find the specific item (Product + Talla)
         $query = DetalleCarrito::where('CRC_Carrito', $cart->CRC_Carrito)

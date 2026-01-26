@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('carritos', function (Blueprint $table) {
             $table->string('CRC_Carrito', 13)->primary();
-            $table->string('CLI_Ced_Ruc', 13);
+            $table->string('CLI_Ced_Ruc', 13)->nullable(); // Allow guest carts
             $table->foreign('CLI_Ced_Ruc')->references('CLI_Ced_Ruc')->on('clientes')->onDelete('cascade');
             $table->timestamps();
         });
