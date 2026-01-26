@@ -27,19 +27,21 @@ class Factura extends Model
 
     public function productos()
     {
-        return $this->belongsToMany(Producto::class, 'detalle_factura', 'FAC_Codigo', 'PRO_Codigo')
-            ->withPivot('DFC_Cantidad', 'DFC_Precio', 'DFC_Talla')
+        return $this->belongsToMany(Producto::class, 'detalle_factura', 'FAC_CODIGO', 'PRO_CODIGO')
+            ->withPivot('DFC_CANTIDAD', 'DFC_PRECIO', 'DFC_TALLA')
             ->withTimestamps();
     }
 
     public static function generateId()
     {
-        $last = self::orderBy('FAC_Codigo', 'desc')->first();
-        if (!$last) {
-            return 'FAC001';
-        }
-        $number = intval(substr($last->FAC_Codigo, 3)) + 1;
-        return 'FAC' . str_pad($number, 3, '0', STR_PAD_LEFT);
+        // Use SQL to find the true numeric max, ensuring concurrency safety and correct ordering
+        // Oracle compatible syntax
+        $maxId = \Illuminate\Support\Facades\DB::table('facturas')
+            ->selectRaw('MAX(TO_NUMBER(SUBSTR(FAC_CODIGO, 4))) as max_id')
+            ->value('max_id');
+
+        $number = ($maxId ?? 0) + 1;
+        return 'FAC' . str_pad($number, 5, '0', STR_PAD_LEFT);
     }
 
     public static function rules($id = null)
@@ -68,5 +70,22 @@ class Factura extends Model
             'productos.required' => 'Debe agregar al menos un producto.',
             'cantidades.required' => 'Las cantidades son obligatorias.',
         ];
+    }
+
+    /**
+     * Override getAttribute to handle Oracle case-insensitive column names
+     */
+    public function getAttribute($key)
+    {
+        $value = parent::getAttribute($key);
+
+        if ($value === null && $key !== strtolower($key)) {
+            $lowerKey = strtolower($key);
+            if (array_key_exists($lowerKey, $this->attributes)) {
+                return $this->attributes[$lowerKey];
+            }
+        }
+
+        return $value;
     }
 }

@@ -225,7 +225,7 @@
                                             Ver
                                         </a>
                                         <button type="button"
-                                            onclick="window.addToCart('{{ $producto->PRO_Codigo }}', '{{ addslashes($producto->PRO_Nombre) }}', {{ $producto->PRO_Precio }}, '{{ $producto->PRO_Imagen ? asset('storage/' . $producto->PRO_Imagen) : asset('images/default.jpg') }}', '{{ json_encode($producto->PRO_Talla) }}')"
+                                            onclick="window.addToCart('{{ $producto->PRO_Codigo }}', '{{ addslashes($producto->PRO_Nombre) }}', {{ $producto->PRO_Precio }}, '{{ $producto->PRO_Imagen ? asset('storage/' . $producto->PRO_Imagen) : asset('images/default.jpg') }}', {{ json_encode($producto->PRO_Talla) }})"
                                             class="btn btn-brand px-4 py-2 text-sm font-bold flex items-center gap-2 hover:bg-yellow-500 transition-colors text-black">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">

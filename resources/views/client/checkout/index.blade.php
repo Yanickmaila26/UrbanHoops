@@ -163,28 +163,26 @@
                     const estado = document.getElementById('estado');
                     const cp = document.getElementById('cp');
                     const cardExpiry = document.getElementById('card_expiry');
-                    // Note: Card Number and CVV are encrypted, so we cannot autofill them from frontend safely/easily
-                    // without fetching decrypted version via AJAX which might be insecure or intended behavior.
-                    // For now, let's autofill address data which is plain text.
-                    // If the user wants to reuse the card, usually tokens are used.
-                    // Since we store encrypted, we might need to ask them to re-enter sensitive info or handle it in backend.
-                    // Re-entering Card Number is safer if we don't have tokens.
 
                     if (this.value) {
-                        direccion.value = selectedOption.dataset.direccion;
-                        ciudad.value = selectedOption.dataset.ciudad;
-                        estado.value = selectedOption.dataset.estado;
-                        cp.value = selectedOption.dataset.cp;
-                        cardExpiry.value = selectedOption.dataset.cardExpiry;
+                        // Use getAttribute for safer data access
+                        direccion.value = selectedOption.getAttribute('data-direccion') || '';
+                        ciudad.value = selectedOption.getAttribute('data-ciudad') || '';
+                        estado.value = selectedOption.getAttribute('data-estado') || '';
+                        cp.value = selectedOption.getAttribute('data-cp') || '';
+                        cardExpiry.value = selectedOption.getAttribute('data-card-expiry') || '';
 
-                        // Highlight that they need to re-enter sensitive info if empty
+                        // Visual feedback
+                        direccion.style.backgroundColor = '#e8f0fe';
+                        setTimeout(() => direccion.style.backgroundColor = '', 500);
+
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
-                            icon: 'info',
-                            title: 'Datos de dirección cargados. Por favor confirma tu tarjeta.',
+                            icon: 'success',
+                            title: 'Datos cargados correctamente from saved profile',
                             showConfirmButton: false,
-                            timer: 3000
+                            timer: 2000
                         });
                     } else {
                         direccion.value = '';
