@@ -23,9 +23,11 @@ class ProductoSeeder extends Seeder
             ]);
         }
 
-        // Fetch Subcategory IDs helper
+
+        // Fetch Subcategory IDs helper - Oracle compatible
         $getSubId = function ($name) {
-            return \App\Models\Subcategoria::where('SCT_Nombre', $name)->value('SCT_Codigo');
+            $subcategoria = \App\Models\Subcategoria::where('SCT_Nombre', $name)->first();
+            return $subcategoria ? $subcategoria->SCT_Codigo : null;
         };
 
         // Pre-fetch IDs to avoid queries inside loop if possible, but helper is fine for seeder
@@ -403,7 +405,8 @@ class ProductoSeeder extends Seeder
         foreach ($allProductos as $producto) {
             foreach ($allBodegas as $bodega) {
                 // Attach product to warehouse if not already attached
-                if (!$producto->bodegas()->where('bodegas.BOD_Codigo', $bodega->BOD_Codigo)->exists()) {
+                // Qualify column name to avoid Oracle ambiguous column error
+                if (!$producto->bodegas()->wherePivot('BOD_Codigo', $bodega->BOD_Codigo)->exists()) {
                     $producto->bodegas()->attach($bodega->BOD_Codigo, ['PXB_Stock' => 0]);
                 }
             }

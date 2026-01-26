@@ -88,4 +88,21 @@ class Cliente extends Model
     {
         return $this->belongsTo(UsuarioAplicacion::class, 'usuario_aplicacion_id');
     }
+
+    /**
+     * Override getAttribute to handle Oracle case-insensitive column names
+     */
+    public function getAttribute($key)
+    {
+        $value = parent::getAttribute($key);
+
+        if ($value === null && $key !== strtolower($key)) {
+            $lowerKey = strtolower($key);
+            if (array_key_exists($lowerKey, $this->attributes)) {
+                return $this->attributes[$lowerKey];
+            }
+        }
+
+        return $value;
+    }
 }
