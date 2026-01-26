@@ -26,7 +26,7 @@
                                             #{{ $pedido->PED_Codigo }}
                                         </td>
                                         <td class="py-3 px-6">
-                                            {{ $pedido->PED_Fecha->format('d/m/Y H:i') }}
+                                            {{ \Carbon\Carbon::parse($pedido->PED_Fecha)->format('d/m/Y H:i') }}
                                         </td>
                                         <td class="py-3 px-6 text-right font-bold text-gray-800">
                                             ${{ number_format($pedido->factura->FAC_Total ?? 0, 2) }}

@@ -43,8 +43,9 @@ Route::middleware(['auth:client'])->prefix('client')->name('client.')->group(fun
 
     // Checkout Routes
     Route::get('/checkout', [App\Http\Controllers\Client\CheckoutController::class, 'index'])->name('checkout');
-    Route::post('/checkout', [App\Http\Controllers\Client\CheckoutController::class, 'process'])->name('checkout.process');
+    Route::post('/checkout', [App\Http\Controllers\Client\CheckoutController::class, 'processPayment'])->name('checkout.process');
     Route::get('/checkout/success/{order}', [App\Http\Controllers\Client\CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/invoice/{order}', [App\Http\Controllers\Client\CheckoutController::class, 'downloadInvoice'])->name('checkout.invoice');
 });
 
 // Cart Sync Routes (Session Auth directly)

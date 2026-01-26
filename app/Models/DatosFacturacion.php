@@ -53,4 +53,21 @@ class DatosFacturacion extends Model
     {
         return $this->belongsTo(Cliente::class, 'DAF_CLI_Codigo', 'CLI_Ced_Ruc');
     }
+
+    /**
+     * Override getAttribute to handle Oracle case-insensitive column names
+     */
+    public function getAttribute($key)
+    {
+        $value = parent::getAttribute($key);
+
+        if ($value === null && $key !== strtolower($key)) {
+            $lowerKey = strtolower($key);
+            if (array_key_exists($lowerKey, $this->attributes)) {
+                return $this->attributes[$lowerKey];
+            }
+        }
+
+        return $value;
+    }
 }
