@@ -11,19 +11,16 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     @foreach ($profiles as $profile)
                         <div class="bg-white rounded-lg shadow p-4 border relative">
-                            <form action="{{ route('client.billing.destroy', $profile->DAF_Codigo) }}" method="POST"
-                                class="absolute top-2 right-2" onsubmit="return confirm('¿Eliminar este perfil?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                        fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                                            clip-rule="evenodd" />
-                                    </svg>
-                                </button>
-                            </form>
+                            <button type="button"
+                                @click="deleteModal = true; selectedAddress = { codigo: '{{ $profile->DAF_Codigo }}', ciudad: '{{ $profile->DAF_Ciudad }}', estado: '{{ $profile->DAF_Estado }}', direccion: '{{ Str::limit($profile->DAF_Direccion, 100) }}', cp: '{{ $profile->DAF_CP }}' }"
+                                class="absolute top-2 right-2 text-red-500 hover:text-red-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                    fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </button>
                             <p class="font-bold text-gray-800">{{ $profile->DAF_Ciudad }}, {{ $profile->DAF_Estado }}</p>
                             <p class="text-sm text-gray-600">{{ Str::limit($profile->DAF_Direccion, 50) }}</p>
                             <p class="text-sm text-gray-500 mt-2">CP: {{ $profile->DAF_CP }}</p>
@@ -128,6 +125,53 @@
                         Perfil</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Delete Address Modal -->
+    <div x-show="deleteModal" x-cloak @click.away="deleteModal = false" class="fixed inset-0 z-50 overflow-y-auto"
+        style="display: none;">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black opacity-50"></div>
+
+            <div class="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                <div class="flex items-start mb-4">
+                    <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                        <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-1.96-1.333-2.73 0L3.732 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div class="ml-4 flex-1">
+                        <h3 class="text-lg font-bold text-gray-900">Eliminar Perfil de Facturación</h3>
+                        <div class="mt-2 text-sm text-gray-600">
+                            <p class="mb-2">¿Estás seguro de que deseas eliminar este perfil?</p>
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                                <p><strong>Ciudad:</strong> <span x-text="selectedAddress.ciudad"></span>, <span
+                                        x-text="selectedAddress.estado"></span></p>
+                                <p><strong>Dirección:</strong> <span x-text="selectedAddress.direccion"></span></p>
+                                <p><strong>C.P.:</strong> <span x-text="selectedAddress.cp"></span></p>
+                            </div>
+                            <p class="mt-3 text-red-600 font-medium">Esta acción no se puede deshacer.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button @click="deleteModal = false" type="button"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-sm font-semibold hover:bg-gray-300 transition">
+                        Cancelar
+                    </button>
+                    <form :action="`/client/billing/${selectedAddress.codigo}`" method="POST" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                            class="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-semibold hover:bg-red-700 transition">
+                            Eliminar Perfil
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

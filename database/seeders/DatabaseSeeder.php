@@ -19,26 +19,34 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::create([
-            'name' => 'Yanick Maila',
-            'email' => 'aetherin12@gmail.com',
-            'password' => Hash::make('secreto123'),
-        ]);
-        User::create([
-            'name' => 'Jorge Corrales',
-            'email' => 'lucho19982005@hotmail.com',
-            'password' => Hash::make('secreto123'),
-        ]);
-        User::create([
-            'name' => 'Mateo Pozo',
-            'email' => 'mateopozo240@gmail.com',
-            'password' => Hash::make('secreto123'),
-        ]);
-        User::create([
-            'name' => 'Esteban GarciaS',
-            'email' => 'estebangarciaojeda@gmail.com',
-            'password' => Hash::make('secreto123'),
-        ]);
+        User::firstOrCreate(
+            ['email' => 'aetherin12@gmail.com'],
+            [
+                'name' => 'Yanick Maila',
+                'password' => Hash::make('secreto123'),
+            ]
+        );
+        User::firstOrCreate(
+            ['email' => 'lucho19982005@hotmail.com'],
+            [
+                'name' => 'Jorge Corrales',
+                'password' => Hash::make('secreto123'),
+            ]
+        );
+        User::firstOrCreate(
+            ['email' => 'mateopozo240@gmail.com'],
+            [
+                'name' => 'Mateo Pozo',
+                'password' => Hash::make('secreto123'),
+            ]
+        );
+        User::firstOrCreate(
+            ['email' => 'estebangarciaojeda@gmail.com'],
+            [
+                'name' => 'Esteban GarciaS',
+                'password' => Hash::make('secreto123'),
+            ]
+        );
         $tipos = [
             ['TRN_Codigo' => 'T01', 'TRN_Nombre' => 'Compra de Mercadería', 'TRN_Tipo' => 'E'],
             ['TRN_Codigo' => 'T02', 'TRN_Nombre' => 'Devolución al Proveedor', 'TRN_Tipo' => 'S'],
@@ -50,13 +58,15 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($tipos as $tipo) {
-            Transaccion::create($tipo);
+            Transaccion::updateOrCreate(
+                ['TRN_Codigo' => $tipo['TRN_Codigo']],
+                $tipo
+            );
         }
         $this->call(BodegaSeeder::class);
         $this->call(ClienteSeeder::class);
         $this->call(ProveedorSeeder::class);
-        $this->call(CategoriaSeeder::class);
-        $this->call(SubcategoriaSeeder::class);
+        $this->call(CategoriaSubcategoriaSeeder::class); // Combined seeder for categories and subcategories
         $this->call(ProductoSeeder::class);
         $this->call(RoleSeeder::class);
     }

@@ -37,4 +37,21 @@ class DetalleCarrito extends Model
     {
         return $this->producto ? $this->producto->PRO_Precio : 0;
     }
+
+    /**
+     * Override getAttribute to handle Oracle case-insensitive column names
+     */
+    public function getAttribute($key)
+    {
+        $value = parent::getAttribute($key);
+
+        if ($value === null && $key !== strtolower($key)) {
+            $lowerKey = strtolower($key);
+            if (array_key_exists($lowerKey, $this->attributes)) {
+                return $this->attributes[$lowerKey];
+            }
+        }
+
+        return $value;
+    }
 }

@@ -53,8 +53,13 @@ class PublicController extends Controller
         // Fetch categories with sub-categories for the sidebar
         $categorias = \App\Models\Categoria::with('subcategorias')->get();
 
-        // Fetch distinct brands for filter
-        $allBrands = Producto::select('PRO_Marca')->distinct()->pluck('PRO_Marca');
+        // Fetch distinct brands for filter (Oracle-compatible)
+        $allBrands = Producto::select('PRO_Marca')
+            ->distinct()
+            ->get()
+            ->map(fn($item) => $item->PRO_Marca)
+            ->filter()
+            ->values();
 
         return view('productos_servicios', compact('productos', 'maxPrice', 'categorias', 'allBrands'));
     }
