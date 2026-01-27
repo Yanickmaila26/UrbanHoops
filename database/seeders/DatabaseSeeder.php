@@ -63,11 +63,11 @@ class DatabaseSeeder extends Seeder
                 $tipo
             );
         }
+        $this->call(RoleSeeder::class);
         $this->call(BodegaSeeder::class);
         $this->call(ClienteSeeder::class);
         $this->call(ProveedorSeeder::class);
         $this->call(CategoriaSubcategoriaSeeder::class); // Combined seeder for categories and subcategories
         $this->call(ProductoSeeder::class);
-        $this->call(RoleSeeder::class);
     }
 }

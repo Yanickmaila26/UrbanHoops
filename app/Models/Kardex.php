@@ -13,13 +13,13 @@ class Kardex extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'KAR_Codigo', // Added PK to fillable if needed, or rely on generation
+        'KAR_Codigo',
         'BOD_Codigo',
         'TRN_Codigo',
         'ORC_Numero',
         'FAC_Codigo',
         'PRO_Codigo',
-        'KAR_cantidad' // Migration says KAR_cantidad, Model said BOD_cantidad. Migration step 359 says KAR_cantidad. User model step 358 said BOD_cantidad. I will use KAR_cantidad to match migration.
+        'KAR_CANTIDAD' // Physical column name
     ];
 
     public function transaccion()
@@ -64,16 +64,34 @@ class Kardex extends Model
 
             // CASO A: ORDEN DE COMPRA (ENTRADA)
             if (!empty($data['ORC_Numero'])) {
-                $oc = OrdenCompra::with('productos')->where('ORC_Numero', $data['ORC_Numero'])->firstOrFail();
+                $oc = OrdenCompra::where('ORC_Numero', $data['ORC_Numero'])->firstOrFail();
 
-                \Illuminate\Support\Facades\Log::info("Kardex Debug: Procesando OC {$data['ORC_Numero']}. Productos encontrados: " . $oc->productos->count());
+                // Get order details directly from DB to avoid Eloquent casing issues
+                $detalles = DB::table('DETALLE_ORD_COM')
+                    ->where('ORC_NUMERO', $data['ORC_Numero'])
+                    ->get();
 
-                foreach ($oc->productos as $prod) {
+                \Illuminate\Support\Facades\Log::info("Kardex Debug: Procesando OC {$data['ORC_Numero']}. Detalles encontrados: " . $detalles->count());
+
+                if ($detalles->isEmpty()) {
+                    throw new \Exception("No se encontraron detalles para la orden de compra {$data['ORC_Numero']}");
+                }
+
+                foreach ($detalles as $detalle) {
                     $esCancelacion = ($data['TRN_Codigo'] === 'T07');
 
-                    // Pivot Casing Fallback
-                    $cantidad = $prod->pivot->cantidad_solicitada ?? $prod->pivot->CANTIDAD_SOLICITADA ?? 0;
-                    $talla = $prod->pivot->DOC_Talla ?? $prod->pivot->DOC_TALLA ?? $prod->pivot->doc_talla ?? null;
+                    // Get product
+                    $proCodigo = $detalle->PRO_CODIGO ?? $detalle->pro_codigo ?? $detalle->PRO_Codigo;
+                    $prod = Producto::where('PRO_Codigo', $proCodigo)->first();
+
+                    if (!$prod) {
+                        \Illuminate\Support\Facades\Log::warning("Kardex: Producto {$proCodigo} no encontrado para OC {$data['ORC_Numero']}");
+                        continue;
+                    }
+
+                    // Extract quantity and size with casing fallback
+                    $cantidad = $detalle->CANTIDAD_SOLICITADA ?? $detalle->cantidad_solicitada ?? 0;
+                    $talla = $detalle->DOC_TALLA ?? $detalle->DOC_Talla ?? $detalle->doc_talla ?? null;
 
                     \Illuminate\Support\Facades\Log::info("Kardex Debug: Producto {$prod->PRO_Codigo} - Cantidad: {$cantidad}, Talla: {$talla}");
 
@@ -86,15 +104,28 @@ class Kardex extends Model
                         self::actualizarStockFisico($prod, $trn->TRN_Tipo, $cantidad, $data['BOD_Codigo'], $talla);
                     }
 
-                    self::create([
-                        'KAR_Codigo'   => self::generateId(),
-                        'BOD_Codigo'   => $data['BOD_Codigo'],
-                        'TRN_Codigo'   => $data['TRN_Codigo'],
-                        'ORC_Numero'   => $data['ORC_Numero'],
-                        'PRO_Codigo'   => $prod->PRO_Codigo,
-                        'KAR_cantidad' => $esCancelacion ? 0 : $cantidad,
-                    ]);
+                    $insertData = [
+                        'KAR_CODIGO'   => self::generateId(),
+                        'BOD_CODIGO'   => $data['BOD_Codigo'],
+                        'TRN_CODIGO'   => $data['TRN_Codigo'],
+                        'ORC_NUMERO'   => $data['ORC_Numero'],
+                        'PRO_CODIGO'   => $prod->PRO_Codigo,
+                        'KAR_CANTIDAD' => $esCancelacion ? 0 : $cantidad,
+                        'CREATED_AT'   => DB::raw('SYSTIMESTAMP'),
+                        'UPDATED_AT'   => DB::raw('SYSTIMESTAMP'),
+                    ];
+
+                    \Illuminate\Support\Facades\Log::info("Kardex Debug: Insertando registro - " . json_encode(array_merge($insertData, ['CREATED_AT' => 'SYSTIMESTAMP', 'UPDATED_AT' => 'SYSTIMESTAMP'])));
+
+                    DB::table('kardexes')->insert($insertData);
+
+                    \Illuminate\Support\Facades\Log::info("Kardex Debug: Registro insertado exitosamente");
                 }
+
+                // Deactivate order to prevent reprocessing
+                $oc->ORC_Estado = false;
+                $oc->save();
+
                 return true;
             }
 
@@ -172,10 +203,20 @@ class Kardex extends Model
             else if (!empty($data['PRO_Codigo'])) {
                 $prod = Producto::where('PRO_Codigo', $data['PRO_Codigo'])->firstOrFail();
                 $talla = $data['talla'] ?? null;
-                self::actualizarStockFisico($prod, $trn->TRN_Tipo, $data['KAR_cantidad'], $data['BOD_Codigo'], $talla);
+                $cantidad = $data['KAR_CANTIDAD'] ?? $data['KAR_cantidad']; // Support both keys
+                self::actualizarStockFisico($prod, $trn->TRN_Tipo, $cantidad, $data['BOD_Codigo'], $talla);
 
-                $data['KAR_Codigo'] = self::generateId();
-                return self::create($data);
+                $insertData = [
+                    'KAR_CODIGO'   => self::generateId(),
+                    'BOD_CODIGO'   => $data['BOD_Codigo'],
+                    'TRN_CODIGO'   => $data['TRN_Codigo'],
+                    'PRO_CODIGO'   => $data['PRO_Codigo'],
+                    'KAR_CANTIDAD' => $cantidad,
+                    'CREATED_AT'   => DB::raw('SYSTIMESTAMP'),
+                    'UPDATED_AT'   => DB::raw('SYSTIMESTAMP'),
+                ];
+                DB::table('kardexes')->insert($insertData);
+                return true;
             }
         });
     }

@@ -34,6 +34,36 @@ class OrdenCompra extends Model
             ->withPivot('cantidad_solicitada', 'DOC_Talla', 'CANTIDAD_SOLICITADA', 'DOC_TALLA');
     }
 
+    /**
+     * Get products with details using raw queries to avoid Eloquent casing issues
+     * Returns a collection with productos and their pivot data properly attached
+     */
+    public function getProductosWithDetails()
+    {
+        $detalles = \Illuminate\Support\Facades\DB::table('DETALLE_ORD_COM')
+            ->where('ORC_NUMERO', $this->ORC_Numero)
+            ->get();
+
+        $productos = collect();
+
+        foreach ($detalles as $detalle) {
+            $proCodigo = $detalle->PRO_CODIGO ?? $detalle->pro_codigo ?? $detalle->PRO_Codigo;
+            $producto = Producto::where('PRO_Codigo', $proCodigo)->first();
+
+            if ($producto) {
+                // Attach pivot data to producto object
+                $pivot = new \stdClass();
+                $pivot->cantidad_solicitada = $detalle->CANTIDAD_SOLICITADA ?? $detalle->cantidad_solicitada ?? 0;
+                $pivot->DOC_Talla = $detalle->DOC_TALLA ?? $detalle->DOC_Talla ?? $detalle->doc_talla ?? null;
+
+                $producto->pivot = $pivot;
+                $productos->push($producto);
+            }
+        }
+
+        return $productos;
+    }
+
     public static function getOrdenes($search = null)
     {
         $query = self::with(['proveedor']);

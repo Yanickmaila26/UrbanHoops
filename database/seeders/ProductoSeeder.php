@@ -407,7 +407,7 @@ class ProductoSeeder extends Seeder
                 // Attach product to warehouse if not already attached
                 // Qualify column name to avoid Oracle ambiguous column error
                 if (!$producto->bodegas()->wherePivot('BOD_Codigo', $bodega->BOD_Codigo)->exists()) {
-                    $producto->bodegas()->attach($bodega->BOD_Codigo, ['PXB_Stock' => 0]);
+                    $producto->bodegas()->attach($bodega->BOD_Codigo, ['PXB_Stock' => $producto->PRO_Stock]);
                 }
             }
         }

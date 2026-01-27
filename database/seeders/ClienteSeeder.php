@@ -90,5 +90,6 @@ class ClienteSeeder extends Seeder
                 'usuario_aplicacion_id' => $user->id
             ]
         );
+        $user->assignRole('ROLE_APP_FRONTEND');
     }
 }

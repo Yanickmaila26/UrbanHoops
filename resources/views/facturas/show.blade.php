@@ -94,6 +94,9 @@
                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                 Descripción</th>
                             <th scope="col"
+                                class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                Talla</th>
+                            <th scope="col"
                                 class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                 Precio Unit.</th>
                             <th scope="col"
@@ -118,6 +121,10 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                                     {{ $producto->PRO_Nombre }}
                                 </td>
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500 dark:text-gray-400">
+                                    {{ $producto->pivot->DFC_Talla ?? 'N/A' }}
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-500 dark:text-gray-400">
                                     ${{ number_format($price, 2) }}
                                 </td>
@@ -133,7 +140,23 @@
                     </tbody>
                     <tfoot class="bg-gray-50 dark:bg-zinc-700">
                         <tr>
-                            <td colspan="4"
+                            <td colspan="5"
+                                class="px-6 py-2 text-sm font-bold text-right text-gray-500 dark:text-gray-400 uppercase">
+                                Subtotal</td>
+                            <td class="px-6 py-2 text-right text-gray-900 dark:text-white font-medium">
+                                ${{ number_format($factura->FAC_Subtotal, 2) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5"
+                                class="px-6 py-2 text-sm font-bold text-right text-gray-500 dark:text-gray-400 uppercase">
+                                IVA ({{ number_format($factura->FAC_IVA, 0) }}%)</td>
+                            <td class="px-6 py-2 text-right text-gray-900 dark:text-white font-medium">
+                                ${{ number_format($factura->FAC_Subtotal * ($factura->FAC_IVA / 100), 2) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5"
                                 class="px-6 py-4 whitespace-nowrap text-sm font-bold text-right text-gray-900 dark:text-white uppercase">
                                 Total Factura</td>
                             <td

@@ -34,6 +34,36 @@ class Factura extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Get products with details using raw queries to avoid Eloquent casing issues
+     */
+    public function getProductosWithDetails()
+    {
+        $detalles = \Illuminate\Support\Facades\DB::table('DETALLE_FACTURA')
+            ->where('FAC_CODIGO', $this->FAC_Codigo)
+            ->get();
+
+        $productos = collect();
+
+        foreach ($detalles as $detalle) {
+            $proCodigo = $detalle->PRO_CODIGO ?? $detalle->pro_codigo ?? $detalle->PRO_Codigo;
+            $producto = Producto::where('PRO_Codigo', $proCodigo)->first();
+
+            if ($producto) {
+                // Attach pivot data
+                $pivot = new \stdClass();
+                $pivot->DFC_Cantidad = $detalle->DFC_CANTIDAD ?? $detalle->DFC_Cantidad ?? $detalle->dfc_cantidad ?? 0;
+                $pivot->DFC_Precio = $detalle->DFC_PRECIO ?? $detalle->DFC_Precio ?? $detalle->dfc_precio ?? 0;
+                $pivot->DFC_Talla = $detalle->DFC_TALLA ?? $detalle->DFC_Talla ?? $detalle->dfc_talla ?? null;
+
+                $producto->pivot = $pivot;
+                $productos->push($producto);
+            }
+        }
+
+        return $productos;
+    }
+
     public static function generateId()
     {
         // Use SQL to find the true numeric max, ensuring concurrency safety and correct ordering

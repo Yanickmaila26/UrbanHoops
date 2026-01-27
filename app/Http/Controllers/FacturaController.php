@@ -110,7 +110,8 @@ class FacturaController extends Controller
 
     public function show($id)
     {
-        $factura = Factura::with(['cliente', 'productos'])->findOrFail($id);
+        $factura = Factura::with('cliente')->findOrFail($id);
+        $factura->productos = $factura->getProductosWithDetails();
         return view('facturas.show', compact('factura'));
     }
 
