@@ -214,7 +214,26 @@
                         if (selected) {
                             row.price = selected.PRO_Precio;
                             row.code = selected.PRO_Codigo;
-                            row.availableSizes = selected.PRO_Talla || [];
+
+                            let sizes = selected.PRO_Talla;
+                            if (typeof sizes === 'string') {
+                                try {
+                                    sizes = JSON.parse(sizes);
+                                } catch (e) {
+                                    console.error('Error parsing sizes for PO:', e);
+                                    sizes = [];
+                                }
+                            }
+                            // Double decoding check if needed
+                            if (typeof sizes === 'string') {
+                                try {
+                                    sizes = JSON.parse(sizes);
+                                } catch (e) {
+                                    sizes = [];
+                                }
+                            }
+
+                            row.availableSizes = sizes || [];
                             row.talla = ''; // Reset talla
                         }
                     });

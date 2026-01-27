@@ -74,6 +74,8 @@ class ClientAuthController extends Controller
                 'usuario_aplicacion_id' => $user->id,
             ]);
 
+            $user->assignRole('ROLE_APP_FRONTEND'); // Guard handled automatically by model instance
+
             Auth::guard('client')->login($user);
         });
 

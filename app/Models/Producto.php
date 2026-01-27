@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Producto extends Model
 {
+    use HasFactory;
     protected $table = 'productos';
     protected $primaryKey = 'PRO_Codigo';
     public $incrementing = false;
@@ -80,7 +82,7 @@ class Producto extends Model
             'PRO_Color'       => 'required|string|max:15',
             'PRO_Talla'       => 'required|array',
             'PRO_Talla.*.talla' => 'required|string|max:10',
-            'PRO_Talla.*.stock' => 'required|integer|min:1',
+            'PRO_Talla.*.stock' => 'required|integer|min:0',
             'PRO_Marca'       => 'required|string|max:20',
             'PRO_Precio'      => 'required|numeric|min:0',
             'PRO_Stock'       => 'required|integer|min:0',

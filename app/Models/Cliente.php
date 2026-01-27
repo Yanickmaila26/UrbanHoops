@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
 class Cliente extends Authenticatable
 {
-    use Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles;
 
     protected $table = 'clientes';
     protected $primaryKey = 'CLI_Ced_Ruc';

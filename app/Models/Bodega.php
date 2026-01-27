@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Bodega extends Model
 {
+    use HasFactory;
     protected $table = 'bodegas';
     protected $primaryKey = 'BOD_Codigo';
     public $incrementing = false;
@@ -62,5 +64,22 @@ class Bodega extends Model
         return $this->belongsToMany(Producto::class, 'producto_bodega', 'BOD_Codigo', 'PRO_Codigo')
             ->withPivot('PXB_Stock')
             ->withTimestamps();
+    }
+
+    /**
+     * Override parameter handling to support insensitive database column names
+     */
+    public function getAttribute($key)
+    {
+        $value = parent::getAttribute($key);
+
+        if ($value === null && $key !== strtolower($key)) {
+            $lowerKey = strtolower($key);
+            if (array_key_exists($lowerKey, $this->attributes)) {
+                return $this->attributes[$lowerKey];
+            }
+        }
+
+        return $value;
     }
 }

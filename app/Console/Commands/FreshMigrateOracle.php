@@ -11,7 +11,7 @@ class FreshMigrateOracle extends Command
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'migrate:fresh-oracle {--seed : Seed the database after migration}';
+    protected $signature = 'migrate:fresh-oracle {--seed : Seed the database after migration} {--force : Force the operation to run when in production}';
 
     /**
      * The console command description.
@@ -23,7 +23,7 @@ class FreshMigrateOracle extends Command
      */
     public function handle()
     {
-        if (!$this->confirm('⚠️  This will DROP ALL TABLES in the database. Continue?', false)) {
+        if (! $this->option('force') && ! $this->confirm('⚠️  This will DROP ALL TABLES in the database. Continue?', false)) {
             $this->info('Operation cancelled.');
             return 0;
         }
