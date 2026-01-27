@@ -29,14 +29,16 @@
                         {{ $producto->PRO_Descripcion }}
                     </p>
 
-                    <div
-                        x-data='{
+                    <div x-data='{
                         selectedSize: null,
                         sizes: @json($producto->PRO_Talla ?? []),
                         init() {
-                            // Initialized
-                        }
-                    }'>
+                            // Ensure sizes is an array if it comes as a string (double encoded or missed cast)
+                            if (typeof this.sizes === 'string')
+                        { try { this.sizes=JSON.parse(this.sizes); } catch (e) { console.error('Error parsing sizes:', e);
+                        this.sizes=[]; } } // Extra check: if it parsed but is still string (double JSON encoded) if (typeof
+                        this.sizes === 'string') { try { this.sizes=JSON.parse(this.sizes); } catch (e) { this.sizes=[]; }
+                        } } }'>
                         <div class="mb-5">
                             <h3 class="h5 fw-bold mb-3">Talla Disponible (US)</h3>
 

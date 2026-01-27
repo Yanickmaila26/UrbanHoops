@@ -1,0 +1,49 @@
+INICIO INSTALACION TRIGGERS
+
+----------------------------------------------------------------
+   Instalando Triggers de Replicacion (Debug Mode)             
+----------------------------------------------------------------
+
+Verificando columnas requeridas en PROD...
+  [OK] Columna USUARIO_APLICACION_ID existe en CLIENTES
+  [OK] Columna SCT_CODIGO existe en PRODUCTOS
+
+Creando triggers en PROD...
+  [OK] Completado sin errores
+
+Creando triggers en COMEE...
+  [OK] Completado sin errores
+
+----------------------------------------------------------------
+Verificando triggers instalados
+----------------------------------------------------------------
+
+Triggers en PROD:
+  [OK] TRG_CLIENTES_DELETE_REPL - ENABLED
+  [OK] TRG_CLIENTES_INSERT_REPL - ENABLED
+  [OK] TRG_CLIENTES_UPDATE_REPL - ENABLED
+  [OK] TRG_FACTURAS_DELETE_REPL - ENABLED
+  [OK] TRG_FACTURAS_INSERT_REPL - ENABLED
+  [OK] TRG_FACTURAS_UPDATE_REPL - ENABLED
+  [OK] TRG_PRODUCTOS_DELETE_REPL - ENABLED
+  [OK] TRG_PRODUCTOS_INSERT_REPL - ENABLED
+  [OK] TRG_PRODUCTOS_UPDATE_REPL - ENABLED
+
+Triggers en COMEE:
+
+----------------------------------------------------------------
+   [OK] Triggers de replicacion instalados                        
+----------------------------------------------------------------
+
+PROBANDO REPLICACION (PROD -> COMEE):
+---------------------------------------------------------------
+
+1. Insertando producto en PROD (master)...
+  [OK] Producto insertado en PROD
+  [OK] REPLICACION FUNCIONANDO! Producto aparecio en COMEE
+
+2. Insertando cliente en PROD (master)...
+  [OK] Cliente insertado en PROD
+  [OK] REPLICACION FUNCIONANDO! Cliente aparecio en COMEE
+
+[OK] Pruebas completadas!

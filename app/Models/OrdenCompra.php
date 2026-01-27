@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class OrdenCompra extends Model
 {
+    use HasFactory;
     protected $table = 'orden_compras';
     protected $primaryKey = 'ORC_Numero';
     public $incrementing = false;
@@ -27,8 +29,9 @@ class OrdenCompra extends Model
 
     public function productos()
     {
-        return $this->belongsToMany(Producto::class, 'detalle_ord_com', 'ORC_Numero', 'PRO_Codigo')
-            ->withPivot('cantidad_solicitada', 'DOC_Talla');
+        // Explicit uppercase for Oracle compatibility
+        return $this->belongsToMany(Producto::class, 'DETALLE_ORD_COM', 'ORC_NUMERO', 'PRO_CODIGO')
+            ->withPivot('cantidad_solicitada', 'DOC_Talla', 'CANTIDAD_SOLICITADA', 'DOC_TALLA');
     }
 
     public static function getOrdenes($search = null)
@@ -111,5 +114,22 @@ class OrdenCompra extends Model
             'cantidades.*.integer' => 'La cantidad debe ser un número entero.',
             'cantidades.*.min'     => 'La cantidad mínima por producto es 1.',
         ];
+    }
+
+    /**
+     * Override getAttribute to handle Oracle case-insensitive column names
+     */
+    public function getAttribute($key)
+    {
+        $value = parent::getAttribute($key);
+
+        if ($value === null && $key !== strtolower($key)) {
+            $lowerKey = strtolower($key);
+            if (array_key_exists($lowerKey, $this->attributes)) {
+                return $this->attributes[$lowerKey];
+            }
+        }
+
+        return $value;
     }
 }

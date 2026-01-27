@@ -33,7 +33,17 @@ class OrdenCompraController extends Controller
             : 'ORC001';
 
         $proveedores = Proveedor::all();
-        $productos = Producto::all();
+        $productosRaw = Producto::all();
+
+        // Normalize data for Frontend execution to avoid Oracle Case Sensitivity issues in JSON
+        $productos = $productosRaw->map(function ($prod) {
+            return [
+                'PRO_Codigo' => $prod->PRO_Codigo ?? $prod->pro_codigo ?? $prod->PRO_CODIGO,
+                'PRO_Nombre' => $prod->PRO_Nombre ?? $prod->pro_nombre ?? $prod->PRO_NOMBRE,
+                'PRO_Precio' => $prod->PRO_Precio ?? $prod->pro_precio ?? $prod->PRO_PRECIO,
+                'PRO_Talla'  => $prod->PRO_Talla  ?? $prod->pro_talla  ?? $prod->PRO_TALLA,
+            ];
+        });
 
         return view('ordenes.create', compact('nuevoCodigo', 'proveedores', 'productos'));
     }

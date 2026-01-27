@@ -41,9 +41,12 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
+        \Illuminate\Support\Facades\Log::info('Producto Store Request:', $request->all());
+
         $validator = Validator::make($request->all(), Producto::rules(), Producto::messages());
 
         if ($validator->fails()) {
+            \Illuminate\Support\Facades\Log::error('Producto Validation Failed:', $validator->errors()->toArray());
             return redirect()->back()->withErrors($validator)->withInput();
         }
 

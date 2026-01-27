@@ -31,6 +31,32 @@
                     x-data="{ loading: false }" @submit="loading = true">
                     @csrf
 
+                    @if ($errors->any())
+                        <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 dark:bg-red-900/30 dark:border-red-600">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
+                                        Hay errores en el formulario:
+                                    </h3>
+                                    <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                                        <ul class="list-disc pl-5 space-y-1">
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="PRO_Codigo"
@@ -117,8 +143,20 @@
                             @enderror
                         </div>
 
+                        <div>
+                            <label for="PRO_Color"
+                                class="block text-sm font-medium text-gray-700 dark:text-gray-300">Color</label>
+                            <input type="text" name="PRO_Color" id="PRO_Color" value="{{ old('PRO_Color') }}"
+                                placeholder="Ej: Rojo, Azul/Blanco"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white"
+                                required>
+                            @error('PRO_Color')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div class="md:col-span-2" x-data="{
-                            sizes: [{ talla: '', stock: 0 }],
+                            sizes: {{ old('PRO_Talla') ? json_encode(array_values(old('PRO_Talla'))) : '[{ "talla": "", "stock": 0 }]' }},
                             get totalStock() {
                                 return this.sizes.reduce((sum, item) => sum + (parseInt(item.stock) || 0), 0);
                             },
@@ -139,18 +177,19 @@
                                 <template x-for="(size, index) in sizes" :key="index">
                                     <div class="flex gap-4 items-start">
                                         <div class="flex-1">
-                                            <input type="text" :name="`PRO_Talla[${index}][talla]`" x-model="size.talla"
-                                                placeholder="Talla (ej: S, 42)" required
+                                            <input type="text" :name="`PRO_Talla[${index}][talla]`"
+                                                x-model="size.talla" placeholder="Talla (ej: S, 42)" required
                                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white sm:text-sm">
                                         </div>
                                         <div class="w-32">
-                                            <input type="number" :name="`PRO_Talla[${index}][stock]`" x-model="size.stock"
-                                                min="0" placeholder="Cant." required
+                                            <input type="number" :name="`PRO_Talla[${index}][stock]`"
+                                                x-model="size.stock" min="0" placeholder="Cant." required
                                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white sm:text-sm">
                                         </div>
                                         <button type="button" @click="removeSize(index)"
                                             class="mt-1 text-red-500 hover:text-red-700">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
                                                 </path>
@@ -176,6 +215,18 @@
                                 </p>
                                 <input type="hidden" name="PRO_Stock" :value="totalStock">
                             </div>
+
+                            @if ($errors->has('PRO_Talla.*'))
+                                <div class="mt-2 text-sm text-red-600">
+                                    <ul class="list-disc pl-5">
+                                        @foreach ($errors->get('PRO_Talla.*') as $field => $messages)
+                                            @foreach ($messages as $message)
+                                                <li>{{ $message }}</li>
+                                            @endforeach
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                         </div>
 
                         <div class="md:col-span-2">
@@ -189,6 +240,7 @@
                                     <label
                                         class="flex items-center p-3 border border-gray-300 dark:border-zinc-700 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-700 cursor-pointer transition">
                                         <input type="checkbox" name="bodegas[]" value="{{ $bodega->BOD_Codigo }}"
+                                            {{ is_array(old('bodegas')) && in_array($bodega->BOD_Codigo, old('bodegas')) ? 'checked' : '' }}
                                             class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2">
                                         <span class="text-sm dark:text-white">{{ $bodega->BOD_Nombre }}</span>
                                     </label>

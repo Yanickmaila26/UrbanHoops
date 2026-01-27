@@ -116,6 +116,16 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <div>
+                            <label class="block text-sm font-medium dark:text-gray-300">Talla</label>
+                            <select name="talla" id="talla"
+                                class="mt-1 block w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white">
+                                <option value="">Seleccione talla...</option>
+                            </select>
+                            <p class="text-xs text-gray-500 mt-1">Seleccione la talla afectada por el ajuste.</p>
+                        </div>
+
                         <div>
                             <label class="block text-sm font-medium dark:text-gray-300">Cantidad</label>
                             <input type="number" name="KAR_cantidad" id="KAR_cantidad" min="1"
@@ -156,26 +166,74 @@
     </div>
 
     <script>
+        // Store product sizes map
+        const productSizes = {
+            @foreach ($productos as $prod)
+                "{{ $prod->PRO_Codigo }}": @json($prod->PRO_Talla),
+            @endforeach
+        };
+
+        // Listen for Product Change
+        document.getElementById('PRO_Codigo').addEventListener('change', function() {
+            const code = this.value;
+            const sizeSelect = document.getElementById('talla');
+            sizeSelect.innerHTML = '<option value="">Seleccione talla...</option>';
+
+            if (code && productSizes[code]) {
+                let sizes = productSizes[code];
+
+                // Robust parsing (handles string, double-encoded string, or array)
+                if (typeof sizes === 'string') {
+                    try {
+                        sizes = JSON.parse(sizes);
+                    } catch (e) {
+                        sizes = [];
+                    }
+                }
+                if (typeof sizes === 'string') {
+                    try {
+                        sizes = JSON.parse(sizes);
+                    } catch (e) {
+                        sizes = [];
+                    }
+                }
+
+                // Check if mapped or array
+                if (Array.isArray(sizes)) {
+                    sizes.forEach(s => {
+                        const option = document.createElement('option');
+                        option.value = s.talla;
+                        option.textContent = `${s.talla} (Stock: ${s.stock})`;
+                        sizeSelect.appendChild(option);
+                    });
+                }
+            }
+        });
+
         function toggleModo(modo) {
             const sectionOc = document.getElementById('section-oc');
             const sectionManual = document.getElementById('section-manual');
             const inputOc = document.getElementById('ORC_Numero');
             const inputProd = document.getElementById('PRO_Codigo');
             const inputCant = document.getElementById('KAR_cantidad');
+            const inputTalla = document.getElementById('talla');
 
             if (modo === 'oc') {
                 sectionOc.classList.remove('hidden');
                 sectionManual.classList.add('hidden');
                 inputProd.value = "";
                 inputCant.value = "";
+                inputTalla.value = "";
                 inputOc.required = true;
                 inputProd.required = false;
+                inputTalla.required = false;
             } else {
                 sectionOc.classList.add('hidden');
                 sectionManual.classList.remove('hidden');
                 inputOc.value = "";
                 inputOc.required = false;
                 inputProd.required = true;
+                inputTalla.required = true;
             }
         }
 

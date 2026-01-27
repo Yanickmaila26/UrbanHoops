@@ -66,10 +66,21 @@ class Kardex extends Model
             if (!empty($data['ORC_Numero'])) {
                 $oc = OrdenCompra::with('productos')->where('ORC_Numero', $data['ORC_Numero'])->firstOrFail();
 
+                \Illuminate\Support\Facades\Log::info("Kardex Debug: Procesando OC {$data['ORC_Numero']}. Productos encontrados: " . $oc->productos->count());
+
                 foreach ($oc->productos as $prod) {
                     $esCancelacion = ($data['TRN_Codigo'] === 'T07');
-                    $cantidad = $prod->pivot->cantidad_solicitada;
-                    $talla = $prod->pivot->DOC_Talla;
+
+                    // Pivot Casing Fallback
+                    $cantidad = $prod->pivot->cantidad_solicitada ?? $prod->pivot->CANTIDAD_SOLICITADA ?? 0;
+                    $talla = $prod->pivot->DOC_Talla ?? $prod->pivot->DOC_TALLA ?? $prod->pivot->doc_talla ?? null;
+
+                    \Illuminate\Support\Facades\Log::info("Kardex Debug: Producto {$prod->PRO_Codigo} - Cantidad: {$cantidad}, Talla: {$talla}");
+
+                    if ($cantidad <= 0) {
+                        \Illuminate\Support\Facades\Log::warning("Kardex: Cantidad 0 para producto {$prod->PRO_Codigo} en OC {$data['ORC_Numero']}");
+                        continue;
+                    }
 
                     if (!$esCancelacion) {
                         self::actualizarStockFisico($prod, $trn->TRN_Tipo, $cantidad, $data['BOD_Codigo'], $talla);
@@ -188,12 +199,16 @@ class Kardex extends Model
             ->first();
 
         if ($pivotRecord) {
-            $newWarehouseStock = $pivotRecord->PXB_Stock;
+            // Handle Oracle Casing (Likely UPPERCASE)
+            $currentStock = $pivotRecord->PXB_Stock ?? $pivotRecord->PXB_STOCK ?? $pivotRecord->pxb_stock ?? 0;
+
+            $newWarehouseStock = $currentStock; // Start with current
+
             if ($tipo === 'E') {
                 $newWarehouseStock += $cantidad;
             } else {
-                if ($pivotRecord->PXB_Stock < $cantidad) {
-                    throw new \Exception("Stock insuficiente en bodega para: {$producto->PRO_Nombre}. Disponible en bodega: {$pivotRecord->PXB_Stock}");
+                if ($currentStock < $cantidad) {
+                    throw new \Exception("Stock insuficiente en bodega para: {$producto->PRO_Nombre}. Disponible en bodega: {$currentStock}");
                 }
                 $newWarehouseStock -= $cantidad;
             }
@@ -309,6 +324,7 @@ class Kardex extends Model
             'FAC_Codigo'   => 'nullable|exists:facturas,FAC_Codigo',
             'PRO_Codigo'   => 'nullable|required_without_all:ORC_Numero,FAC_Codigo|exists:productos,PRO_Codigo',
             'KAR_cantidad' => 'nullable|required_without_all:ORC_Numero,FAC_Codigo|numeric|min:1',
+            'talla'        => 'nullable|required_with:PRO_Codigo|string',
         ];
     }
 
@@ -320,5 +336,22 @@ class Kardex extends Model
             'ORC_Numero.required_without_all' => 'Debe seleccionar una Orden, Factura o Producto.',
             'KAR_cantidad.required_without_all' => 'La cantidad es obligatoria para ajustes manuales.',
         ];
+    }
+
+    /**
+     * Override parameter handling to support insensitive database column names
+     */
+    public function getAttribute($key)
+    {
+        $value = parent::getAttribute($key);
+
+        if ($value === null && $key !== strtolower($key)) {
+            $lowerKey = strtolower($key);
+            if (array_key_exists($lowerKey, $this->attributes)) {
+                return $this->attributes[$lowerKey];
+            }
+        }
+
+        return $value;
     }
 }

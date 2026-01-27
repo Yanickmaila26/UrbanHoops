@@ -15,4 +15,21 @@ class Transaccion extends Model
         'TRN_Nombre',
         'TRN_Tipo',
     ];
+
+    /**
+     * Override parameter handling to support insensitive database column names
+     */
+    public function getAttribute($key)
+    {
+        $value = parent::getAttribute($key);
+
+        if ($value === null && $key !== strtolower($key)) {
+            $lowerKey = strtolower($key);
+            if (array_key_exists($lowerKey, $this->attributes)) {
+                return $this->attributes[$lowerKey];
+            }
+        }
+
+        return $value;
+    }
 }

@@ -113,6 +113,52 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        /*
+        |--------------------------------------------------------------------------
+        | Oracle Database Connections (Distributed Database)
+        |--------------------------------------------------------------------------
+        |
+        | PROD is the primary connection with master tables for productos,
+        | facturas, proveedors, etc. Tables moved to COMEE are accessed via
+        | database synonyms transparently.
+        |
+        | COMEE is the secondary connection with master tables for clientes,
+        | carritos, pedidos, etc. Available if direct access is needed.
+        |
+        */
+
+        'oracle' => [
+            'driver' => 'oracle',
+            'host' => env('DB_HOST', '192.168.1.115'),
+            'port' => env('DB_PORT', '1521'),
+            'database' => env('DB_DATABASE'),
+            'service_name' => env('DB_SERVICE_NAME', 'prod'),
+            'username' => env('DB_USERNAME', 'u_prod'),
+            'password' => env('DB_PASSWORD', ''),
+            'charset' => env('DB_CHARSET', 'AL32UTF8'),
+            'prefix' => '',
+            'prefix_schema' => env('DB_SCHEMA_PREFIX', ''),
+            'options' => [
+                // Add any Oracle-specific PDO options here
+            ],
+        ],
+
+        'oracle_comee' => [
+            'driver' => 'oracle',
+            'host' => env('DB_HOST_COMEE', '192.168.1.125'),
+            'port' => env('DB_PORT_COMEE', '1521'),
+            'database' => env('DB_DATABASE_COMEE'),
+            'service_name' => env('DB_SERVICE_NAME_COMEE', 'comee'),
+            'username' => env('DB_USERNAME_COMEE', 'u_comee'),
+            'password' => env('DB_PASSWORD_COMEE', ''),
+            'charset' => env('DB_CHARSET', 'AL32UTF8'),
+            'prefix' => '',
+            'prefix_schema' => env('DB_SCHEMA_PREFIX', ''),
+            'options' => [
+                // Add any Oracle-specific PDO options here
+            ],
+        ],
+
     ],
 
     /*
@@ -148,7 +194,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')).'-database-'),
+            'prefix' => env('REDIS_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')) . '-database-'),
             'persistent' => env('REDIS_PERSISTENT', false),
         ],
 
