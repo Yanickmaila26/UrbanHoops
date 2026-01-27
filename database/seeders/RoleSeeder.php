@@ -20,7 +20,8 @@ class RoleSeeder extends Seeder
         // 1. Crear Roles (coincidiendo con DB Roles)
         $roleAdmin = Role::firstOrCreate(['name' => 'ROLE_ADMIN_PROD']);
         $roleGestor = Role::firstOrCreate(['name' => 'ROLE_GESTOR_INV']);
-        $roleFrontend = Role::firstOrCreate(['name' => 'ROLE_APP_FRONTEND']);
+        $roleFrontend = Role::firstOrCreate(['name' => 'ROLE_APP_FRONTEND', 'guard_name' => 'web']);
+        $roleFrontendClient = Role::firstOrCreate(['name' => 'ROLE_APP_FRONTEND', 'guard_name' => 'client']);
 
         // Roles legacy (opcional, mantener si se usan en código viejo, o migrar)
         // Por ahora los mantengo mapeados o creo nuevos para desarrollo.

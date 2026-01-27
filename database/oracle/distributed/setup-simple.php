@@ -38,6 +38,35 @@ echo "════════════════════════�
 passthru('php artisan migrate:fresh-oracle --force', $return);
 
 echo "\n═══════════════════════════════════════════════════════════════\n";
+echo "Paso 1.5: Configurando PROD (Sinónimos para tablas distribuidas)\n";
+echo "═══════════════════════════════════════════════════════════════\n\n";
+
+$distTables = ['DATOS_FACTURACION', 'CARRITOS', 'DETALLE_CARRITO', 'DETALLE_FACTURA', 'PEDIDOS'];
+
+foreach ($distTables as $table) {
+    echo "Configurando $table en PROD...\n";
+    try {
+        DB::connection($prodConn)->statement("DROP TABLE $table CASCADE CONSTRAINTS");
+        echo "  ✓ Tabla física eliminada\n";
+    } catch (\Exception $e) {
+        // Ignorar si no existe
+    }
+
+    try {
+        DB::connection($prodConn)->statement("DROP SYNONYM $table");
+    } catch (\Exception $e) {
+    }
+
+    try {
+        DB::connection($prodConn)->statement("CREATE SYNONYM $table FOR u_comee.$table@link_comee");
+        echo "  ✓ Sinónimo creado -> COMEE\n";
+    } catch (\Exception $e) {
+        echo "  ⚠ Error creando sinónimo: " . $e->getMessage() . "\n";
+    }
+    echo "\n";
+}
+
+echo "\n═══════════════════════════════════════════════════════════════\n";
 echo "Paso 2: Creando tablas REPLICADAS en COMEE (Destino)\n";
 echo "═══════════════════════════════════════════════════════════════\n\n";
 
@@ -73,6 +102,7 @@ CREATE TABLE FACTURAS (
     FAC_Codigo VARCHAR2(15) PRIMARY KEY,
     CLI_Ced_Ruc VARCHAR2(13) NOT NULL,
     FAC_IVA NUMBER NOT NULL,
+    FAC_IVA_Porcentaje NUMBER(5,2) DEFAULT 15.00,
     FAC_Subtotal NUMBER(10,2) NOT NULL,
     FAC_Total NUMBER(10,2) NOT NULL,
     FAC_Estado VARCHAR2(3) DEFAULT 'Pen' CHECK (FAC_Estado IN ('Pen', 'Pag', 'Anu')),

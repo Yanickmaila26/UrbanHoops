@@ -19,7 +19,10 @@ class OrdenCompraController extends Controller
 
     public function show(string $id)
     {
-        $orden = OrdenCompra::with(['proveedor', 'productos'])->findOrFail($id);
+        $orden = OrdenCompra::with('proveedor')->findOrFail($id);
+
+        // Use helper method to get products with details via raw queries
+        $orden->productos = $orden->getProductosWithDetails();
 
         return view('ordenes.show', compact('orden'));
     }
@@ -74,7 +77,9 @@ class OrdenCompraController extends Controller
 
     public function edit(string $id)
     {
-        $orden = OrdenCompra::with('productos')->findOrFail($id);
+        $orden = OrdenCompra::findOrFail($id);
+        $orden->productos = $orden->getProductosWithDetails();
+
         $proveedores = Proveedor::all();
         $productos = Producto::all();
 

@@ -3,7 +3,7 @@
 @section('content')
     <div class="max-w-7xl mx-auto p-6">
         <form action="{{ route('shopping-carts.update', $carrito->CRC_Carrito) }}" method="POST" id="carrito-form"
-            x-data="carritoFormEdit()" x-init="initForm({{ $carrito->productos->map(function ($p) {return ['id' => uniqid(), 'code' => $p->PRO_Codigo, 'qty' => $p->pivot->CRD_Cantidad, 'price' => $p->PRO_Precio];}) }})" @submit="loading = true">
+            x-data="carritoFormEdit()" x-init="initForm({{ $carrito->productos->map(function ($p) {return ['id' => uniqid(), 'code' => $p->PRO_Codigo, 'qty' => $p->pivot->CRD_Cantidad, 'price' => $p->PRO_Precio, 'talla' => $p->pivot->CRD_Talla];}) }})" @submit="loading = true">
             @csrf
             @method('PUT')
 
@@ -56,6 +56,7 @@
                         <tr class="text-left text-sm text-gray-500 border-b">
                             <th class="pb-2">Producto</th>
                             <th class="pb-2 w-32">Cantidad</th>
+                            <th class="pb-2 w-48">Talla</th>
                             <th class="pb-2 w-32">Precio Unit.</th>
                             <th class="pb-2 w-16"></th>
                         </tr>
@@ -74,6 +75,16 @@
                                 <td class="py-3">
                                     <input type="number" name="cantidades[]" min="1" x-model="row.qty"
                                         class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
+                                </td>
+                                <td class="py-3">
+                                    <select name="tallas[]" x-model="row.talla"
+                                        class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
+                                        <option value="">Seleccione...</option>
+                                        <template x-for="t in row.availableSizes" :key="t.talla">
+                                            <option :value="t.talla" x-text="`${t.talla} (Stock: ${t.stock})`"
+                                                :selected="t.talla == row.talla"></option>
+                                        </template>
+                                    </select>
                                 </td>
                                 <td class="py-3">
                                     <input type="text" name="precios[]" :value="row.price"
@@ -126,7 +137,9 @@
                         id: Date.now(),
                         qty: 1,
                         price: 0,
-                        code: ''
+                        code: '',
+                        talla: '',
+                        availableSizes: []
                     });
                 },
 
@@ -158,27 +171,37 @@
                     // Set initial value if exists
                     if (row.code) {
                         $(el).val(row.code).trigger('change');
+
+                        // Set available sizes for initial row
+                        const selected = this.productos.find(p => p.PRO_Codigo == row.code);
+                        if (selected) {
+                            try {
+                                row.availableSizes = typeof selected.PRO_Talla === 'string' ?
+                                    JSON.parse(selected.PRO_Talla) :
+                                    selected.PRO_Talla;
+                            } catch (e) {
+                                row.availableSizes = [];
+                            }
+                        }
                     }
 
                     $(el).on('select2:select', (e) => {
                         const selectedId = e.params.data.id;
 
-                        // Duplicate Check
-                        const isDuplicate = this.rows.some(r => r.id !== row.id && r.code ===
-                            selectedId);
-
-                        if (isDuplicate) {
-                            this.showError(
-                                "Este producto ya está en el carrito. Ajuste la cantidad en su lugar."
-                            );
-                            $(el).val(null).trigger('change');
-                            return;
-                        }
-
                         const selected = this.productos.find(p => p.PRO_Codigo == selectedId);
                         if (selected) {
                             row.price = selected.PRO_Precio;
                             row.code = selected.PRO_Codigo;
+
+                            // Parse sizes
+                            try {
+                                row.availableSizes = typeof selected.PRO_Talla === 'string' ?
+                                    JSON.parse(selected.PRO_Talla) :
+                                    selected.PRO_Talla;
+                            } catch (e) {
+                                row.availableSizes = [];
+                            }
+                            row.talla = '';
                         }
                     });
                 }

@@ -45,7 +45,7 @@
                         <div
                             class="aspect-square w-full relative overflow-hidden rounded-lg border dark:border-zinc-700 bg-gray-50 dark:bg-zinc-900">
                             @if ($producto->PRO_Imagen)
-                                <img src="{{ asset($producto->PRO_Imagen) }}" alt="{{ $producto->PRO_Nombre }}"
+                                <img src="{{ asset('storage/' . $producto->PRO_Imagen) }}" alt="{{ $producto->PRO_Nombre }}"
                                     class="object-cover w-full h-full hover:scale-105 transition duration-300">
                             @else
                                 <div class="flex flex-col items-center justify-center h-full text-gray-400">
@@ -93,8 +93,26 @@
                                         <dd class="text-lg text-gray-900 dark:text-white">{{ $producto->PRO_Marca }}</dd>
                                     </div>
                                     <div>
-                                        <dt class="text-sm font-medium text-gray-500">Talla</dt>
-                                        <dd class="text-lg text-gray-900 dark:text-white">{{ $producto->PRO_Talla }}</dd>
+                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Tallas Disponibles
+                                        </dt>
+                                        <dd class="mt-2 flex flex-wrap gap-2">
+                                            @php
+                                                $tallas = is_string($producto->PRO_Talla)
+                                                    ? json_decode($producto->PRO_Talla, true)
+                                                    : $producto->PRO_Talla;
+                                                $tallas = is_array($tallas) ? $tallas : [];
+                                            @endphp
+                                            @forelse($tallas as $talla)
+                                                <span
+                                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                                    {{ $talla['talla'] ?? 'N/A' }}
+                                                    <span
+                                                        class="ml-2 text-xs opacity-75">({{ $talla['stock'] ?? 0 }})</span>
+                                                </span>
+                                            @empty
+                                                <span class="text-sm text-gray-400 italic">Sin tallas definidas</span>
+                                            @endforelse
+                                        </dd>
                                     </div>
                                     <div>
                                         <dt class="text-sm font-medium text-gray-500">Precio de Venta</dt>

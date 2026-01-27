@@ -35,8 +35,12 @@ class Carrito extends Model
 
     public function getSubtotal()
     {
-        return $this->productos->sum(function ($producto) {
-            return $producto->PRO_Precio * $producto->pivot->CRD_Cantidad;
+        // Use detalles relation to leverage Model's getAttribute casing handling
+        // (Pivot access on belongsToMany can likely fail with Oracle uppercase columns)
+        return $this->detalles->sum(function ($detalle) {
+            $precio = $detalle->producto->PRO_Precio ?? 0;
+            $cantidad = $detalle->CRD_Cantidad ?? 0;
+            return $precio * $cantidad;
         });
     }
 

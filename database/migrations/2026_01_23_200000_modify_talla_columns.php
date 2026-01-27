@@ -32,15 +32,21 @@ return new class extends Migration
 
         // 2. Add size columns to detail tables
         Schema::table('detalle_carrito', function (Blueprint $table) {
-            $table->string('CRD_Talla', 20)->nullable();
+            if (!Schema::hasColumn('detalle_carrito', 'CRD_Talla')) {
+                $table->string('CRD_Talla', 20)->nullable();
+            }
         });
 
         Schema::table('detalle_ord_com', function (Blueprint $table) {
-            $table->string('DOC_Talla', 20)->nullable();
+            if (!Schema::hasColumn('detalle_ord_com', 'DOC_Talla')) {
+                $table->string('DOC_Talla', 20)->nullable();
+            }
         });
 
         Schema::table('detalle_factura', function (Blueprint $table) {
-            $table->string('DFC_Talla', 20)->nullable();
+            if (!Schema::hasColumn('detalle_factura', 'DFC_Talla')) {
+                $table->string('DFC_Talla', 20)->nullable();
+            }
         });
     }
 

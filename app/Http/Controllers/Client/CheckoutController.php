@@ -79,6 +79,7 @@ class CheckoutController extends Controller
                 'CLI_Ced_Ruc' => $cliente->CLI_Ced_Ruc,
                 'FAC_Subtotal' => $subtotal,
                 'FAC_IVA' => $iva,
+                'FAC_IVA_Porcentaje' => config('urbanhoops.iva', 15), // Uses configured rate
                 'FAC_Total' => $total,
                 'FAC_Estado' => 'Pag', // Automatically paid since it's a card checkout
             ]);

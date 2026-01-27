@@ -115,7 +115,7 @@
                                     Fecha de Creación
                                 </dt>
                                 <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                                    {{ $cliente->created_at->format('d/m/Y H:i') }}
+                                    {{ $cliente->created_at ? $cliente->created_at->format('d/m/Y H:i') : 'N/A' }}
                                 </dd>
                             </div>
 
@@ -124,7 +124,7 @@
                                     Última Actualización
                                 </dt>
                                 <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-                                    {{ $cliente->updated_at->format('d/m/Y H:i') }}
+                                    {{ $cliente->updated_at ? $cliente->updated_at->format('d/m/Y H:i') : 'N/A' }}
                                 </dd>
                             </div>
                         </dl>

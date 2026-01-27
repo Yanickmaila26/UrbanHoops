@@ -11,6 +11,8 @@ class UsuarioAplicacion extends Authenticatable
 {
     use HasFactory, Notifiable, HasRoles;
 
+    protected $guard_name = 'client';
+
     /**
      * The attributes that are mass assignable.
      *

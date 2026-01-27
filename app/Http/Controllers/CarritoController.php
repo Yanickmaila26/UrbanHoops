@@ -39,7 +39,17 @@ class CarritoController extends Controller
             : 'CRC001';
 
         $clientes = Cliente::whereNotIn('CLI_Ced_Ruc', Carrito::pluck('CLI_Ced_Ruc'))->get();
-        $productos = Producto::all();
+        $productosRaw = Producto::all();
+
+        // Normalize product data for JavaScript to avoid Oracle casing issues
+        $productos = $productosRaw->map(function ($prod) {
+            return [
+                'PRO_Codigo' => $prod->PRO_Codigo ?? $prod->pro_codigo ?? $prod->PRO_CODIGO,
+                'PRO_Nombre' => $prod->PRO_Nombre ?? $prod->pro_nombre ?? $prod->PRO_NOMBRE,
+                'PRO_Precio' => $prod->PRO_Precio ?? $prod->pro_precio ?? $prod->PRO_PRECIO,
+                'PRO_Talla'  => $prod->PRO_Talla  ?? $prod->pro_talla  ?? $prod->PRO_TALLA,
+            ];
+        });
 
         return view('carritos.create', compact('nuevoCodigo', 'clientes', 'productos'));
     }
@@ -62,7 +72,10 @@ class CarritoController extends Controller
 
             $detalles = [];
             foreach ($request->productos as $index => $proCodigo) {
-                $detalles[$proCodigo] = ['CRD_Cantidad' => $request->cantidades[$index]];
+                $detalles[$proCodigo] = [
+                    'CRD_Cantidad' => $request->cantidades[$index],
+                    'CRD_Talla' => $request->tallas[$index] ?? null
+                ];
             }
             $carrito->productos()->sync($detalles);
 
@@ -85,7 +98,17 @@ class CarritoController extends Controller
     {
         $carrito = Carrito::with('productos')->findOrFail($id);
         $clientes = Cliente::all();
-        $productos = Producto::all();
+        $productosRaw = Producto::all();
+
+        // Normalize product data for JavaScript to avoid Oracle casing issues
+        $productos = $productosRaw->map(function ($prod) {
+            return [
+                'PRO_Codigo' => $prod->PRO_Codigo ?? $prod->pro_codigo ?? $prod->PRO_CODIGO,
+                'PRO_Nombre' => $prod->PRO_Nombre ?? $prod->pro_nombre ?? $prod->PRO_NOMBRE,
+                'PRO_Precio' => $prod->PRO_Precio ?? $prod->pro_precio ?? $prod->PRO_PRECIO,
+                'PRO_Talla'  => $prod->PRO_Talla  ?? $prod->pro_talla  ?? $prod->PRO_TALLA,
+            ];
+        });
 
         return view('carritos.edit', compact('carrito', 'clientes', 'productos'));
     }
@@ -114,7 +137,10 @@ class CarritoController extends Controller
 
             $detalles = [];
             foreach ($request->productos as $index => $proCodigo) {
-                $detalles[$proCodigo] = ['CRD_Cantidad' => $request->cantidades[$index]];
+                $detalles[$proCodigo] = [
+                    'CRD_Cantidad' => $request->cantidades[$index],
+                    'CRD_Talla' => $request->tallas[$index] ?? null
+                ];
             }
             $carrito->productos()->sync($detalles);
 

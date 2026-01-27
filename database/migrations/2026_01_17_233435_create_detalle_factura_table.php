@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('PRO_Codigo')->references('PRO_Codigo')->on('productos')->onDelete('cascade');
             $table->integer('DFC_Cantidad');
             $table->decimal('DFC_Precio', 10, 2);
+            $table->string('DFC_Talla', 50)->nullable();
             $table->timestamps();
         });
     }

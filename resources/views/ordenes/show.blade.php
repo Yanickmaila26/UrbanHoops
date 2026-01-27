@@ -76,7 +76,11 @@
                                 <td class="py-4">
                                     <span class="font-bold dark:text-white">{{ $producto->PRO_Nombre }}</span><br>
                                     <span class="text-xs text-gray-500">{{ $producto->PRO_Marca }} |
-                                        {{ $producto->PRO_Color }} | Talla: {{ $producto->PRO_Talla }}</span>
+                                        {{ $producto->PRO_Color }}
+                                        @if ($producto->pivot->DOC_Talla)
+                                            | Talla: <span class="font-semibold">{{ $producto->pivot->DOC_Talla }}</span>
+                                        @endif
+                                    </span>
                                 </td>
                                 <td class="py-4 text-center dark:text-white">{{ $producto->pivot->cantidad_solicitada }}
                                 </td>
