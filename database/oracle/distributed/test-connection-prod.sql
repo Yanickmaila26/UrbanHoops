@@ -46,7 +46,7 @@ PROMPT
 PROMPT If the database link test passed, you can proceed with setup.
 PROMPT
 PROMPT Next: Execute scripts in COMEE first:
-PROMPT   sqlplus u_comee/secreto123@192.168.1.125:1521/comee
+PROMPT   sqlplus u_comee/secreto123@172.16.18.125:1521/comee
 PROMPT   @database/oracle/distributed/01_create_tables_comee.sql
 PROMPT
 PROMPT ════════════════════════════════════════════════════════════════

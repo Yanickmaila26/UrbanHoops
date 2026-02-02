@@ -5,8 +5,8 @@
 Antes de comenzar, asegúrate de tener:
 
 1. **Ambos PDBs funcionando:**
-   - PROD: 192.168.1.115:1521/prod (usuario: u_prod)
-   - COMEE: 192.168.1.125:1521/comee (usuario: u_comee)
+   - PROD: 172.16.8.125:1521/prod (usuario: u_prod)
+   - COMEE: 172.16.18.125:1521/comee (usuario: u_comee)
 
 2. **Database links creados:**
    - En PROD: `link_comee` apuntando a COMEE
@@ -25,14 +25,14 @@ Antes de comenzar, asegúrate de tener:
 #### Test PROD:
 ```bash
 cd c:\laragon\www\UrbanHoops
-sqlplus u_prod/secreto123@192.168.1.115:1521/prod @database\oracle\distributed\test-connection-prod.sql
+sqlplus u_prod/secreto123@172.16.8.125:1521/prod @database\oracle\distributed\test-connection-prod.sql
 ```
 
 **Resultado esperado:** ✓ Database link link_comee is working
 
 #### Test COMEE:
 ```bash
-sqlplus u_comee/secreto123@192.168.1.125:1521/comee @database\oracle\distributed\test-connection-comee.sql
+sqlplus u_comee/secreto123@172.16.18.125:1521/comee @database\oracle\distributed\test-connection-comee.sql
 ```
 
 **Resultado esperado:** ✓ Database link link_prod is working
@@ -53,7 +53,7 @@ Si puedes ver las migraciones, la conexión funciona.
 
 **Conectarse a COMEE:**
 ```bash
-sqlplus u_comee/secreto123@192.168.1.125:1521/comee
+sqlplus u_comee/secreto123@172.16.18.125:1521/comee
 ```
 
 **Ejecutar:**
@@ -110,7 +110,7 @@ sqlplus u_comee/secreto123@192.168.1.125:1521/comee
 
 **Conectarse a PROD:**
 ```bash
-sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 ```
 
 **Ejecutar:**
@@ -154,7 +154,7 @@ sqlplus u_prod/secreto123@192.168.1.115:1521/prod
 
 **Conectarse a COMEE:**
 ```bash
-sqlplus u_comee/secreto123@192.168.1.125:1521/comee
+sqlplus u_comee/secreto123@172.16.18.125:1521/comee
 ```
 
 **Ejecutar:**
@@ -183,7 +183,7 @@ sqlplus u_comee/secreto123@192.168.1.125:1521/comee
 
 **Conectarse a COMEE:**
 ```bash
-sqlplus u_comee/secreto123@192.168.1.125:1521/comee
+sqlplus u_comee/secreto123@172.16.18.125:1521/comee
 ```
 
 **Ejecutar estos comandos:**
@@ -200,7 +200,7 @@ exit;
 
 **Conectarse a PROD:**
 ```bash
-sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 ```
 
 **Ejecutar:**
@@ -234,7 +234,7 @@ Verification Results:
 
 **Conectarse a COMEE:**
 ```bash
-sqlplus u_comee/secreto123@192.168.1.125:1521/comee
+sqlplus u_comee/secreto123@172.16.18.125:1521/comee
 ```
 
 **Ejecutar:**
@@ -255,7 +255,7 @@ exit;
 
 **Conectarse a PROD:**
 ```bash
-sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 ```
 
 **Ejecutar:**
@@ -330,7 +330,7 @@ Una vez que hayas probado y verificado que todo funciona correctamente durante a
 
 **Conectarse a PROD:**
 ```bash
-sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 ```
 
 **Ejecutar:**

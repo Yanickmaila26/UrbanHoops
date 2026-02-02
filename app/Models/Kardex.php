@@ -154,11 +154,12 @@ class Kardex extends Model
                         $proCodigo = $detalle->PRO_CODIGO ?? $detalle->pro_codigo ?? $detalle->PRO_Codigo;
                         $productoData = DB::table('productos')->where(DB::raw('UPPER(PRO_CODIGO)'), strtoupper($proCodigo))->first();
                         if ($productoData) {
-                            $prod = new Producto((array)$productoData);
-                            // Force attributes
-                            $prod->PRO_Codigo = $productoData->PRO_CODIGO ?? $productoData->pro_codigo ?? $productoData->PRO_Codigo;
-                            $prod->PRO_Nombre = $productoData->PRO_NOMBRE ?? $productoData->pro_nombre ?? $productoData->PRO_Nombre;
-                            $prod->PRO_Stock = $productoData->PRO_STOCK ?? $productoData->pro_stock ?? 0;
+                            $prod = new Producto();
+                            // Inject all DB data regardless of casing and fillability
+                            $prod->setRawAttributes((array)$productoData);
+
+                            // Specific forcing for critical Laravel/Eloquent internal expectations
+                            $prod->exists = true;
 
                             // Pivot simulation
                             $pivot = new \stdClass();
@@ -174,17 +175,6 @@ class Kardex extends Model
                     $cantidad = $prod->pivot->DFC_CANTIDAD ?? $prod->pivot->DFC_Cantidad;
                     $talla = $prod->pivot->DFC_TALLA ?? $prod->pivot->DFC_Talla;
 
-                    // Final safety check
-                    if (!$prod->PRO_Nombre) {
-                        $fresh = DB::table('productos')->where('PRO_Codigo', $prod->PRO_Codigo)->first();
-                        if ($fresh) {
-                            $prod->PRO_Nombre = $fresh->PRO_NOMBRE ?? $fresh->pro_nombre ?? $fresh->PRO_Nombre;
-                            $prod->PRO_Stock = $fresh->PRO_STOCK ?? $fresh->pro_stock ?? 0;
-                            // Force Talla json decoding if needed by accessor logic, or just raw
-                            $prod->setAttribute('PRO_Talla', $fresh->PRO_TALLA ?? $fresh->pro_talla);
-                        }
-                    }
-
                     self::actualizarStockFisico($prod, $trn->TRN_Tipo, $cantidad, $data['BOD_Codigo'], $talla);
 
                     self::create([
@@ -193,7 +183,7 @@ class Kardex extends Model
                         'TRN_Codigo'   => $data['TRN_Codigo'],
                         'FAC_Codigo'   => $data['FAC_Codigo'],
                         'PRO_Codigo'   => $prod->PRO_Codigo,
-                        'KAR_cantidad' => $cantidad,
+                        'KAR_CANTIDAD' => $cantidad,
                     ]);
                 }
                 return true;
@@ -289,7 +279,36 @@ class Kardex extends Model
 
         // 3. Update JSON Size Stock if talla provided
         if ($talla) {
-            $sizes = $producto->PRO_Talla; // Accessor handles JSON decoding if defined in casting
+            $allAttrs = $producto->getAttributes();
+            $sizes = null;
+            $foundKey = null;
+
+            foreach ($allAttrs as $k => $v) {
+                $upperK = strtoupper($k);
+                if (str_contains($upperK, 'TALLA') && !str_contains($upperK, 'DFC')) {
+                    $sizes = $v;
+                    $foundKey = $k;
+                    break;
+                }
+            }
+
+            // Handle CLOB objects from Oracle
+            if (is_object($sizes) && method_exists($sizes, 'load')) {
+                $sizes = $sizes->load();
+            } else if (is_object($sizes) && method_exists($sizes, 'readAll')) {
+                $sizes = $sizes->readAll();
+            } else if (is_object($sizes)) {
+                try {
+                    $sizes = (string)$sizes;
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error("Kardex: Error al convertir talla a string: " . $e->getMessage());
+                    $sizes = null;
+                }
+            }
+
+            // For updates, use the column name without JSON_ prefix if possible
+            $tallaCol = $foundKey ? str_replace('JSON_', '', $foundKey) : 'PRO_Talla';
+
             // Ensure array
             if (is_string($sizes)) {
                 $sizes = json_decode($sizes, true) ?? [];
@@ -299,6 +318,7 @@ class Kardex extends Model
                 $found = false;
                 foreach ($sizes as &$s) {
                     if (isset($s['talla']) && trim($s['talla']) == trim($talla)) {
+                        \Illuminate\Support\Facades\Log::info("Kardex Stock Talla: Talla encontrada. Stock actual: {$s['stock']}");
                         if ($tipo === 'E') {
                             $s['stock'] = (int)($s['stock'] ?? 0) + $cantidad;
                         } else {
@@ -307,6 +327,7 @@ class Kardex extends Model
                             }
                             $s['stock'] = (int)($s['stock'] ?? 0) - $cantidad;
                         }
+                        \Illuminate\Support\Facades\Log::info("Kardex Stock Talla: Nuevo stock: {$s['stock']}");
                         $found = true;
                         break;
                     }
@@ -317,9 +338,7 @@ class Kardex extends Model
                 }
                 // If Exit and size not found -> Error
                 if (!$found && $tipo !== 'E') {
-                    // Tolerancia: Si no se encuentra talla, quizás es producto sin talla o error de data
-                    // throw new \Exception("La talla {$talla} no existe para el producto {$producto->PRO_Nombre}.");
-                    // Mejor log y continuar si el stock global valida
+                    throw new \Exception("La talla '{$talla}' no existe para el producto: {$producto->PRO_Nombre}");
                 }
 
                 $producto->PRO_Talla = $sizes;
@@ -336,8 +355,9 @@ class Kardex extends Model
         ];
 
         // Only update PRO_Talla if we actually have a value (avoid ORA-01407 NULL constraint)
-        if ($producto->PRO_Talla !== null) {
-            $updatePayload['PRO_Talla'] = is_array($producto->PRO_Talla) ? json_encode($producto->PRO_Talla) : $producto->PRO_Talla;
+        if ($producto->PRO_Talla !== null || (isset($sizes) && $sizes !== null)) {
+            $tallaData = $producto->PRO_Talla ?? $sizes;
+            $updatePayload[$tallaCol ?? 'PRO_Talla'] = is_array($tallaData) ? json_encode($tallaData) : $tallaData;
         }
 
         DB::table('productos')

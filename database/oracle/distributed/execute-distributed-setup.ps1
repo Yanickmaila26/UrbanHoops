@@ -11,13 +11,13 @@ Write-Host "╚═════════════════════�
 Write-Host ""
 
 # Configuration
-$PROD_HOST = "192.168.1.115"
+$PROD_HOST = "172.16.8.125"
 $PROD_PORT = "1521"
 $PROD_SERVICE = "prod"
 $PROD_USER = "u_prod"
 $PROD_PASS = "secreto123"
 
-$COMEE_HOST = "192.168.1.125"
+$COMEE_HOST = "172.16.18.125"
 $COMEE_PORT = "1521"
 $COMEE_SERVICE = "comee"
 $COMEE_USER = "u_comee"

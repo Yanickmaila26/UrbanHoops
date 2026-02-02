@@ -14,8 +14,8 @@ PROMPT ╚═══════════════════════�
 PROMPT
 PROMPT This script will guide you through setting up a distributed
 PROMPT database architecture across two Oracle PDBs:
-PROMPT   - PROD (192.168.1.115)
-PROMPT   - COMEE (192.168.1.125)
+PROMPT   - PROD (172.16.8.125)
+PROMPT   - COMEE (172.16.18.125)
 PROMPT
 
 PROMPT ════════════════════════════════════════════════════════════════
@@ -71,7 +71,7 @@ PROMPT ════════════════════════�
 PROMPT
 PROMPT STEP 1: Connect to COMEE PDB
 PROMPT ─────────────────────────────
-PROMPT   sqlplus u_comee/secreto123@192.168.1.125:1521/comee
+PROMPT   sqlplus u_comee/secreto123@172.16.18.125:1521/comee
 PROMPT
 PROMPT Execute in order:
 PROMPT   @database/oracle/distributed/01_create_tables_comee.sql
@@ -81,7 +81,7 @@ PROMPT
 
 PROMPT STEP 2: Connect to PROD PDB
 PROMPT ───────────────────────────
-PROMPT   sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+PROMPT   sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 PROMPT
 PROMPT Execute in order:
 PROMPT   @database/oracle/distributed/04_create_synonyms_prod.sql
@@ -90,7 +90,7 @@ PROMPT
 
 PROMPT STEP 3: Back to COMEE PDB
 PROMPT ─────────────────────────
-PROMPT   sqlplus u_comee/secreto123@192.168.1.125:1521/comee
+PROMPT   sqlplus u_comee/secreto123@172.16.18.125:1521/comee
 PROMPT
 PROMPT Execute:
 PROMPT   @database/oracle/distributed/06_triggers_replication_comee.sql
@@ -98,7 +98,7 @@ PROMPT
 
 PROMPT STEP 4: Data Migration (from PROD)
 PROMPT ──────────────────────────────────
-PROMPT   sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+PROMPT   sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 PROMPT
 PROMPT IMPORTANT: Before running migration, disable triggers in COMEE:
 PROMPT   -- In COMEE connection:
@@ -121,7 +121,7 @@ PROMPT
 
 PROMPT STEP 5: Verification
 PROMPT ────────────────────
-PROMPT   sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+PROMPT   sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 PROMPT
 PROMPT Execute:
 PROMPT   @database/oracle/distributed/99_verification_queries.sql
@@ -140,7 +140,7 @@ PROMPT
 
 PROMPT STEP 7: Cleanup (ONLY AFTER SUCCESSFUL TESTING)
 PROMPT ───────────────────────────────────────────────
-PROMPT   sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+PROMPT   sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 PROMPT
 PROMPT Execute:
 PROMPT   @database/oracle/distributed/08_drop_original_tables_prod.sql

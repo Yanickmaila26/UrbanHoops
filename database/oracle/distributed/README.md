@@ -3,8 +3,8 @@
 ## Overview
 
 This guide explains how to set up and maintain the distributed Oracle database architecture for UrbanHoops across two PDBs:
-- **PROD**: 192.168.1.115:1521/prod
-- **COMEE**: 192.168.1.125:1521/comee
+- **PROD**: 172.16.8.125:1521/prod
+- **COMEE**: 172.16.18.125:1521/comee
 
 ## Table Distribution
 
@@ -41,7 +41,7 @@ All other tables including:
 
 #### Phase 1: Setup COMEE
 ```bash
-sqlplus u_comee/secreto123@192.168.1.125:1521/comee
+sqlplus u_comee/secreto123@172.16.18.125:1521/comee
 
 @database/oracle/distributed/01_create_tables_comee.sql
 @database/oracle/distributed/02_create_replica_tables_comee.sql
@@ -50,7 +50,7 @@ sqlplus u_comee/secreto123@192.168.1.125:1521/comee
 
 #### Phase 2: Setup PROD
 ```bash
-sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 
 @database/oracle/distributed/04_create_synonyms_prod.sql
 @database/oracle/distributed/05_triggers_replication_prod.sql
@@ -58,7 +58,7 @@ sqlplus u_prod/secreto123@192.168.1.115:1521/prod
 
 #### Phase 3: Complete COMEE Setup
 ```bash
-sqlplus u_comee/secreto123@192.168.1.125:1521/comee
+sqlplus u_comee/secreto123@172.16.18.125:1521/comee
 
 @database/oracle/distributed/06_triggers_replication_comee.sql
 ```
@@ -76,7 +76,7 @@ ALTER TRIGGER trg_detalle_factura_insert_repl DISABLE;
 
 **Step 2**: Run migration from PROD
 ```bash
-sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 
 @database/oracle/distributed/07_migrate_data.sql
 ```
@@ -92,7 +92,7 @@ ALTER TRIGGER trg_detalle_factura_insert_repl ENABLE;
 
 #### Phase 5: Verify
 ```bash
-sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 
 @database/oracle/distributed/99_verification_queries.sql
 ```
@@ -111,7 +111,7 @@ All tests should show ✓ for success.
 
 #### Phase 7: Cleanup (ONLY AFTER SUCCESSFUL TESTING)
 ```bash
-sqlplus u_prod/secreto123@192.168.1.115:1521/prod
+sqlplus u_prod/secreto123@172.16.8.125:1521/prod
 
 @database/oracle/distributed/08_drop_original_tables_prod.sql
 ```

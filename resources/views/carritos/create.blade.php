@@ -80,7 +80,8 @@
                                 </td>
                                 <td class="py-3">
                                     <select name="tallas[]" x-model="row.talla"
-                                        class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
+                                        class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required
+                                        @change="checkDuplicate(row)">
                                         <option value="">Seleccione...</option>
                                         <template x-for="t in row.availableSizes" :key="t.talla">
                                             <option :value="t.talla" x-text="`${t.talla} (Stock: ${t.stock})`">
@@ -136,9 +137,10 @@
 
                 addRow() {
                     this.rows.push({
-                        id: Date.now(),
+                        id: Date.now() + Math.random(),
                         qty: 1,
                         price: 0,
+                        code: '',
                         talla: '',
                         availableSizes: []
                     });
@@ -174,27 +176,38 @@
                     // Event listener
                     $(el).on('select2:select', (e) => {
                         const selectedId = e.params.data.id;
-
-                        // Duplicate Check (Same product and same size later, but for now just product if simple)
-                        // Actually, with sizes, they might want same product different sizes?
-                        // Let's keep it simple for now as requested.
-
                         const selected = this.productos.find(p => p.PRO_Codigo == selectedId);
+
                         if (selected) {
-                            row.price = selected.PRO_Precio;
+                            row.price = parseFloat(selected.PRO_Precio);
                             row.code = selected.PRO_Codigo;
 
                             // Parse sizes
                             try {
                                 row.availableSizes = typeof selected.PRO_Talla === 'string' ?
                                     JSON.parse(selected.PRO_Talla) :
-                                    selected.PRO_Talla;
+                                    (selected.PRO_Talla || []);
                             } catch (e) {
                                 row.availableSizes = [];
                             }
                             row.talla = '';
                         }
                     });
+                },
+
+                checkDuplicate(row) {
+                    if (!row.code || !row.talla) return;
+
+                    const isDuplicate = this.rows.some(r =>
+                        r.id !== row.id &&
+                        r.code === row.code &&
+                        r.talla === row.talla
+                    );
+
+                    if (isDuplicate) {
+                        this.showError("Este producto y talla ya está en el carrito.");
+                        row.talla = '';
+                    }
                 }
             }));
         });

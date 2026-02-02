@@ -148,11 +148,20 @@ class Producto extends Model
         // Try standard access
         $value = parent::getAttribute($key);
 
-        // If null, try lowercase key if attributes exist
-        if ($value === null && $key !== strtolower($key)) {
+        // If null, try lowercase and uppercase keys if attributes exist
+        if ($value === null) {
             $lowerKey = strtolower($key);
             if (array_key_exists($lowerKey, $this->attributes)) {
                 return $this->attributes[$lowerKey];
+            }
+            $upperKey = strtoupper($key);
+            if (array_key_exists($upperKey, $this->attributes)) {
+                return $this->attributes[$upperKey];
+            }
+            // Support Oracle's JSON column prefixing (behavior in some drivers/versions)
+            $jsonKey = 'JSON_' . $upperKey;
+            if (array_key_exists($jsonKey, $this->attributes)) {
+                return $this->attributes[$jsonKey];
             }
         }
 

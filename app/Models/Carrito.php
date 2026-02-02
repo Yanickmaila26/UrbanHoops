@@ -24,7 +24,8 @@ class Carrito extends Model
     public function productos()
     {
         return $this->belongsToMany(Producto::class, 'detalle_carrito', 'CRC_Carrito', 'PRO_Codigo')
-            ->withPivot('CRD_Cantidad')
+            ->using(DetalleCarrito::class)
+            ->withPivot('CRD_Cantidad', 'CRD_Talla')
             ->withTimestamps();
     }
 

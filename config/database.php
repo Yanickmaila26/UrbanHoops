@@ -129,7 +129,7 @@ return [
 
         'oracle' => [
             'driver' => 'oracle',
-            'host' => env('DB_HOST', '192.168.1.115'),
+            'host' => env('DB_HOST', '172.16.8.125'),
             'port' => env('DB_PORT', '1521'),
             'database' => env('DB_DATABASE'),
             'service_name' => env('DB_SERVICE_NAME', 'prod'),
@@ -145,7 +145,7 @@ return [
 
         'oracle_comee' => [
             'driver' => 'oracle',
-            'host' => env('DB_HOST_COMEE', '192.168.1.125'),
+            'host' => env('DB_HOST_COMEE', '172.16.18.125'),
             'port' => env('DB_PORT_COMEE', '1521'),
             'database' => env('DB_DATABASE_COMEE'),
             'service_name' => env('DB_SERVICE_NAME_COMEE', 'comee'),

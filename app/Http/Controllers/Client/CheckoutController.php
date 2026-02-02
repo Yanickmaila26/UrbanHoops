@@ -66,6 +66,48 @@ class CheckoutController extends Controller
             foreach ($cartItems as $item) {
                 // Determine quantity key (qty or quantity)
                 $qty = $item['qty'] ?? $item['quantity'] ?? 1;
+                $proCodigo = $item['id'];
+                $tallaSolicitada = $item['talla'] ?? $item['size'] ?? null;
+
+                $producto = \App\Models\Producto::where('PRO_Codigo', $proCodigo)->first();
+                if (!$producto) {
+                    throw new \Exception("Producto no encontrado: " . ($item['name'] ?? $proCodigo));
+                }
+
+                // --- VALIDACIÓN DE STOCK ---
+                // 1. Global
+                if ($producto->PRO_Stock < $qty) {
+                    throw new \Exception("Stock insuficiente para {$producto->PRO_Nombre}.");
+                }
+
+                // 2. Bodega
+                $bodega = \App\Models\Bodega::first();
+                if ($bodega) {
+                    $stockBodega = DB::table('producto_bodega')
+                        ->where('PRO_Codigo', $proCodigo)
+                        ->where('BOD_Codigo', $bodega->BOD_Codigo)
+                        ->value('PXB_Stock') ?? 0;
+                    if ($stockBodega < $qty) {
+                        throw new \Exception("Stock insuficiente en bodega para {$producto->PRO_Nombre}.");
+                    }
+                }
+
+                // 3. Talla
+                if ($tallaSolicitada) {
+                    $tallas = is_string($producto->PRO_Talla) ? json_decode($producto->PRO_Talla, true) : $producto->PRO_Talla;
+                    $found = false;
+                    foreach ($tallas as $t) {
+                        if (trim($t['talla']) == trim($tallaSolicitada)) {
+                            if ($t['stock'] < $qty) {
+                                throw new \Exception("Stock insuficiente para {$producto->PRO_Nombre} en talla {$tallaSolicitada}.");
+                            }
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if (!$found) throw new \Exception("Talla {$tallaSolicitada} no disponible para {$producto->PRO_Nombre}.");
+                }
+
                 $subtotal += $item['price'] * $qty;
             }
             $ivaRate = config('urbanhoops.iva', 15) / 100;
@@ -148,7 +190,8 @@ class CheckoutController extends Controller
             \App\Models\Kardex::crearMovimiento([
                 'TRN_Codigo' => 'T04', // Venta de Productos
                 'FAC_Codigo' => $factura->FAC_Codigo,
-                'BOD_Codigo' => $bodegaId
+                'BOD_Codigo' => $bodegaId,
+                'KAR_Cantidad' => $qty // Calculated internally
             ]);
 
             DB::commit();

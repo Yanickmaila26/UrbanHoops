@@ -8,6 +8,8 @@ use App\Models\Producto;
 use App\Models\Kardex;
 use App\Models\Bodega;
 use App\Models\Carrito;
+use App\Models\Pedido;
+use App\Models\DatosFacturacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -35,17 +37,40 @@ class FacturaController extends Controller
     {
         $nuevoCodigo = Factura::generateId();
         $clientes = Cliente::all();
-        $productos = Producto::all();
+        $productosRaw = Producto::all();
+
+        // Normalize product data for JavaScript to avoid Oracle casing issues
+        $productos = $productosRaw->map(function ($prod) {
+            return [
+                'PRO_Codigo' => $prod->PRO_Codigo ?? $prod->pro_codigo ?? $prod->PRO_CODIGO,
+                'PRO_Nombre' => $prod->PRO_Nombre ?? $prod->pro_nombre ?? $prod->PRO_NOMBRE,
+                'PRO_Precio' => $prod->PRO_Precio ?? $prod->pro_precio ?? $prod->PRO_PRECIO,
+                'PRO_Talla'  => $prod->PRO_Talla  ?? $prod->pro_talla  ?? $prod->PRO_TALLA,
+            ];
+        });
 
         return view('facturas.create', compact('nuevoCodigo', 'clientes', 'productos'));
     }
 
     public function store(Request $request)
     {
-        $request->validate(Factura::rules(), Factura::messages());
+        $request->validate(array_merge(Factura::rules(), [
+            'tallas' => ['required', 'array', 'min:1'],
+        ]), Factura::messages());
 
-        if (collect($request->productos)->unique()->count() !== count($request->productos)) {
-            return back()->with('error', 'No se permiten productos duplicados en la factura.')->withInput();
+        if (collect($request->productos)->count() !== count($request->tallas)) {
+            return back()->with('error', 'Inconsistencia en los datos de productos y tallas.')->withInput();
+        }
+
+        // Duplicate check (Product + Size)
+        $combinations = [];
+        foreach ($request->productos as $index => $codigo) {
+            $talla = $request->tallas[$index] ?? '';
+            $key = $codigo . '_' . $talla;
+            if (isset($combinations[$key])) {
+                return back()->with('error', "El producto {$codigo} con talla {$talla} está duplicado en la factura.")->withInput();
+            }
+            $combinations[$key] = true;
         }
 
         try {
@@ -62,10 +87,48 @@ class FacturaController extends Controller
                     $subtotal = $precio * $cantidad;
                     $totalCallback += $subtotal;
 
+                    // --- VALIDACIÓN DE STOCK MULTI-NIVEL ---
+                    // 1. Validar Stock Global
+                    if ($producto->PRO_Stock < $cantidad) {
+                        throw new \Exception("Stock global insuficiente para {$producto->PRO_Nombre}. Disponible: {$producto->PRO_Stock}");
+                    }
+
+                    // 2. Validar Stock por Bodega (Usamos la primera bodega seleccionada en el sistema)
+                    $bodega = Bodega::first();
+                    if ($bodega) {
+                        $stockBodega = DB::table('producto_bodega')
+                            ->where('PRO_Codigo', $codigo)
+                            ->where('BOD_Codigo', $bodega->BOD_Codigo)
+                            ->value('PXB_Stock') ?? 0;
+
+                        if ($stockBodega < $cantidad) {
+                            throw new \Exception("Stock insuficiente en bodega ({$bodega->BOD_Nombre}) para {$producto->PRO_Nombre}. Disponible: {$stockBodega}");
+                        }
+                    }
+
+                    // 3. Validar Stock por Talla
+                    $tallaSolicitada = $request->tallas[$index] ?? null;
+                    if ($tallaSolicitada) {
+                        $tallas = is_string($producto->PRO_Talla) ? json_decode($producto->PRO_Talla, true) : $producto->PRO_Talla;
+                        $tallaEncontrada = false;
+                        foreach ($tallas as $t) {
+                            if (trim($t['talla']) == trim($tallaSolicitada)) {
+                                if ($t['stock'] < $cantidad) {
+                                    throw new \Exception("Stock insuficiente para {$producto->PRO_Nombre} en talla {$tallaSolicitada}. Disponible: {$t['stock']}");
+                                }
+                                $tallaEncontrada = true;
+                                break;
+                            }
+                        }
+                        if (!$tallaEncontrada) {
+                            throw new \Exception("La talla {$tallaSolicitada} no está registrada para {$producto->PRO_Nombre}");
+                        }
+                    }
+
                     $detalles[$codigo] = [
                         'DFC_Cantidad' => $cantidad,
                         'DFC_Precio' => $precio,
-                        'DFC_Talla' => $request->tallas[$index] ?? null
+                        'DFC_Talla' => $tallaSolicitada
                     ];
                 }
 
@@ -86,7 +149,31 @@ class FacturaController extends Controller
                 // 3. Attach Productos
                 $factura->productos()->attach($detalles);
 
-                // 4. Registrar en Kardex y Descontar Stock
+                // 4. Crear Datos de Facturación (Perfil para venta en tienda / Manual)
+                $datosFacturacion = DatosFacturacion::where('DAF_CLI_Codigo', $request->CLI_Ced_Ruc)->first();
+                if (!$datosFacturacion) {
+                    $datosFacturacion = DatosFacturacion::create([
+                        'DAF_CLI_Codigo' => $request->CLI_Ced_Ruc,
+                        'DAF_Direccion' => $factura->cliente->CLI_Direccion ?? 'Venta Directa',
+                        'DAF_Ciudad' => 'Quito',
+                        'DAF_Estado' => 'Pichincha',
+                        'DAF_CP' => '170150',
+                        'DAF_Tarjeta_Numero' => '0000000000000000',
+                        'DAF_Tarjeta_Expiracion' => '00/00',
+                        'DAF_Tarjeta_CVV' => '000',
+                    ]);
+                }
+
+                // 5. Crear Pedido (Vínculo necesario para el historial y seguimiento)
+                Pedido::create([
+                    'PED_CLI_Codigo' => $request->CLI_Ced_Ruc,
+                    'PED_DAF_Codigo' => $datosFacturacion->DAF_Codigo,
+                    'PED_FAC_Codigo' => $factura->FAC_Codigo,
+                    'PED_Fecha' => now(),
+                    'PED_Estado' => 'Entregado'
+                ]);
+
+                // 6. Registrar en Kardex y Descontar Stock
                 // Usamos la primera bodega por defecto por ahora
                 $bodega = Bodega::first();
                 if ($bodega) {
@@ -98,7 +185,7 @@ class FacturaController extends Controller
                     ]);
                 }
 
-                // 5. Eliminar Carrito si existe (Opcional, pero lógico)
+                // 7. Eliminar Carrito si existe (Opcional, pero lógico)
                 Carrito::where('CLI_Ced_Ruc', $request->CLI_Ced_Ruc)->delete();
             });
 
@@ -151,6 +238,7 @@ class FacturaController extends Controller
                 'qty' => $producto->pivot->CRD_Cantidad,
                 'price' => $producto->PRO_Precio,
                 'talla' => $producto->pivot->CRD_Talla,
+                'PRO_Talla' => $producto->PRO_Talla, // Include sizing JSON for frontend initialization
             ];
         });
 

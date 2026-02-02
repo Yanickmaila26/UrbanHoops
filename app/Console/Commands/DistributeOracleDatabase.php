@@ -89,7 +89,7 @@ class DistributeOracleDatabase extends Command
         } catch (\Exception $e) {
             $this->error('✗ No se puede conectar a COMEE: ' . $e->getMessage());
             $this->warn('Verifica la configuración en .env:');
-            $this->warn('  DB_HOST_COMEE=192.168.1.125');
+            $this->warn('  DB_HOST_COMEE=172.16.18.125');
             $this->warn('  DB_SERVICE_NAME_COMEE=comee');
             $this->warn('  DB_USERNAME_COMEE=u_comee');
             $this->warn('  DB_PASSWORD_COMEE=secreto123');

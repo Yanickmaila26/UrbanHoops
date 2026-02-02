@@ -95,13 +95,15 @@
                                             @change="checkDuplicate(row)">
                                             <option value="">...</option>
                                             <template x-for="size in row.availableSizes" :key="size.talla">
-                                                <option :value="size.talla" x-text="size.talla"></option>
+                                                <option :value="size.talla"
+                                                    x-text="size.talla + ' (Stock: ' + size.stock + ')'"></option>
                                             </template>
                                         </select>
                                     </template>
                                 </td>
                                 <td class="py-3">
                                     <input type="number" name="cantidades[]" min="1" x-model="row.qty"
+                                        :max="getMaxStock(row)"
                                         class="w-full rounded-md border-gray-300 dark:bg-zinc-900 dark:text-white" required>
                                 </td>
                                 <td class="py-3">
@@ -109,6 +111,7 @@
                                     <input type="hidden" name="precios[]" :value="row.price">
                                 </td>
                                 <td class="py-3 font-semibold dark:text-white">
+                                    <input type="hidden" name="is_cart_row[]" :value="row.isCart ? 1 : 0">
                                     <span x-text="formatCurrency(row.price * row.qty)"></span>
                                 </td>
                                 <td class="py-3 text-center">
@@ -174,6 +177,8 @@
                     // Check for invalid input (Old Data)
                     const oldProductos = @json(old('productos', []));
                     const oldCantidades = @json(old('cantidades', []));
+                    const oldTallas = @json(old('tallas', []));
+                    const oldIsCart = @json(old('is_cart_row', []));
 
                     if (oldProductos.length > 0) {
                         oldProductos.forEach((code, index) => {
@@ -181,18 +186,38 @@
                             const price = product ? parseFloat(product.PRO_Precio) : 0;
                             const qty = oldCantidades[index] ? parseInt(oldCantidades[index]) :
                                 1;
+                            const talla = oldTallas[index] || '';
+                            const isCart = oldIsCart[index] == 1;
+
+                            let availableSizes = [];
+                            if (product) {
+                                try {
+                                    availableSizes = typeof product.PRO_Talla === 'string' ?
+                                        JSON.parse(product.PRO_Talla) :
+                                        (product.PRO_Talla || []);
+                                } catch (e) {
+                                    availableSizes = [];
+                                }
+                            }
 
                             this.rows.push({
                                 id: Date.now() + Math.random() + index,
                                 qty: qty,
                                 price: price,
                                 code: code,
-                                isCart: false
+                                talla: talla,
+                                availableSizes: availableSizes,
+                                isCart: isCart
                             });
                         });
                     } else {
-                        // Only add empty row if no old data
-                        this.addRow();
+                        // If no old products but client is selected, try fetching cart
+                        const selectedClient = $('#cliente-select').val();
+                        if (selectedClient) {
+                            this.checkCart(selectedClient);
+                        } else {
+                            this.addRow();
+                        }
                     }
                 },
 
@@ -210,13 +235,23 @@
                             // This prevents potential issues with key tracking if reusing keys (though we use random ID)
                             setTimeout(() => {
                                 data.items.forEach(item => {
+                                    let availableSizes = [];
+                                    try {
+                                        availableSizes = typeof item.PRO_Talla ===
+                                            'string' ?
+                                            JSON.parse(item.PRO_Talla) :
+                                            (item.PRO_Talla || []);
+                                    } catch (e) {
+                                        availableSizes = [];
+                                    }
+
                                     this.rows.push({
                                         id: Date.now() + Math.random(),
                                         qty: parseInt(item.qty),
                                         price: parseFloat(item.price),
                                         code: item.id,
                                         talla: item.talla || '',
-                                        availableSizes: [], // populated later? Or not needed for IS CART
+                                        availableSizes: availableSizes,
                                         isCart: true
                                     });
                                 });
@@ -241,6 +276,12 @@
 
                 removeRow(id) {
                     this.rows = this.rows.filter(r => r.id !== id);
+                },
+
+                getMaxStock(row) {
+                    if (!row.talla || !row.availableSizes) return 999;
+                    const sizeData = row.availableSizes.find(s => s.talla == row.talla);
+                    return sizeData ? sizeData.stock : 999;
                 },
 
                 showError(msg) {
@@ -279,7 +320,15 @@
                             row.price = parseFloat(selected.PRO_Precio);
                             row.code = selected.PRO_Codigo;
                             row.isCart = false;
-                            row.availableSizes = selected.PRO_Talla || [];
+
+                            // Parse sizes correctly
+                            try {
+                                row.availableSizes = typeof selected.PRO_Talla === 'string' ?
+                                    JSON.parse(selected.PRO_Talla) :
+                                    (selected.PRO_Talla || []);
+                            } catch (e) {
+                                row.availableSizes = [];
+                            }
                             row.talla = '';
                         }
                     });
